@@ -1,0 +1,142 @@
+swagger: '2.0'
+info:
+  description: |
+    This is a sample Petstore server.  You can find 
+    out more about Swagger at 
+    [http://swagger.io](http://swagger.io) or on 
+    [irc.freenode.net, #swagger](http://swagger.io/irc/).
+  version: 1.0.0
+  title: Swagger Petstore
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+# host: petstore.swagger.io
+# basePath: /v2
+tags:
+- name: pet
+  description: Everything about your Pets
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+- name: store
+  description: Access to Petstore orders
+# schemes:
+# - http
+paths:
+  /user/create:
+    post:
+      tags:
+      - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Created user object
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        default:
+          description: successful operation
+        400:
+          description: Invalid wallet address
+  /user/getbalance:
+    get:
+      tags:
+      - user
+      summary: Get user by user name
+      operationId: getBalance
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: idtoken
+        in: body
+        description: The google auth generated user token that identifies this user
+        required: true
+        schema:
+          $ref: '#/definitions/IdToken'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/WalletBalance'
+        400:
+          description: Invalid username supplied
+        404:
+          description: User not found
+securityDefinitions:
+  petstore_auth:
+    type: oauth2
+    authorizationUrl: http://petstore.swagger.io/oauth/dialog
+    flow: implicit
+    scopes:
+      write:pets: modify pets in your account
+      read:pets: read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  User:
+    type: object
+    properties:
+      idToken:
+        type: string
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      walletAddress:
+        type: string
+    xml:
+      name: User
+  IdToken:
+    type: object
+    properties:
+      idToken:
+        type: string
+    xml:
+      name: IdToken
+  WalletBalance:
+    type: object
+    properties:
+      coinValue:
+        type: number
+      dollarValue:
+        type: number
+      timeSeries:
+        type: array
+        items:
+          type: number
+    xml:
+      name: WalletBalance
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /drydenwiebe/tyfw/1.0.0
+schemes:
+ - https
+ - http
