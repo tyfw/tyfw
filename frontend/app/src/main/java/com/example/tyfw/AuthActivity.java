@@ -111,6 +111,10 @@ public class AuthActivity extends AppCompatActivity {
             // There should be a way to authenticate if an account exists with account.getIdToken()
             // Assume for now no account exists
 
+            // If user exists, they are logged in
+            // Intent mainActivity = new Intent(this, MainActivity.class);
+            // startActivity(mainActivity);
+
             Intent mainActivity = new Intent(this, LoginActivity.class);
             mainActivity.putExtra("username", account.getDisplayName());
             startActivity(mainActivity);
