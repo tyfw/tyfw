@@ -12,6 +12,30 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_leaderboard"
+        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_leaderboard" />
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/navigation_social"
+        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_social" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
