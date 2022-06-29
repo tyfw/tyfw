@@ -6,10 +6,14 @@
     "web3": "^1.7.3"
   },
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "jest --coverage"
   },
   "name": "backend",
   "version": "1.0.0",
   "description": "Server backend for 321 Project",
-  "main": "server.js"
+  "main": "server.js",
+  "devDependencies": {
+    "jest": "^28.1.1"
+  }
 }
