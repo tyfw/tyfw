@@ -50,7 +50,7 @@ app.get("/user/leaderboard", async (req, res) => {
     
 app.get("/user/displaycurruser", async (req, res) => {
     try {
-        res.status(200).json({startTime: 10, endTime: 12, timescale: {type: "timescaleType", hour: 12, month: 10, day: 31}, value: [1, 2, 3, 4]})
+        res.status(200).json({startTime: 10, endTime: 12, timescale: "month", value: [5, 6, 7, 8]}) 
     }
     catch (err) {
         console.log(err)
@@ -60,7 +60,7 @@ app.get("/user/displaycurruser", async (req, res) => {
 
 app.get("/user/displayotheruser", async (req, res) => {
     try {
-        res.status(200).json({startTime: 10, endTime: 12, timescale: {type: "timescaleType", hour: 12, month: 10, day: 31}, value: [1, 2, 3, 4]})
+        res.status(200).json({startTime: 10, endTime: 12, timescale: "hour", value: [1, 2, 3, 4]})
     }
     catch (err) {
         console.log(err)
