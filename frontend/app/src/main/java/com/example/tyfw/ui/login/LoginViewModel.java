@@ -59,9 +59,6 @@ public class LoginViewModel extends ViewModel {
     private boolean isFirstNameValid(String firstName) {
         if (firstName == null) {
             return false;
-        }
-        if (firstName.contains("@")) {
-            return Patterns.EMAIL_ADDRESS.matcher(firstName).matches();
         } else {
             return !firstName.trim().isEmpty();
         }
@@ -70,9 +67,6 @@ public class LoginViewModel extends ViewModel {
     private boolean isLastNameValid(String lastName) {
         if (lastName == null) {
             return false;
-        }
-        if (lastName.contains("@")) {
-            return Patterns.EMAIL_ADDRESS.matcher(lastName).matches();
         } else {
             return !lastName.trim().isEmpty();
         }
@@ -80,7 +74,7 @@ public class LoginViewModel extends ViewModel {
 
     // A placeholder password validation check
     private boolean isEmailValid(String email) {
-        return email != null && email.trim().length() > 5 && !Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return email != null && email.trim().length() > 5 && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     // A placeholder wallet address validation check

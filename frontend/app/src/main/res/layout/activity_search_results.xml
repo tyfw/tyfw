@@ -9,12 +9,12 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search.SearchFragment">
+    tools:context=".SearchResultsActivity">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        tools:context=".MainActivity">
+        tools:context=".SearchResultsActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Leaderboard!"
+                    android:text="Search results"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="50dp"
                     android:textStyle="bold">
@@ -47,7 +47,7 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
             </RelativeLayout>
 
             <ListView
-                android:id="@+id/list"
+                android:id="@+id/search_results_list"
                 android:layout_width="wrap_content"
                 android:layout_height="668dp"
                 android:layout_weight="1.0">
