@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- -
+This code is taken from and adapted from (this includes relevant .xml files):
+https://stackoverflow.com/questions/34518421/adding-a-scoreboard-to-an-android-studio-application
+https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.leaderboard.LeaderboardFragment">
+    tools:context=".ui.search.SearchFragment">
 
     <TextView
-        android:id="@+id/text_leaderboard"
+        android:id="@+id/text_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -19,4 +24,55 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:context=".leaderboard">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.38">
+
+                <TextView
+                    android:layout_width="420dp"
+                    android:layout_height="150dp"
+                    android:gravity="center"
+                    android:text="Leaderboard!"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="50dp"
+                    android:textStyle="bold">
+
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.38">
+
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="wrap_content"
+                android:layout_height="580dp"
+                android:layout_weight="1.0">
+
+            </ListView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
