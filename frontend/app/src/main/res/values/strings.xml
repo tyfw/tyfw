@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">tyfw</string>
+    <string name="title_home">Home</string>
+    <string name="title_leaderboard">Leaderboard</string>
+    <string name="title_search">Search</string>
+    <string name="title_social">Social</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_first_name">First Name</string>
+    <string name="prompt_last_name">Last Name</string>
+    <string name="prompt_wallet_address">Wallet Address</string>
+    <string name="action_register">Register for an account</string>
+    <string name="action_register_short">Register</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_first_name">Not a valid first name</string>
+    <string name="invalid_last_name">Not a valid last name</string>
+    <string name="invalid_email">Not a valid email</string>
+    <string name="invalid_wallet_address">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+    <!-- Should not need these -->
+    <string name="prompt_password">"ERROR"</string>
+    <string name="action_sign_in_short">"ERROR"</string>
+    <string name="action_sign_in">"ERROR"</string>
+
+</resources>
