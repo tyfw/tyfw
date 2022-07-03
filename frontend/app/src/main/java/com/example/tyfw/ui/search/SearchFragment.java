@@ -17,6 +17,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.tyfw.databinding.FragmentSearchBinding;
 
 public class SearchFragment extends Fragment {
@@ -47,8 +49,6 @@ public class SearchFragment extends Fragment {
                 startActivity(searchResultsActivity);
             }
         });
-
-        return root;
     }
 
     @Override

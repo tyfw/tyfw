@@ -25,7 +25,6 @@
     <string name="prompt_search">Search for user by username or wallet address</string>
     <string name="action_search">Search</string>
 
-
     <!-- Should not need these -->
     <string name="prompt_password">"ERROR"</string>
     <string name="action_sign_in_short">"ERROR"</string>

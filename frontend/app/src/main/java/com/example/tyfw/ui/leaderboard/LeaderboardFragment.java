@@ -26,7 +26,6 @@ public class LeaderboardFragment extends Fragment {
     private List<LeaderboardRow> itemsList = new ArrayList<LeaderboardRow>();
     private ListView listView;
     private LeaderboardListAdapter adapter;
-
     private FragmentLeaderboardBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
