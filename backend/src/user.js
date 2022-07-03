@@ -4,8 +4,8 @@ class User {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        // this.role = role;
         this.addresses = addresses;
+        this.friends = [];
     }
     
 }

@@ -9,13 +9,19 @@ class User {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        // this.role = role;
-        this.addresses = [];
+        this.addresses = addresses; 
+        this.friends = [];
     }
-    
 }
 
-
+class Wallet {
+    constructor(timescale, startTime, endTime, data) {
+        this.timescale = timescale;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.data = data;
+    }
+}
 
 // mongo-db
 const { MongoClient } = require('mongodb');
@@ -101,40 +107,59 @@ app.post("/user/register", async (req, res) => {
 app.get("/user/leaderboard", async (req, res) => {
   try {
       res.status(200).json([{user: "BarackObama", value: 4.20}, {user: "CaleMakar", value: 8.0} ])
+      //TODO: find the % gain/loss of each friend in friend list and return
   }
   catch (err) {
       console.log(err)
-      res.send(400).send(err)
+      res.sendStatus(400)
   }
 })
   
 app.get("/user/displaycurruser", async (req, res) => {
   try {
-      res.status(200).json({startTime: 10, endTime: 12, timescale: "month", value: [5, 6, 7, 8]}) 
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
+      if (user == null) {
+        throw new Error('No users found')
+      }
+      else {
+        res.status(200).json(user.wallet)
+      }
   }
   catch (err) {
       console.log(err)
-      res.send(400).send(err)
+      res.sendStatus(400)
   }
 })
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
   try {
-      res.status(200).json({startTime: 10, endTime: 12, timescale: "hour", value: [1, 2, 3, 4]})
-  }
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.otherUsername})
+      if (user == null) {
+        throw new Error('No users found')
+      }
+      else {
+        res.status(200).json(user.wallet)
+      }
+    }
   catch (err) {
       console.log(err)
-      res.send(400).send(err)
+      res.sendStatus(400)
   }
 })
 
 app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
   try {
-      res.status(200).json({startTime: 10, endTime: 12, timescale: "hour", value: [1, 2, 3, 4]})
-  }
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.body.otherWalletAddress})
+      if (user == null) {
+        throw new Error('No users found')
+      }
+      else {
+        res.status(200).json(user.wallet)
+      }
+    }
   catch (err) {
       console.log(err)
-      res.send(400).send(err)
+      res.sendStatus(400)
   }
 })
 
@@ -152,20 +177,69 @@ app.post("/user/changename", async (req, res) => {
   }
   catch (err) {
       console.log(err)
-      res.send(400).send(err)
+      res.sendStatus(400)
   }
 })
 
 app.get("/user/search", async (req, res) => {
   try {
-      res.status(200).send("Success")
-
+      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.body.queryString, $options: "$i"}}, {"addresses": req.body.queryString}]}).project({username: 1, _id: 0}).toArray()
+      if (queryMatches.length == 0) {
+        throw new Error('No users found')
+      }
+      res.status(200).json({"queryMatches": queryMatches})
   }
   catch (err) {
       console.log(err)
-      res.send(400).send(err)
+      res.sendStatus(400)
   }
 
+})
+
+app.post("/user/addbyusername", async (req, res) => {
+  try {
+    //check that username exists
+      const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.friendUsername})
+      if (newFriend == null) {
+        throw new Error('No User with this username')
+      }
+      await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$addToSet: {friends: newFriend.email}})
+      res.status(200).send("Success")
+  }
+  catch (err) {
+      console.log(err)
+      res.sendStatus(400)
+  }
+
+})
+
+app.post("/user/addbywalletaddress", async (req, res) => {
+  try {
+    //check that there is a user with the specified wallet address 
+      const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.body.friendWalletAddress})
+      if (newFriend == null) {
+        throw new Error('No User with this wallet address')
+      }
+      await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$addToSet: {friends: newFriend.email}})
+      res.status(200).send("Success")
+  }
+  catch (err) {
+      console.log(err)
+      res.sendStatus(400)
+  }
+})
+
+app.post("/user/addWallet", async (req, res) => {
+  //TODO: replace this with a call to a "crypto" collection in mongodb to retreive latest wallet data
+  try {
+    const wallet = new Wallet(req.body.timescale, req.body.startTime, req.body.endTime, req.body.data)
+      await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$set: {"wallet": wallet}})
+      res.status(200).send("Success")
+  }
+  catch (err) {
+      console.log(err)
+      res.sendStatus(400)
+  }
 })
 
 run()
