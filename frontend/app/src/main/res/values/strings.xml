@@ -19,6 +19,11 @@
     <string name="invalid_email">Not a valid email</string>
     <string name="invalid_wallet_address">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_search_results">Search Results</string>
+
+    <!-- For search page -->
+    <string name="prompt_search">Search for user by username or wallet address</string>
+    <string name="action_search">Search</string>
 
     <!-- Should not need these -->
     <string name="prompt_password">"ERROR"</string>
