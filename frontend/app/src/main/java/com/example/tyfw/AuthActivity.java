@@ -108,7 +108,7 @@ public class AuthActivity extends AppCompatActivity {
             Log.d(TAG, "User " + account.getDisplayName() + " signed in.");
 
             // TODO: Authenticate on the backend
-            // There should be a way to authenticate if an account exists with account.getIdToken()
+            // There should bea way to authenticate if an account exists with account.getIdToken()
             // Assume for now no account exists
 
             // If user exists, they are logged in
