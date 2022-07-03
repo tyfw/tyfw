@@ -13,33 +13,27 @@
 
     <fragment
         android:id="@+id/navigation_leaderboard"
-        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:name="com.example.tyfw.ui.leaderboard.LeaderboardFragment"
+        android:label="@string/title_leaderboard"
         tools:layout="@layout/fragment_leaderboard" />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:name="com.example.tyfw.ui.search.SearchFragment"
+        android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_social"
-        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:name="com.example.tyfw.ui.social.SocialFragment"
+        android:label="@string/title_social"
         tools:layout="@layout/fragment_social" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:name="com.example.tyfw.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.tyfw.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
