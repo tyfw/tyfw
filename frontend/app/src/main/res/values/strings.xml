@@ -30,6 +30,16 @@
     <string name="profile_name">Loading profile name…</string>
     <string name="wallet_name">Loading wallet address…</string>
 
+    <string-array
+        name="time_options">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+        <item>Custom</item>
+    </string-array>
+
+
     <!-- Should not need these -->
     <string name="prompt_password">"ERROR"</string>
     <string name="action_sign_in_short">"ERROR"</string>
