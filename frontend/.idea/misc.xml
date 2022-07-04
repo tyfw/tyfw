@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.26766304347826086" />
         <entry key="..\:/Users/Dryden/Desktop/projects/tyfw/frontend/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.173" />
         <entry key="..\:/Users/Dryden/Desktop/projects/tyfw/frontend/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.173" />
         <entry key="..\:/Users/Dryden/Desktop/projects/tyfw/frontend/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.173" />
@@ -21,9 +22,16 @@
         <entry key="..\:/Users/Dryden/Desktop/projects/tyfw/frontend/app/src/main/res/layout/leaderboard_row.xml" value="0.2669706180344478" />
         <entry key="..\:/Users/Dryden/Desktop/projects/tyfw/frontend/app/src/main/res/layout/search_result_row.xml" value="0.375" />
         <entry key="..\:/Users/Dryden/Desktop/projects/tyfw/frontend/app/src/main/res/menu/bottom_nav_menu.xml" value="0.5074074074074074" />
+        <entry key="app/src/main/res/drawable/ic_baseline_leaderboard_24.xml" value="0.1785" />
+        <entry key="app/src/main/res/drawable/sample_pfp.xml" value="0.178" />
+        <entry key="app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_search_results.xml" value="0.291213768115942" />
+        <entry key="app/src/main/res/layout/activity_wallet_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/content_scrolling.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2853810264385692" />
         <entry key="app/src/main/res/layout/fragment_leaderboard.xml" value="0.25" />
@@ -31,6 +39,10 @@
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.19114583333333332" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.19114583333333332" />
         <entry key="app/src/main/res/layout/fragment_social.xml" value="0.19114583333333332" />
+        <entry key="app/src/main/res/layout/leaderboard_row.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.34375" />
+        <entry key="app/src/main/res/menu/drop_down.xml" value="0.34322916666666664" />
+        <entry key="app/src/main/res/menu/friends_popup.xml" value="0.6279296875" />
       </map>
     </option>
   </component>
