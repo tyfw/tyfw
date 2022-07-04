@@ -37,6 +37,8 @@ public class SettingsFragment extends Fragment {
         return root;
     }
 
+    // Note that Fragment onCreateViews do not have findViewById implemented
+    // Source: https://stackoverflow.com/questions/6495898/findviewbyid-in-fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
@@ -48,6 +50,7 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v){
                 Log.d("settings", "Checking user's own profile.");
                 Intent myProfileIntent = new Intent(getActivity(), ProfileActivity.class);
+                myProfileIntent.putExtra("username", "DEFAULT_USER");
                 startActivity(myProfileIntent);
             }
         });
