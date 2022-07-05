@@ -49,6 +49,8 @@ public class SearchFragment extends Fragment {
                 startActivity(searchResultsActivity);
             }
         });
+
+        return root;
     }
 
     @Override
