@@ -75,11 +75,19 @@ var server = app.listen(8081, (req, res) => {
 
 app.post("/user/authenticate", async (req, res) => {
   try {
-      verify(req.body.token);
+      verify(req.body.token).catch(() => {
+          console.log("Error verifying token")
+          res.sendStatus(401)
+          return;
+      });
+
       const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
       if (existingUser == null) {
-        throw new Error('No User with this email')
+          console.log("User not found")
+          res.sendStatus(201)
+          return;
       }
+      res.sendStatus(200)
   }
   catch (err) {
       console.log(err)
