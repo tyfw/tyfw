@@ -52,16 +52,22 @@ const client = new OAuth2Client(CLIENT_ID);
 
 
 // verifacation of token provided by frontend
-async function verify(token) {
-  const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
-  });
-  const payload = ticket.getPayload();
-  const userid = payload['sub'];
-}
+async function googleAuthVerify(token) {
+  try {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: CLIENT_ID,
+    });
+    // TODO: Check if more info from the ticket needs to be validated
+    return true
 
-//verify().catch(console.error);
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+  //const payload = ticket.getPayload();
+  //const userid = payload['sub'];
+}
 
 app.get("/", (req, res) => {
   res.send("Hello world!")
@@ -75,19 +81,20 @@ var server = app.listen(8081, (req, res) => {
 
 app.post("/user/authenticate", async (req, res) => {
   try {
-      verify(req.body.token).catch(() => {
-          console.log("Error verifying token")
-          res.sendStatus(401)
-          return;
-      });
+    const verifyied = await googleAuthVerify(req.body.googleIdToken)
+    if (!verifyied) {
+      res.sendStatus(401)
+      return;
+    }
 
-      const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
-      if (existingUser == null) {
-          console.log("User not found")
-          res.sendStatus(201)
-          return;
-      }
-      res.sendStatus(200)
+    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
+    
+    if (existingUser == null) {
+      console.log("User not found")
+      res.sendStatus(201)
+      return;
+    }
+    res.sendStatus(200)
   }
   catch (err) {
       console.log(err)
