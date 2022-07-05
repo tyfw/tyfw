@@ -46,7 +46,7 @@ async function run() {
 const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
-
+var token;
 
 // verifacation of token provided by frontend
 async function verify() {
@@ -70,8 +70,9 @@ var server = app.listen(8081, (req, res) => {
   console.log("TYFW backend server running at http://%s:%s", host, port)
 })
 
-app.get("/user/authenticate", async (req, res) => {
+app.post("/user/authenticate", async (req, res) => {
   try {
+      token = req.body.googleIdToken
       verify()
       const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
       if (existingUser == null) {
