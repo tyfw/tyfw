@@ -1,3 +1,6 @@
+// dotenv for environment variables
+require('dotenv').config();
+
 // express server
 const express = require('express');
 const app = express();
@@ -49,7 +52,7 @@ const client = new OAuth2Client(CLIENT_ID);
 
 
 // verifacation of token provided by frontend
-async function verify() {
+async function verify(token) {
   const ticket = await client.verifyIdToken({
       idToken: token,
       audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
@@ -70,9 +73,9 @@ var server = app.listen(8081, (req, res) => {
   console.log("TYFW backend server running at http://%s:%s", host, port)
 })
 
-app.get("/user/authenticate", async (req, res) => {
+app.post("/user/authenticate", async (req, res) => {
   try {
-      verify()
+      verify(req.body.token);
       const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
       if (existingUser == null) {
         throw new Error('No User with this email')
@@ -80,7 +83,7 @@ app.get("/user/authenticate", async (req, res) => {
   }
   catch (err) {
       console.log(err)
-      res.sendStatus(401)
+      res.sendStatus(400)
   }
 })
 
