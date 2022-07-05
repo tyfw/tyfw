@@ -251,5 +251,10 @@ public class AuthActivity extends AppCompatActivity {
 
             return api_code[0];
         }
+
+        @Override
+        protected void onPostExecute() {
+            Log.d(TAG, "a");
+        }
     }
 }
