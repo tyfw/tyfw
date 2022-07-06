@@ -7,12 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.androidnetworking.AndroidNetworking;
@@ -21,15 +18,17 @@ import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
-import com.example.tyfw.AuthActivity;
-import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
 import com.example.tyfw.ui.login.LoginActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,11 +69,23 @@ public class SearchFragment extends Fragment {
                 e.printStackTrace();
             }
             JSONObject serverResponse = getSearch.getValue();
-
-            Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-            searchResultsActivity.putExtra("queryString", queryString);
-            searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
-            startActivity(searchResultsActivity);
+            Log.e("a", String.valueOf(serverResponse));
+            try {
+                Log.e("a", String.valueOf(serverResponse.getJSONArray("queryMatches").length()));
+                if (serverResponse.length() > 0) {
+                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                    searchResultsActivity.putExtra("queryString", queryString);
+                    searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
+                    startActivity(searchResultsActivity);
+                } else {
+                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                    searchResultsActivity.putExtra("queryString", queryString);
+                    searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
+                    startActivity(searchResultsActivity);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         });
 
         return root;
@@ -89,7 +100,7 @@ public class SearchFragment extends Fragment {
     class GetSearch implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private JSONObject value;
-        private String url = "http://34.105.106.85:8081/user/leaderboard/";
+        private String url = "http://34.105.106.85:8081/user/search/";
         private JSONObject jsonObject;
 
         public GetSearch(JSONObject jsonObject) {
@@ -97,19 +108,23 @@ public class SearchFragment extends Fragment {
         }
 
         public void run() {
-            ANRequest request= AndroidNetworking.post(url)
-                    .addJSONObjectBody(this.jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("queryString", jsonObject.getString("queryString"))
+                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .setPriority(Priority.MEDIUM)
+                        .build();
+                ANResponse<JSONObject> response = request.executeForJSONObject();
 
-            ANResponse<JSONObject> response = request.executeForJSONObject();
-
-            if (response.isSuccess()) {
-                value = response.getResult();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
+                if (response.isSuccess()) {
+                    value = response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    error.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 

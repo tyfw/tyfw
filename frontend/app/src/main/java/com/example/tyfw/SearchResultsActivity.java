@@ -62,7 +62,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                     intent.putExtra("username", item);
                 } else {
                     intent = new Intent(SearchResultsActivity.this, WalletProfileActivity.class);
-                    intent.putExtra("walletAddr", item);
+                    intent.putExtra("walletAddress", item);
                 }
                 startActivity(intent);
 

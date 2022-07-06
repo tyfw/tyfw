@@ -65,6 +65,10 @@ public class LoginActivity extends AppCompatActivity {
         final EditText lastNameEditText = binding.lastName;
         final EditText emailEditText = binding.email;
         final EditText walletAddressEditText = binding.walletAddress;
+        final EditText usernameEditText = binding.username;
+
+        emailEditText.setText(email);
+        emailEditText.setEnabled(false);
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
@@ -100,7 +104,13 @@ public class LoginActivity extends AppCompatActivity {
                 showLoginFailed(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
-                updateUiWithUser(loginResult.getSuccess(), firstNameEditText.getText().toString(), lastNameEditText.getText().toString(), emailEditText.getText().toString(), walletAddressEditText.getText().toString());
+                updateUiWithUser(
+                        loginResult.getSuccess(),
+                        firstNameEditText.getText().toString(),
+                        lastNameEditText.getText().toString(),
+                        emailEditText.getText().toString(),
+                        walletAddressEditText.getText().toString(),
+                        usernameEditText.getText().toString());
             }
             setResult(Activity.RESULT_OK);
 
@@ -156,13 +166,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress) {
+    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress, String username) {
         // TODO : initiate successful logged in experience
         App config = (App) getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", config.getEmail());
+            jsonObject.put("username", username);
             jsonObject.put("firstName", firstName);
             jsonObject.put("lastName", lastName);
             jsonObject.put("walletAddress", walletAddress);

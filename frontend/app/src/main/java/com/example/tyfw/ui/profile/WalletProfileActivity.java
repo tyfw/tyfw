@@ -20,7 +20,7 @@ public class WalletProfileActivity extends AppCompatActivity {
 
         walletAddr = findViewById(R.id.profile_wallet_addr);
 
-        walletAddr.setText(getIntent().getStringExtra("walletAddr"));
+        walletAddr.setText(getIntent().getStringExtra("walletAddress"));
 
         profilePic = findViewById(R.id.profile_pic_wallet);
         profilePic.setVisibility(1);

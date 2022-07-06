@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,15 +19,13 @@ import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
-import com.example.tyfw.AuthActivity;
-import com.example.tyfw.R;
-import com.example.tyfw.SearchResultsActivity;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,12 +82,39 @@ public class LeaderboardFragment extends Fragment {
 
         for (int i = 0; i < 10; i++) {
             LeaderboardRow items = new LeaderboardRow();
+            
+        App config = (App) getActivity().getApplicationContext();
 
-            items.setName(Integer.toString(i));
-            items.setValue(Integer.toString(i));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken", config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-            itemsList.add(items);
-            adapter.notifyDataSetChanged();
+        GetLeaderboard getAuth = new GetLeaderboard(jsonObject);
+        Thread getAuthThread = new Thread(getAuth);
+        getAuthThread.start();
+        try {
+            getAuthThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        JSONArray serverResponse = getAuth.getValue();
+        Log.e(TAG, serverResponse.toString());
+        for (int i = 0; i < serverResponse.length(); i++) {
+            try {
+                JSONObject currFriend = serverResponse.getJSONObject(i);
+                LeaderboardRow items = new LeaderboardRow();
+                items.setName(currFriend.getString("user"));
+                items.setValue(String.valueOf(currFriend.getDouble("value")));
+                itemsList.add(items);
+                adapter.notifyDataSetChanged();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         adapter.notifyDataSetChanged();
 
@@ -137,32 +161,37 @@ public class LeaderboardFragment extends Fragment {
 
     class GetLeaderboard implements Runnable {
         final static String TAG = "GetAuthRunnable";
-        private JSONObject value;
-        private String url = "http://34.105.106.85:8081/user/leaderboard/";
+        private JSONArray value;
         private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/leaderboard/";
 
         public GetLeaderboard(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
-            ANRequest request= AndroidNetworking.post(url)
-                    .addJSONObjectBody(this.jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .setPriority(Priority.MEDIUM)
+                        .build();
 
-            ANResponse<JSONObject> response = request.executeForJSONObject();
+                ANResponse<JSONArray> response = request.executeForJSONArray();
 
-            if (response.isSuccess()) {
-                value = response.getResult();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
+                if (response.isSuccess()) {
+                    value = response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    error.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
-        public JSONObject getValue() {
+        public JSONArray getValue() {
             return value;
         }
     }
