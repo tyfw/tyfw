@@ -11,6 +11,7 @@
     <string name="prompt_first_name">First Name</string>
     <string name="prompt_last_name">Last Name</string>
     <string name="prompt_wallet_address">Wallet Address</string>
+    <string name="prompt_username">Username</string>
     <string name="action_register">Register for an account</string>
     <string name="action_register_short">Register</string>
     <string name="welcome">"Welcome !"</string>

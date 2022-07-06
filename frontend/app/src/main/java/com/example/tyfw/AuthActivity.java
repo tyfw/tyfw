@@ -145,8 +145,6 @@ public class AuthActivity extends AppCompatActivity {
             config.setGoogleIdToken(account.getIdToken());
             config.setEmail(account.getEmail());
 
-            // TODO: Authenticate on the backend
-
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("email", account.getEmail());
