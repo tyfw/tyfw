@@ -2,6 +2,7 @@ package com.example.tyfw.ui.search;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,23 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.common.ANResponse;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.example.tyfw.App;
+import com.example.tyfw.AuthActivity;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
+import com.example.tyfw.ui.login.LoginActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SearchFragment extends Fragment {
 
@@ -34,20 +46,35 @@ public class SearchFragment extends Fragment {
 
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        // View view =  inflater.inflate(R.layout.fragment_search, container, false);
-
-        final EditText firstNameEditText = (EditText) root.findViewById(R.id.search_input);
         final Button search_button = (Button) root.findViewById(R.id.search_button);
-        // binding.searchButton;
 
-        search_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                searchResultsActivity.putExtra("queryString", firstNameEditText.getText().toString());
-                startActivity(searchResultsActivity);
+        search_button.setOnClickListener(v -> {
+            String queryString = search_button.getText().toString();
+
+            App config = (App) getContext().getApplicationContext();
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("queryString", queryString);
+                jsonObject.put("googleIdToken", config.getGoogleIdToken());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
+            GetSearch getSearch = new GetSearch(jsonObject);
+            Thread getAuthThread = new Thread(getSearch);
+            getAuthThread.start();
+            try {
+                getAuthThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            JSONObject serverResponse = getSearch.getValue();
+
+            Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+            searchResultsActivity.putExtra("queryString", queryString);
+            searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
+            startActivity(searchResultsActivity);
         });
 
         return root;
@@ -57,5 +84,37 @@ public class SearchFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    class GetSearch implements Runnable {
+        final static String TAG = "GetAuthRunnable";
+        private JSONObject value;
+        private String url = "http://34.105.106.85:8081/user/leaderboard/";
+        private JSONObject jsonObject;
+
+        public GetSearch(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            ANRequest request= AndroidNetworking.post(url)
+                    .addJSONObjectBody(this.jsonObject)
+                    .setPriority(Priority.MEDIUM)
+                    .build();
+
+            ANResponse<JSONObject> response = request.executeForJSONObject();
+
+            if (response.isSuccess()) {
+                value = response.getResult();
+            } else {
+                // handle error
+                ANError error = response.getError();
+                Log.d(TAG, error.toString());
+            }
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
     }
 }
