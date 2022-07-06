@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", config.getEmail());
-            jsonObject.put("username", username)
+            jsonObject.put("username", username);
             jsonObject.put("firstName", firstName);
             jsonObject.put("lastName", lastName);
             jsonObject.put("walletAddress", walletAddress);
