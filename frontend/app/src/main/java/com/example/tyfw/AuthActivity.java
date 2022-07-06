@@ -155,78 +155,57 @@ public class AuthActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            new AuthAPITask(new AuthAPITask.TaskCompleteListener() {
-                @Override
-                public void onTaskComplete(Integer api_code) {
-                    if (api_code == 200) {
-                        Log.d(TAG, "1");
-                        Intent mainActivity = new Intent(AuthActivity.this, MainActivity.class);
-                        startActivity(mainActivity);
-                    } else if (api_code == 201) {
-                        Log.d(TAG, "2");
-                        Intent loginActivity = new Intent(AuthActivity.this, LoginActivity.class);
-                        startActivity(loginActivity);
-                    } else {
-                        Log.d(TAG, "3");
-                        System.out.print(api_code);
-                    }
-                }
-            }).execute(jsonObject);
-        }
-    }
-
-    // Implemented using Async API
-    // TODO if we want to change: https://stackoverflow.com/questions/58767733/the-asynctask-api-is-deprecated-in-android-11-what-are-the-alternatives
-    private static class AuthAPITask extends AsyncTask<JSONObject, Integer, Integer> {
-        private String url = "http://34.105.106.85:8081/user/authenticate/";
-
-
-        // Followed instructions in this medium article:
-        // https://ioannisanif.medium.com/making-an-intent-call-from-inside-activity-when-asynctask-is-in-a-separate-file-via-a-java-9b6850b6a73d
-
-        public interface TaskCompleteListener {
-            void onTaskComplete(Integer result);
-        }// define a member variable associated with that interface
-        private final TaskCompleteListener mTaskCompleteListener;
-
-        public AuthAPITask(TaskCompleteListener listener){
-            mTaskCompleteListener = listener;
-        }
-
-        @Override
-        protected Integer doInBackground(JSONObject... body) {
-            final int[] api_code = new int[1];
-
-            for (int i = 0; i < body.length; i++ ){
-                AndroidNetworking.post(url)
-                        .addJSONObjectBody(body[i])
-                        .setPriority(Priority.MEDIUM)
-                        .build()
-                        .getAsOkHttpResponse(new OkHttpResponseListener() {
-                            @Override
-                            public void onResponse(Response response) {
-                                // 200: user in db, auth worked
-                                // 201: user not in db, auth worked
-                                api_code[0] = response.code();
-                                Log.d(TAG, String.valueOf(response.code()));
-                            }
-
-                            @Override
-                            public void onError(ANError anError) {
-                                anError.printStackTrace();
-                                api_code[0] =-1;
-                            }
-                        });
+            GetAuth getAuth = new GetAuth(jsonObject);
+            Thread getAuthThread = new Thread(getAuth);
+            getAuthThread.start();
+            try {
+                getAuthThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            Integer serverResponse = getAuth.getValue();
 
-            return api_code[0];
-        }
-
-        @Override
-        protected void onPostExecute(Integer api_code){
-            Log.d(TAG, api_code.toString());
-            mTaskCompleteListener.onTaskComplete(api_code);
+            if (serverResponse == 200) {
+                Intent mainActivity = new Intent(AuthActivity.this, MainActivity.class);
+                startActivity(mainActivity);
+            } else if (serverResponse == 201) {
+                Intent loginActivity = new Intent(AuthActivity.this, LoginActivity.class);
+                startActivity(loginActivity);
+            } else {
+                System.out.print(serverResponse);
+            }
         }
     }
 
+    class GetAuth implements Runnable {
+        final static String TAG = "GetAuthRunnable";
+        private Integer value;
+        private String url = "http://34.105.106.85:8081/user/authenticate/";
+        private JSONObject jsonObject;
+
+        public GetAuth(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            ANRequest request= AndroidNetworking.post(url)
+                    .addJSONObjectBody(this.jsonObject)
+                    .setPriority(Priority.MEDIUM)
+                    .build();
+
+            ANResponse response = request.executeForOkHttpResponse();
+
+            if (response.isSuccess()) {
+                value = response.getOkHttpResponse().code();
+            } else {
+                // handle error
+                ANError error = response.getError();
+                Log.d(TAG, error.toString());
+            }
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+    }
 }

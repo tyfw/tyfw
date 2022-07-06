@@ -27,15 +27,18 @@ import android.widget.Toast;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
+import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.example.tyfw.App;
+import com.example.tyfw.AuthActivity;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.ui.login.LoginViewModel;
 import com.example.tyfw.ui.login.LoginViewModelFactory;
 import com.example.tyfw.databinding.ActivityLoginBinding;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
@@ -155,41 +158,74 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress) {
         // TODO : initiate successful logged in experience
-        // Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
 
-        Thread t = new Thread(() -> callRegister(firstName, lastName, email, walletAddress));
-        t.start();
+        App config = (App) getApplicationContext();
 
-        Intent mainActivity = new Intent(this, MainActivity.class);
-        startActivity(mainActivity);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("firstName", firstName);
+            jsonObject.put("lastName", lastName);
+            jsonObject.put("walletAddress", walletAddress);
+            jsonObject.put("googleIdToken", config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RegisterUser getAuth = new RegisterUser(jsonObject);
+        Thread getAuthThread = new Thread(getAuth);
+        getAuthThread.start();
+        try {
+            getAuthThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Integer serverResponse = getAuth.getValue();
+
+        if (serverResponse == 200) {
+            Intent mainActivity = new Intent(this, MainActivity.class);
+            startActivity(mainActivity);
+        } else {
+            System.out.print(serverResponse);
+        }
+
+        // Intent mainActivity = new Intent(this, MainActivity.class);
+        // startActivity(mainActivity);
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    private void callRegister(String firstName, String lastName, String email, String walletAddress) {
-        App config = (App) getApplicationContext();
-        String googleIdToken = config.getGoogleIdToken();
+    class RegisterUser implements Runnable {
+        final static String TAG = "GetAuthRunnable";
+        private Integer value;
+        private String url = "http://34.105.106.85:8081/user/register/";
+        private JSONObject jsonObject;
 
-        AndroidNetworking.post("http://34.105.106.85:8081/user/authenticate/")
-                .addBodyParameter("email", email)
-                .addBodyParameter("username", "a")
-                .addBodyParameter("firstName", firstName)
-                .addBodyParameter("lastName", lastName)
-                .addBodyParameter("walletAddress", walletAddress)
-                .addBodyParameter("googleIdToken", googleIdToken)
-                .build().getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+        public RegisterUser(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
 
-                    }
+        public void run() {
+            ANRequest request= AndroidNetworking.post(url)
+                    .addJSONObjectBody(this.jsonObject)
+                    .setPriority(Priority.MEDIUM)
+                    .build();
 
-                    @Override
-                    public void onError(ANError anError) {
+            ANResponse response = request.executeForOkHttpResponse();
 
-                    }
-                });
+            if (response.isSuccess()) {
+                value = response.getOkHttpResponse().code();
+            } else {
+                // handle error
+                ANError error = response.getError();
+                Log.d(TAG, error.toString());
+            }
+        }
 
+        public Integer getValue() {
+            return value;
+        }
     }
 }

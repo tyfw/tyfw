@@ -14,6 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.common.ANResponse;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.example.tyfw.App;
+import com.example.tyfw.AuthActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
@@ -21,6 +28,9 @@ import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +55,33 @@ public class LeaderboardFragment extends Fragment {
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        /*
-        final TextView textView = binding.textLeaderboard;
-        leaderboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
-        */
-
         listView = (ListView) binding.list;
         adapter = new LeaderboardListAdapter(root.getContext(), itemsList);
         listView.setAdapter(adapter);
+
+        // Call the leaderboard API
+
+        App config = (App) getActivity().getApplicationContext();
+
+        // TODO: Authenticate on the backend
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        GetLeaderboard getAuth = new GetLeaderboard(jsonObject);
+        Thread getAuthThread = new Thread(getAuth);
+        getAuthThread.start();
+        try {
+            getAuthThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        JSONObject serverResponse = getAuth.getValue();
 
         for (int i = 0; i < 10; i++) {
             LeaderboardRow items = new LeaderboardRow();
@@ -86,7 +114,7 @@ public class LeaderboardFragment extends Fragment {
                     intent.putExtra("username", item);
                 } else {
                     intent = new Intent(getActivity(), WalletProfileActivity.class);
-                    intent.putExtra("walletAddr", item);
+                    intent.putExtra("walletAddress", item);
                 }
                 startActivity(intent);
 
@@ -105,5 +133,37 @@ public class LeaderboardFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    class GetLeaderboard implements Runnable {
+        final static String TAG = "GetAuthRunnable";
+        private JSONObject value;
+        private String url = "http://34.105.106.85:8081/user/leaderboard/";
+        private JSONObject jsonObject;
+
+        public GetLeaderboard(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            ANRequest request= AndroidNetworking.post(url)
+                    .addJSONObjectBody(this.jsonObject)
+                    .setPriority(Priority.MEDIUM)
+                    .build();
+
+            ANResponse<JSONObject> response = request.executeForJSONObject();
+
+            if (response.isSuccess()) {
+                value = response.getResult();
+            } else {
+                // handle error
+                ANError error = response.getError();
+                Log.d(TAG, error.toString());
+            }
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
     }
 }
