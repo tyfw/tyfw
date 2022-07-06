@@ -1,3 +1,6 @@
+// dotenv for environment variables
+require('dotenv').config();
+
 // express server
 const express = require('express');
 const app = express();
@@ -46,19 +49,25 @@ async function run() {
 const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
-var token;
+
 
 // verifacation of token provided by frontend
-async function verify() {
-  const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
-  });
-  const payload = ticket.getPayload();
-  const userid = payload['sub'];
-}
+async function googleAuthVerify(token) {
+  try {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: CLIENT_ID,
+    });
+    // TODO: Check if more info from the ticket needs to be validated
+    return true
 
-//verify().catch(console.error);
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+  //const payload = ticket.getPayload();
+  //const userid = payload['sub'];
+}
 
 app.get("/", (req, res) => {
   res.send("Hello world!")
@@ -72,16 +81,24 @@ var server = app.listen(8081, (req, res) => {
 
 app.post("/user/authenticate", async (req, res) => {
   try {
-      token = req.body.googleIdToken
-      verify()
-      const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
-      if (existingUser == null) {
-        throw new Error('No User with this email')
-      }
+    const verifyied = await googleAuthVerify(req.body.googleIdToken)
+    if (!verifyied) {
+      res.sendStatus(401)
+      return;
+    }
+
+    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
+    
+    if (existingUser == null) {
+      console.log("User not found")
+      res.sendStatus(201)
+      return;
+    }
+    res.sendStatus(200)
   }
   catch (err) {
       console.log(err)
-      res.sendStatus(401)
+      res.sendStatus(400)
   }
 })
 

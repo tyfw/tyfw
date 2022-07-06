@@ -158,7 +158,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress) {
         // TODO : initiate successful logged in experience
-
         App config = (App) getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();
