@@ -22,6 +22,10 @@ import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
+import com.example.tyfw.ui.login.LoginActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 import org.json.JSONArray;
@@ -82,8 +86,6 @@ public class SearchFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         });
 
         return root;

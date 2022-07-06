@@ -70,6 +70,9 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
 
+        emailEditText.setText(email);
+        emailEditText.setEnabled(false);
+
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
@@ -165,7 +168,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress, String username) {
         // TODO : initiate successful logged in experience
-
         App config = (App) getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();

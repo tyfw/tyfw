@@ -60,6 +60,31 @@ public class LeaderboardFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
+        // TODO: Authenticate on the backend
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        GetLeaderboard getAuth = new GetLeaderboard(jsonObject);
+        Thread getAuthThread = new Thread(getAuth);
+        getAuthThread.start();
+        try {
+            getAuthThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        JSONObject serverResponse = getAuth.getValue();
+
+        for (int i = 0; i < 10; i++) {
+            LeaderboardRow items = new LeaderboardRow();
+            
+        App config = (App) getActivity().getApplicationContext();
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", config.getEmail());
