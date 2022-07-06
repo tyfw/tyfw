@@ -6,6 +6,9 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+// Crypto data functions
+const crypto = require("/data.js")
+
 class User {
     constructor(username, firstname, lastname, email, addresses) {
         this.username = username;

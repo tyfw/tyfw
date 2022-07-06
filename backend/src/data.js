@@ -19,16 +19,23 @@ require("dotenv").config();
 
 // axios for fetching from etherscan
 const axios = require("axios");
-const etherscan_api_key = process.env.ETHERSCAN_API_KEY;
+const etherscanApiKey = process.env.ETHERSCAN_API_KEY
 
 // get balance of ether by querying wallet address on blockchain
-const get_eth_ballance = async (wallet_address) => {
-  const ballance = await web3.eth.getBalance(wallet_address);
-  return web3.utils.fromWei(ballance, "ether");
+const getEthBalance = async (wallet_address) => {
+  const balance = await web3.eth.getBalance(wallet_address);
+  return web3.utils.fromWei(balance, "ether");
 };
 
+// return current value of eth at wallet address
+const getBalance = async (address) => {
+  const etheriumBalance = await getEthBalance(address);
+  const conversion = await getEthPrice();
+  return etheriumBalance * conversion
+}
+
 // get balance of erc 20 token by querying token contract
-const get_erc_20_ballance = async (token_address, wallet_address) => {
+const getERC20Balance = async (token_address, wallet_address) => {
   const contract = new web3.eth.Contract(erc20abi, token_address);
   const res = await contract.methods.balanceOf(wallet_address).call();
   const format = web3.utils.fromWei(res);
@@ -36,7 +43,7 @@ const get_erc_20_ballance = async (token_address, wallet_address) => {
 };
 
 // get transaction history of wallet address
-const get_transaction_history = async (wallet_address) => {
+const getTransactionHistory = async (wallet_address) => {
   const url =
     "https://api.etherscan.io/api" +
     "?module=account" +
@@ -49,7 +56,7 @@ const get_transaction_history = async (wallet_address) => {
     "&offset=10" +
     "&sort=asc" +
     "&apikey=" +
-    etherscan_api_key;
+    etherscanApiKey;
   let res = await axios.get(url);
   return res.data["result"].map( (item) => {
     return {
@@ -63,52 +70,35 @@ const get_transaction_history = async (wallet_address) => {
 
 
 // get price history of token from binance
-// uses candlestick data, price taken as open price
-const get_price_history = async (price_abv, interval, options) => {
+// uses candlestick data, price taken as avg of open, close, high, and low
+// Max 1000 points, default 500
+const getPriceHistory = async (price_abv, interval, options) => {
   const res = await client.klines(price_abv, interval, options)
   return res["data"].map( (item) => {
     return {
-      "time": item[0],
-      "price": item[1],
+      "Start_time": item[0],
+      "avgPrice": (item.slice(1,5).map(parseFloat).reduce((a,b)=> a+b)) / 4 ,
+      "Close_time": item[6]
     }
   });
 };
-// ex:
-// get_price_history("ETHUSDC", "1M", {
-  //limit: 1,
-  //startTime: Date.UTC(2020, 1, 1),
-//});
+
+
+// Get current price of etherium relative to USDC
+const getEthPrice = async () => {
+  const point = await getPriceHistory("ETHUSDC", "1m", {limit: 1})
+  return point[0]["avgPrice"];
+}
+
 
 
 // Get account ballance history
-const get_account_ballance_history = async (address) => {
-    
+const getAccountHistory = async (address, startTime, endTime) => {
+  
 }
 
-let addr1 = "0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf";
-let addr2 = "0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4"
-
-// used while developing
-// TODO: Delete this
-const test_func = async (funk, address) => {
-  const data = await funk(address);
-  console.log(data);
-};
-
-const test_async = async () => {
-  const a = await get_price_history("ETHUSDC", "1M", {
-    limit: 1,
-    startTime: Date.UTC(2020, 1, 1),
-  });
-  console.log(a);
-};
-
-test_async();
-test_func(get_eth_ballance, addr2);
-test_func(get_transaction_history, addr2);
-
-
 module.exports = {
-    get_eth_balance: get_eth_ballance,
-    get_erc_20_ballance: get_erc_20_ballance,
+  getEthBalance: getEthBalance,
+  getBalance: getBalance,
+  getTransactionHistory: getTransactionHistory,
 };
