@@ -119,20 +119,23 @@ app.post("/user/register", async (req, res) => {
 
 app.get("/user/leaderboard", async (req, res) => {
   try {
-    var leaderboard = []
+      var leaderboard = []
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
       for (let index in user.friends) {
         const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
         var total_balance = 0
         for (let j = 0; j < friend.addresses.length; j = j+1) {
-          total_balance += parseFloat(getEthBalance(friend.addresses[j]))
+                var balance = await getBalance(friend.addresses[j])
+          total_balance += balance
         }
         leaderboard.push({"user": friend.username, "value": total_balance})
+              leaderboard.sort((a, b) => {
+                if (a.value > b.value) return -1
+                else return 1
+              })
       }
-      
       res.status(200).send(leaderboard)
-      //TODO: find the % gain/loss of each friend in friend list and return
-  }
+    }
   catch (err) {
       console.log(err)
       res.sendStatus(400)
