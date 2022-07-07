@@ -4,14 +4,24 @@
 
     <EditTextPreference
         android:defaultValue="Default value"
-        android:key="edit_text_preference_1"
+        android:key="preference_first_name"
         android:selectAllOnFocus="true"
-        android:title="Change your name"
-        android:summary="firstName lastName"
+        android:title="Change your first name"
+        android:persistent="false"
         />
+
+    <EditTextPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="Default value"
+        android:key="preference_last_name"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:title="Change your last name" />
 
     <SwitchPreferenceCompat
         app:key="notifications"
+        app:enabled="false"
         app:title="Enable message notifications"/>
 
     <Preference

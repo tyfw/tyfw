@@ -18,7 +18,7 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="64dp"
+        android:layout_marginLeft="16dp"
         android:textSize="16dp" />
 
     <TextView
@@ -26,7 +26,7 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="64dp"
+        android:layout_marginRight="16dp"
         android:textSize="16dp" />
 
 </RelativeLayout>
