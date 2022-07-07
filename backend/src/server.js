@@ -6,6 +6,16 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+// Graylog logging
+const graylog2 = require('graylog2');
+
+const logger = new graylog2.graylog({
+  servers: [{ host: '4m1pqj.stackhero-network.com', port: 12201 }] // Replace the "host" per your Graylog domain
+});
+
+// Send a simple message to Graylog
+logger.log('Hello from tyfw server');
+
 // Crypto data functions
 const crypto = require("./data.js")
 
