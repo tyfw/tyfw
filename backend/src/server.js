@@ -52,7 +52,7 @@ async function run() {
 
 // Google User Auth
 const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
-const { getBalance, getEthBalance } = require('./data.js');
+const { getBalance, getEthBalance, getAccountHistory} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -165,7 +165,12 @@ app.get("/user/displaycurruser", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        res.status(200).json(user.wallet)
+        const interval = "1d"
+        const secondsInMonth = 2.628E6
+        const startTime = Date.now() - secondsInMonth
+        const endTime = Date.now()
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numpoints=req.header("numPoints"), startTime, endTime) 
+        res.status(200).json({"startTime": startTime, "endTime": endTime, "timescale": "day", "data": accountHistory})
       }
   }
   catch (err) {
@@ -182,7 +187,12 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        res.status(200).json(user.wallet)
+        const interval = "1d"
+        const secondsInMonth = 2.628E6
+        const startTime = Date.UTC - secondsInMonth
+        const endTime = Date.UTC
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numpoints=req.header("numPoints"), startTime, endTime) 
+        res.status(200).json({"startTime": startTime, "endTime": endTime, "timescale": "day", "data": accountHistory})
       }
     }
   catch (err) {
