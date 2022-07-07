@@ -5,19 +5,27 @@ public class SearchResultsRow {
     // https://stackoverflow.com/questions/34518421/adding-a-scoreboard-to-an-android-studio-application
     // https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
-    private String value;
+    private String username;
+    private String wallet;
 
     public SearchResultsRow() {
     }
 
-    public SearchResultsRow(String value) {
-        this.value = value;
+    public SearchResultsRow(String username, String wallet) {
+        this.username = username;
+        this.wallet = wallet;
     }
 
-    public String getValue() {
-        return value;
+    public String getUsername() {
+        return username;
     }
 
-    public void setValue(String value) { this.value = value; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(String wallet) { this.wallet = wallet; }
 
 }

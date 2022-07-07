@@ -164,12 +164,13 @@ public class AuthActivity extends AppCompatActivity {
             Integer serverResponse = getAuth.getValue();
 
             if (serverResponse == 200) {
-                Intent mainActivity = new Intent(AuthActivity.this, MainActivity.class);
+                Intent mainActivity = new Intent(this, MainActivity.class);
                 startActivity(mainActivity);
             } else if (serverResponse == 201) {
-                Intent loginActivity = new Intent(AuthActivity.this, LoginActivity.class);
+                Intent loginActivity = new Intent(this, LoginActivity.class);
                 startActivity(loginActivity);
             } else {
+                Log.e("TAG", serverResponse.toString());
                 System.out.print(serverResponse);
             }
         }

@@ -196,6 +196,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent mainActivity = new Intent(this, MainActivity.class);
             startActivity(mainActivity);
         } else {
+            Log.e("as", serverResponse.toString());
             System.out.print(serverResponse);
         }
 

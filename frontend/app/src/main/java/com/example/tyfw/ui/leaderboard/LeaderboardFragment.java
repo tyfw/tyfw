@@ -60,8 +60,6 @@ public class LeaderboardFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
-        // TODO: Authenticate on the backend
-
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", config.getEmail());
