@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,20 +36,19 @@ import org.json.JSONObject;
 public class SearchFragment extends Fragment {
 
     private FragmentSearchBinding binding;
-    // private Button search_button;
-    // EditText firstNameEditText;
+    private Button search_button;
+    private EditText search_input;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SearchViewModel searchViewModel =
-                new ViewModelProvider(this).get(SearchViewModel.class);
 
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        final Button search_button = (Button) root.findViewById(R.id.search_button);
+        search_button = (Button) root.findViewById(R.id.search_button);
+        search_input = (EditText) root.findViewById(R.id.search_input);
 
         search_button.setOnClickListener(v -> {
-            String queryString = search_button.getText().toString();
+            String queryString = search_input.getText().toString();
 
             App config = (App) getContext().getApplicationContext();
 
@@ -71,6 +71,12 @@ public class SearchFragment extends Fragment {
             JSONObject serverResponse = getSearch.getValue();
             Log.e("a", String.valueOf(serverResponse));
             try {
+                if (serverResponse == null) {
+                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                    searchResultsActivity.putExtra("queryString", "");
+                    searchResultsActivity.putExtra("serverResponse", "");
+                    startActivity(searchResultsActivity);
+                }
                 Log.e("a", String.valueOf(serverResponse.getJSONArray("queryMatches").length()));
                 if (serverResponse.length() > 0) {
                     Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
@@ -98,7 +104,6 @@ public class SearchFragment extends Fragment {
     }
 
     class GetSearch implements Runnable {
-        final static String TAG = "GetAuthRunnable";
         private JSONObject value;
         private String url = "http://34.105.106.85:8081/user/search/";
         private JSONObject jsonObject;
