@@ -19,7 +19,7 @@ require("dotenv").config();
 
 // axios for fetching from etherscan
 const axios = require("axios");
-const etherscanApiKey = process.env.ETHERSCAN_API_KEY
+const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
 
 // get balance of ether by querying wallet address on blockchain
 const getEthBalance = async (wallet_address) => {
@@ -31,14 +31,15 @@ const getEthBalance = async (wallet_address) => {
 const getBalance = async (address) => {
   const etheriumBalance = await getEthBalance(address);
   const conversion = await getEthPrice();
-  return etheriumBalance * conversion
-}
+  return etheriumBalance * conversion;
+};
 
 // get balance of erc 20 token by querying token contract
 const getERC20Balance = async (token_address, wallet_address) => {
   const contract = new web3.eth.Contract(erc20abi, token_address);
   const res = await contract.methods.balanceOf(wallet_address).call();
   const format = web3.utils.fromWei(res);
+  return format;
   console.log(format);
 };
 
@@ -50,55 +51,103 @@ const getTransactionHistory = async (wallet_address) => {
     "&action=txlist" +
     "&address=" +
     wallet_address +
-    "&startblock=0" +
+    "&startblock=9193266" + //jan 1st 2020
     "&endblock=99999999" +
-    "&page=1" +
-    "&offset=10" +
-    "&sort=asc" +
+    //"&page=1" +
+    //"&offset=10" +
+    "&sort=desc" +
     "&apikey=" +
     etherscanApiKey;
   let res = await axios.get(url);
-  return res.data["result"].map( (item) => {
+  return res.data["result"].map((item) => {
+    const sign = item.to == wallet_address.toLowerCase() ? 1 : -1;
     return {
-      "time": item["timeStamp"],
-      "from": item["from"],
-      "to": item["to"],
-      "value": web3.utils.fromWei(item["value"], "ether"),
+      time: item["timeStamp"],
+      value: web3.utils.fromWei(item["value"], "ether") * sign,
     };
   });
 };
-
 
 // get price history of token from binance
 // uses candlestick data, price taken as avg of open, close, high, and low
 // Max 1000 points, default 500
 const getPriceHistory = async (price_abv, interval, options) => {
-  const res = await client.klines(price_abv, interval, options)
-  return res["data"].map( (item) => {
+  const res = await client.klines(price_abv, interval, options);
+  return res["data"].map((item) => {
     return {
-      "Start_time": item[0],
-      "avgPrice": (item.slice(1,5).map(parseFloat).reduce((a,b)=> a+b)) / 4 ,
-      "Close_time": item[6]
-    }
+      time: item[0] / 1000,
+      avgPrice:
+        item
+          .slice(1, 5)
+          .map(parseFloat)
+          .reduce((a, b) => a + b) / 4,
+    };
   });
 };
 
-
 // Get current price of etherium relative to USDC
 const getEthPrice = async () => {
-  const point = await getPriceHistory("ETHUSDC", "1m", {limit: 1})
+  const point = await getPriceHistory("ETHUSDC", "1m", { limit: 1 });
   return point[0]["avgPrice"];
-}
+};
 
-
+// get current price of ERC20 token
+const getERC20Price = async (token_address) => {
+  const url =
+    "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=" +
+    token_address +
+    "&vs_currencies=USD";
+  let res = await axios.get(url);
+  return res.data[token_address.toLowerCase()]["usd"];
+};
 
 // Get account ballance history
-const getAccountHistory = async (address, startTime, endTime) => {
-  
-}
+const getAccountHistory = async (address, interval, numPoints, startTime, endTime) => {
+  if (!interval) interval = "1d";
+  let ethBalance = await getEthBalance(address);
+  let priceHistory = await getPriceHistory("ETHUSDC", interval, {
+    startTime: startTime,
+    endTime: endTime,
+    limit: numPoints,
+  });
+  priceHistory = priceHistory.reverse();
+  const transactionHistory = await getTransactionHistory(address);
+  let balanceHistory = [];
+  let transactionHistoryIndex = 0;
+
+  // Iterate over price history
+  for (let i = 0; i < priceHistory.length; i++) {
+    let price = priceHistory[i]["avgPrice"];
+    let pointTime = priceHistory[i]["time"];
+
+    // if next point is after a transaction, update balance with the changes from transaction
+    if (pointTime <= transactionHistory[transactionHistoryIndex]["time"]) {
+      while (pointTime <= transactionHistory[transactionHistoryIndex]["time"]) {
+        if (transactionHistoryIndex < transactionHistory.length - 1) {
+          ethBalance -= transactionHistory[transactionHistoryIndex]["value"];
+          transactionHistoryIndex++;
+        } else {
+          break;
+        }
+      }
+    }
+    balanceHistory.push(ethBalance * price);
+  }
+  return balanceHistory.reverse();
+};
+
+// Returns the current preformance of a given address
+const getPercentReturn = async (address, startTime, endTime) => {};
 
 module.exports = {
   getEthBalance: getEthBalance,
   getBalance: getBalance,
   getTransactionHistory: getTransactionHistory,
+  getERC20Price: getERC20Price,
 };
+
+getAccountHistory("0xA6Ac31Aa7a23d1FFFA6fAE4DD065332942621ee4", "1h").then(
+  (res) => {
+    console.log(res);
+  }
+);
