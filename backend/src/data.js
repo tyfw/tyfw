@@ -146,8 +146,3 @@ module.exports = {
   getERC20Price: getERC20Price,
 };
 
-getAccountHistory("0xA6Ac31Aa7a23d1FFFA6fAE4DD065332942621ee4", "1h").then(
-  (res) => {
-    console.log(res);
-  }
-);
