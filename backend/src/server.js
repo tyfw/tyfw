@@ -6,6 +6,16 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+// Graylog logging
+const graylog2 = require('graylog2');
+
+const logger = new graylog2.graylog({
+  servers: [{ host: '4m1pqj.stackhero-network.com', port: 12201 }] // Replace the "host" per your Graylog domain
+});
+
+// Send a simple message to Graylog
+logger.log('Hello from tyfw server');
+
 // Crypto data functions
 const crypto = require("./data.js")
 
@@ -33,6 +43,7 @@ async function run() {
       // Establish and verify connection
       await mongo_client.db("admin").command({ ping: 1 });
       console.log("Connected successfully to database");
+      logger.log("Connected successfully to database")
     } catch(err) {
         console.log(err)
         await mongo_client.close()
@@ -58,6 +69,7 @@ async function googleAuthVerify(token) {
 
   } catch (err) {
     console.log(err)
+    logger.log(String(err))
     return false
   }
   //const payload = ticket.getPayload();
@@ -72,6 +84,7 @@ var server = app.listen(8081, (req, res) => {
   var host = server.address().address
   var port = server.address().port
   console.log("TYFW backend server running at http://%s:%s", host, port)
+  logger.log("TYFW backend server running at http://%s:%s", host, port)
 })
 
 app.post("/user/authenticate", async (req, res) => {
@@ -93,6 +106,7 @@ app.post("/user/authenticate", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
@@ -113,6 +127,7 @@ app.post("/user/register", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(401)
   }
 })
@@ -138,6 +153,7 @@ app.get("/user/leaderboard", async (req, res) => {
     }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
@@ -154,6 +170,7 @@ app.get("/user/displaycurruser", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
@@ -170,6 +187,7 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
     }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
@@ -186,6 +204,7 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
     }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
@@ -204,6 +223,7 @@ app.post("/user/changename", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
@@ -218,6 +238,7 @@ app.get("/user/search", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 
@@ -235,6 +256,7 @@ app.post("/user/addbyusername", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 
@@ -252,6 +274,7 @@ app.post("/user/addbywalletaddress", async (req, res) => {
   }
   catch (err) {
       console.log(err)
+      logger.log(String(err))
       res.sendStatus(400)
   }
 })
