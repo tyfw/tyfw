@@ -30,6 +30,8 @@
     <string name="add_friend_button">Add Friend</string>
     <string name="profile_name">Loading profile name…</string>
     <string name="wallet_name">Loading wallet address…</string>
+    <string name="follow_wallet_button">Follow</string>
+    <string name="time_opt_default">Choose a time range</string>
 
     <string-array
         name="time_options">

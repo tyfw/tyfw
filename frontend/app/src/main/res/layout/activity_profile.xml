@@ -7,9 +7,9 @@
     tools:context=".ui.profile.ProfileActivity">
 
     <ImageView
-        android:id="@+id/profile_pic"
-        android:layout_width="132dp"
-        android:layout_height="122dp"
+        android:id="@+id/profile_default_pic"
+        android:layout_width="161dp"
+        android:layout_height="141dp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/profile_username"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,76 +18,64 @@
         tools:srcCompat="@drawable/shang_chi_stock_photo"
         tools:visibility="visible" />
 
-    <ToggleButton
-        android:id="@+id/toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ToggleButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.377"
-        tools:text="@string/add_friend_button" />
-
     <TextView
         android:id="@+id/profile_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="180dp"
         android:text="TextView"
-        android:textSize="34sp"
+        android:textAlignment="center"
+        android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/toggleButton"
+        app:layout_constraintBottom_toTopOf="@+id/friend_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.27"
         tools:text="@string/profile_name" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="0dp"
-        android:layout_height="66dp"
-        android:layout_marginTop="20dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/friend_button"
+        android:layout_width="414dp"
+        android:layout_height="48dp"
+        android:checkable="true"
+        android:text="@string/add_friend_button"
+        android:textColor="#455A64"
+        app:backgroundTint="@color/friend_button"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/btn_icons"
+        app:iconGravity="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggleButton"
-        app:layout_constraintVertical_bias="0.017">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.383" />
 
-        <!--TODO: implement this using steps given in: https://material.io/components/menus/android#exposed-dropdown-menus-->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/menu"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/label">
-
-            <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="412dp"
-        android:layout_height="298dp"
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/wallet_chart"
+        android:layout_width="match_parent"
+        android:layout_height="271dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
+        app:layout_constraintTop_toBottomOf="@+id/profile_graph_options">
 
+    </com.github.mikephil.charting.charts.LineChart>
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:layout_width="match_parent"
-            android:layout_height="271dp">
-
-        </com.github.mikephil.charting.charts.LineChart>
-
-    </androidx.cardview.widget.CardView>
+    <Spinner
+        android:id="@+id/profile_graph_options"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/time_opt_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/friend_button"
+        app:layout_constraintVertical_bias="0.002" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

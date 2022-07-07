@@ -18,11 +18,10 @@ public class WalletProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallet_profile);
 
-        walletAddr = findViewById(R.id.profile_wallet_addr);
+        walletAddr = findViewById(R.id.wallet_address);
 
         walletAddr.setText(getIntent().getStringExtra("walletAddress"));
 
-        profilePic = findViewById(R.id.profile_pic_wallet);
-        profilePic.setVisibility(1);
+        profilePic = findViewById(R.id.wallet_default_pic);
     }
 }

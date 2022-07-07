@@ -36,7 +36,10 @@ public class HomeFragment extends Fragment {
     private LineChart lineChart;
     private Spinner dropdown;
     private TextView currVal;
-    private TextView currStats;
+    private TextView currWallet;
+    private TextView currUser;
+
+    private final String TAG = "HOME";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,12 +59,12 @@ public class HomeFragment extends Fragment {
         lineChart = view.findViewById(R.id.home_chart);
         dropdown = view.findViewById(R.id.home_graph_options);
         currVal = view.findViewById(R.id.currentvalue);
-        currStats = view.findViewById(R.id.currentstats);
+        currUser = view.findViewById(R.id.user);
+        currWallet = view.findViewById(R.id.wallet);
 
         setChart();
         setTimeOptions();
         currVal.setText("69");
-        currStats.setText("420% worse");
     }
 
 
