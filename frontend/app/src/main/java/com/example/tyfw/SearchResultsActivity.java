@@ -57,6 +57,12 @@ public class SearchResultsActivity extends AppCompatActivity {
             }
         }
 
+        SearchResultsRow firstSearchResultsRow = new SearchResultsRow();
+        firstSearchResultsRow.setUsername("Username");
+        firstSearchResultsRow.setWallet("Wallet address");
+        itemsList.add(firstSearchResultsRow);
+        adapter.notifyDataSetChanged();
+
         for (int i = 0; i < jsonArray.length(); i++) {
             SearchResultsRow items = new SearchResultsRow();
             try {

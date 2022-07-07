@@ -2,26 +2,22 @@ package com.example.tyfw.ui.login;
 
 import android.app.Activity;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
@@ -29,13 +25,8 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.example.tyfw.App;
-import com.example.tyfw.AuthActivity;
 import com.example.tyfw.MainActivity;
-import com.example.tyfw.R;
-import com.example.tyfw.ui.login.LoginViewModel;
-import com.example.tyfw.ui.login.LoginViewModelFactory;
 import com.example.tyfw.databinding.ActivityLoginBinding;
 
 import org.json.JSONException;
@@ -45,8 +36,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
-
-    final static String TAG = "LoginActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,9 +188,6 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("as", serverResponse.toString());
             System.out.print(serverResponse);
         }
-
-        // Intent mainActivity = new Intent(this, MainActivity.class);
-        // startActivity(mainActivity);
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
