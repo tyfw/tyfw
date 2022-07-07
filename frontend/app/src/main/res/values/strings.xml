@@ -35,11 +35,10 @@
 
     <string-array
         name="time_options">
-        <item>Daily</item>
-        <item>Weekly</item>
-        <item>Monthly</item>
-        <item>Yearly</item>
-        <item>Custom</item>
+        <item>Today</item>
+        <item>Last Week</item>
+        <item>Last Month</item>
+        <item>Last Year</item>
     </string-array>
 
 

@@ -20,11 +20,13 @@ import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
+import com.example.tyfw.SearchResultsActivity;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
+import com.example.tyfw.utils.SearchResultsRow;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -119,18 +121,19 @@ public class LeaderboardFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i != 0){
+                    SearchResultsRow item;
 
-                String item = adapterView.getItemAtPosition(i).toString();
+                    item = (SearchResultsRow) adapterView.getItemAtPosition(i);
 
-                Intent intent;
-                if (isProfile(item)){
+                    Intent intent;
+
                     intent = new Intent(getActivity(), ProfileActivity.class);
-                    intent.putExtra("username", item);
-                } else {
-                    intent = new Intent(getActivity(), WalletProfileActivity.class);
-                    intent.putExtra("walletAddress", item);
+                    intent.putExtra("username", item.getUsername());
+                    intent.putExtra("walletAddress", item.getWallet());
+
+                    startActivity(intent);
                 }
-                startActivity(intent);
 
             }
 

@@ -18,7 +18,7 @@ public class WalletProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallet_profile);
 
-        walletAddr = findViewById(R.id.wallet_address);
+        walletAddr = findViewById(R.id.wallet_profile);
 
         walletAddr.setText(getIntent().getStringExtra("walletAddress"));
 

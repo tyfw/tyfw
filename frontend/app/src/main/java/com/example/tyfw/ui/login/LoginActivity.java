@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText firstNameEditText = binding.firstName;
         final EditText lastNameEditText = binding.lastName;
         final EditText emailEditText = binding.email;
-        final EditText walletAddressEditText = binding.walletAddress;
+        final EditText walletAddressEditText = binding.walletProfile;
         final EditText usernameEditText = binding.username;
 
         emailEditText.setText(email);

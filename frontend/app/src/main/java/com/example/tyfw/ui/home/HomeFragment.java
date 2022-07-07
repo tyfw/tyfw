@@ -73,37 +73,15 @@ public class HomeFragment extends Fragment {
         currUser = view.findViewById(R.id.user);
         currWallet = view.findViewById(R.id.wallet);
 
-        setChart();
-        setTimeOptions();
-        currVal.setText("69");
-        try{
-            App config = (App) getActivity().getApplicationContext();
-
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("email", config.getEmail());
-                jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-                jsonObject.put("numPoints", 100);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            GetHome getHome = new GetHome(jsonObject);
-            Thread getHomeThread = new Thread(getHome);
-            getHomeThread.start();
-            try {
-                getHomeThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            JSONObject serverResponse = getHome.getValue();
-            Log.d(TAG, serverResponse.toString());
-        }catch (Exception e){
-            Log.d(TAG, e.getMessage());
+        try {
+            setTimeOptions();
+            setChart();
+        } catch (Exception e){
+            Log.d(TAG,e.toString());
         }
 
+
+        currVal.setText("69");
     }
 
 
@@ -127,13 +105,24 @@ public class HomeFragment extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             timeOption = parent.getItemAtPosition(position).toString();
-            HomeFragment.this.setChart();
+            //HomeFragment.this.setChart();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
+    }
+
+    private void setChartGraphics(){
+        // background color
+        lineChart.setBackgroundColor(Color.WHITE);
+
+        // disable description text
+        lineChart.getDescription().setEnabled(false);
+
+        // enable touch gestures
+        lineChart.setTouchEnabled(true);
     }
 
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
@@ -165,35 +154,68 @@ public class HomeFragment extends Fragment {
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private void updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
-        float startTime = 0;
-        float endTime = 100;
-
-        float timeScale = (float) 0.01;
-
-        setCustom(timeOption.equals("Custom"));
-
+        String timeScale = "";
         switch (timeOption) {
-            case "Daily":
-                timeScale = (float) 0.1;
+            case "Today":
+                timeScale = "day";
                 break;
-            case "Weekly":
-                timeScale = (float) 1.0;
+            case "Last Week":
+                timeScale = "week";
                 break;
-            case "Monthly":
-                timeScale = (float) 10.0;
+            case "Last Month":
+                timeScale = "month";
                 break;
-            case "Yearly":
-                timeScale = (float) 50.0;
+            case "Last Year":
+                timeScale = "year";
                 break;
             case "":
-                timeScale = (float) 0.05;
+                timeScale = "";
                 break;
         }
 
-        for (float t = startTime; t < endTime; t += timeScale) {
-            Entry val = new Entry(t, Float.parseFloat(String.valueOf(Math.sin(t))));
+        App config = (App) getActivity().getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+            jsonObject.put("time", timeScale);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        GetHome getHome = new GetHome(jsonObject);
+        Thread getHomeThread = new Thread(getHome);
+        getHomeThread.start();
+        try {
+            getHomeThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getHome.getValue();
+        Log.d(TAG, serverResponse.toString());
+
+        JSONArray data = new JSONArray();
+        try {
+            data = serverResponse.getJSONArray("data");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        setCustom(timeOption.equals("Custom"));
+
+        for (int i =0; i< data.length(); i++) {
+            Entry val;
+            try {
+                val = new Entry(i,  (float) data.getDouble(i));
+            } catch (JSONException e) {
+                val = new Entry();
+                e.printStackTrace();
+            }
             yAxis.add(val);
-            xAxis.add(String.valueOf(t));
+            xAxis.add(String.valueOf(i));
         }
     }
 
@@ -217,16 +239,17 @@ public class HomeFragment extends Fragment {
         public void run() {
             try {
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .addHeaders("numPoints", Integer.toString(jsonObject.getInt("numPoints")))
+                        .addHeaders("email", "zeph@gmail.com")
+                        //.addHeaders("email", jsonObject.getString("email"))
+                        //.addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .addHeaders("time", jsonObject.getString("time"))
                         .setPriority(Priority.MEDIUM)
                         .build();
 
-                ANResponse<JSONObject> response = request.executeForJSONObject();
+                ANResponse response = request.executeForJSONObject();
 
                 if (response.isSuccess()) {
-                    value =  response.getResult();
+                    value = (JSONObject) response.getResult();
                 } else {
                     // handle error
                     ANError error = response.getError();

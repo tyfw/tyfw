@@ -16,6 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.361"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <com.github.mikephil.charting.charts.LineChart
@@ -27,7 +28,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_graph_options">
+        app:layout_constraintTop_toBottomOf="@+id/home_graph_options"
+        app:layout_constraintVertical_bias="0.243">
 
     </com.github.mikephil.charting.charts.LineChart>
 
@@ -44,7 +46,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.634" />
+        app:layout_constraintVertical_bias="0.366" />
 
     <TextView
         android:id="@+id/currentvalue"
@@ -64,30 +66,28 @@
         android:id="@+id/wallet"
         android:layout_width="409dp"
         android:layout_height="46dp"
-        android:layout_marginTop="212dp"
+        android:layout_marginTop="176dp"
         android:text="@string/wallet_name"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/user"
+        android:layout_width="408dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="192dp"
+        android:text="@string/profile_name"
         android:textAlignment="center"
         android:textSize="28sp"
         app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.404" />
-
-    <TextView
-        android:id="@+id/user"
-        android:layout_width="411dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="204dp"
-        android:text="@string/profile_name"
-        android:textAlignment="center"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.758" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
