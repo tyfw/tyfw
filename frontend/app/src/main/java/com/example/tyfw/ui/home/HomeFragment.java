@@ -16,13 +16,24 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.common.ANResponse;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
+import com.example.tyfw.ui.leaderboard.LeaderboardFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +76,34 @@ public class HomeFragment extends Fragment {
         setChart();
         setTimeOptions();
         currVal.setText("69");
+        try{
+            App config = (App) getActivity().getApplicationContext();
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("email", config.getEmail());
+                jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+                jsonObject.put("numPoints", 100);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            GetHome getHome = new GetHome(jsonObject);
+            Thread getHomeThread = new Thread(getHome);
+            getHomeThread.start();
+            try {
+                getHomeThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            JSONObject serverResponse = getHome.getValue();
+            Log.d(TAG, serverResponse.toString());
+        }catch (Exception e){
+            Log.d(TAG, e.getMessage());
+        }
+
     }
 
 
@@ -165,5 +204,42 @@ public class HomeFragment extends Fragment {
         lineChart.setScaleEnabled(val);
     }
 
+    class GetHome implements Runnable {
+        final static String TAG = "GetHomeRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/displaycurruser/";
+
+        public GetHome(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .addHeaders("numPoints", Integer.toString(jsonObject.getInt("numPoints")))
+                        .setPriority(Priority.MEDIUM)
+                        .build();
+
+                ANResponse<JSONObject> response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value =  response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    error.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
 
 }

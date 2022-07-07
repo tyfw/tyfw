@@ -34,6 +34,8 @@ import org.json.JSONObject;
 
 public class SearchFragment extends Fragment {
 
+    private String TAG = "SEARCH";
+
     private FragmentSearchBinding binding;
     // private Button search_button;
     // EditText firstNameEditText;
@@ -50,6 +52,7 @@ public class SearchFragment extends Fragment {
         search_button.setOnClickListener(v -> {
             String queryString = search_button.getText().toString();
 
+            Log.d(TAG,queryString);
             App config = (App) getContext().getApplicationContext();
 
             JSONObject jsonObject = new JSONObject();
