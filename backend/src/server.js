@@ -165,12 +165,22 @@ app.get("/user/displaycurruser", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        const interval = "1d"
-        const secondsInMonth = 2.628E6
-        const startTime = Date.now() - secondsInMonth
-        const endTime = Date.now()
-        const accountHistory = await getAccountHistory(user.addresses[0], interval, numpoints=req.header("numPoints"), startTime, endTime) 
-        res.status(200).json({"startTime": startTime, "endTime": endTime, "timescale": "day", "data": accountHistory})
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
+        }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
       }
   }
   catch (err) {
@@ -187,12 +197,22 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        const interval = "1d"
-        const secondsInMonth = 2.628E6
-        const startTime = Date.UTC - secondsInMonth
-        const endTime = Date.UTC
-        const accountHistory = await getAccountHistory(user.addresses[0], interval, numpoints=req.header("numPoints"), startTime, endTime) 
-        res.status(200).json({"startTime": startTime, "endTime": endTime, "timescale": "day", "data": accountHistory})
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
+        }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
       }
     }
   catch (err) {
@@ -209,7 +229,22 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        res.status(200).json(user.wallet)
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
+        }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
       }
     }
   catch (err) {
