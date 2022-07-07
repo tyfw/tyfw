@@ -210,7 +210,7 @@ app.post("/user/changename", async (req, res) => {
 
 app.get("/user/search", async (req, res) => {
   try {
-      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}).project({username: 1, _id: 0}).toArray()
+      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
       if (queryMatches.length == 0) {
         throw new Error('No users found')
       }
