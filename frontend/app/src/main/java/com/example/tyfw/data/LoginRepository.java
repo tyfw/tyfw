@@ -10,20 +10,16 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private LoginDataSource dataSource;
-
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
     private LoggedInUser user = null;
 
     // private constructor : singleton access
-    private LoginRepository(LoginDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private LoginRepository() {}
 
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
+    public static LoginRepository getInstance() {
         if (instance == null) {
-            instance = new LoginRepository(dataSource);
+            instance = new LoginRepository();
         }
         return instance;
     }
@@ -34,21 +30,15 @@ public class LoginRepository {
 
     public void logout() {
         user = null;
-        dataSource.logout();
     }
 
     private void setLoggedInUser(LoggedInUser user) {
         this.user = user;
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
     }
 
     public Result<LoggedInUser> login(String firstName, String lastName, String email, String walletAddress) {
-        // handle login
-        Result<LoggedInUser> result = dataSource.login(firstName, lastName, email, walletAddress);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
-        }
-        return result;
+        LoggedInUser currUser = new LoggedInUser(java.util.UUID.randomUUID().toString(), walletAddress, firstName, lastName, email);
+        setLoggedInUser(currUser);
+        return new Result.Success<>(currUser);
     }
 }

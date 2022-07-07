@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,8 @@ public class LeaderboardFragment extends Fragment {
     private ListView listView;
     private LeaderboardListAdapter adapter;
     private FragmentLeaderboardBinding binding;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     private String TAG = "LEADERBOARD";
 
@@ -57,7 +61,6 @@ public class LeaderboardFragment extends Fragment {
         listView.setAdapter(adapter);
 
         // Call the leaderboard API
-
         App config = (App) getActivity().getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();
@@ -77,21 +80,33 @@ public class LeaderboardFragment extends Fragment {
             e.printStackTrace();
         }
         JSONArray serverResponse = getAuth.getValue();
-        Log.e(TAG, serverResponse.toString());
-        for (int i = 0; i < serverResponse.length(); i++) {
-            try {
-                JSONObject currFriend = serverResponse.getJSONObject(i);
-                LeaderboardRow items = new LeaderboardRow();
-                items.setName(currFriend.getString("user"));
-                items.setValue(String.valueOf(currFriend.getDouble("value")));
-                itemsList.add(items);
-                adapter.notifyDataSetChanged();
+        if (serverResponse == null) {
+            Toast.makeText(getContext(), "Unable to access leaderboard", Toast.LENGTH_SHORT);
+        } else {
+            Log.e(TAG, serverResponse.toString());
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            LeaderboardRow firstItem = new LeaderboardRow();
+            firstItem.setName("Username or wallet address");
+            firstItem.setValue("Change (%)");
+            itemsList.add(firstItem);
+            adapter.notifyDataSetChanged();
+
+            for (int i = 0; i < serverResponse.length(); i++) {
+                try {
+                    JSONObject currFriend = serverResponse.getJSONObject(i);
+                    LeaderboardRow items = new LeaderboardRow();
+                    items.setName(currFriend.getString("user"));
+                    items.setValue(df.format(currFriend.getDouble("value")) + "%");
+                    itemsList.add(items);
+                    adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Unable to access leaderboard element", Toast.LENGTH_SHORT);
+                }
             }
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
 
         return root;
     }
