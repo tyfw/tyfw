@@ -144,5 +144,6 @@ module.exports = {
   getBalance: getBalance,
   getTransactionHistory: getTransactionHistory,
   getERC20Price: getERC20Price,
+  getAccountHistory: getAccountHistory
 };
 

@@ -52,7 +52,7 @@ async function run() {
 
 // Google User Auth
 const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
-const { getBalance, getEthBalance } = require('./data.js');
+const { getBalance, getEthBalance, getAccountHistory} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -165,7 +165,22 @@ app.get("/user/displaycurruser", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        res.status(200).json(user.wallet)
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
+        }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
       }
   }
   catch (err) {
@@ -182,7 +197,22 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        res.status(200).json(user.wallet)
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
+        }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
       }
     }
   catch (err) {
@@ -199,7 +229,22 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
         throw new Error('No users found')
       }
       else {
-        res.status(200).json(user.wallet)
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
+        }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
       }
     }
   catch (err) {
