@@ -26,6 +26,10 @@ import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
 import com.example.tyfw.ui.leaderboard.LeaderboardFragment;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -80,7 +84,6 @@ public class HomeFragment extends Fragment {
             Log.d(TAG,e.toString());
         }
 
-
         currVal.setText("69");
     }
 
@@ -105,7 +108,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             timeOption = parent.getItemAtPosition(position).toString();
-            //HomeFragment.this.setChart();
+            HomeFragment.this.setChart();
         }
 
         @Override
@@ -123,37 +126,62 @@ public class HomeFragment extends Fragment {
 
         // enable touch gestures
         lineChart.setTouchEnabled(true);
+
+        LimitLine ll1 = new LimitLine(30f,"Title");
+        ll1.setLineColor(getResources().getColor(R.color.rosy_brown));
+        ll1.setLineWidth(4f);
+        ll1.enableDashedLine(10f, 10f, 0f);
+        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+        ll1.setTextSize(10f);
+
+        LimitLine ll2 = new LimitLine(35f, "");
+        ll2.setLineWidth(4f);
+        ll2.enableDashedLine(10f, 10f, 0f);
     }
 
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
     // TODO: add custom x-y-margins for graph for each option
     private void setChart(){
-        ArrayList<String> xAxis = new ArrayList<>(); // each index contains String of what that is
+        ArrayList<String> xData = new ArrayList<>(); // each index contains String of what that is
         ArrayList<Entry> yAxis = new ArrayList<>(); // each index contains data point
         // Assuming xAxis and yAxis are set:
-        updateData(xAxis, yAxis);
+        //TODO: make a better way of reloading
+        updateData(xData,yAxis);
 
         ArrayList<ILineDataSet> lineData = new ArrayList<>();
-
         LineDataSet yData = new LineDataSet(yAxis, "Value");
         yData.setCircleColor(Color.MAGENTA);
-        yData.setDrawCircles(true);
 
         lineData.add(yData);
-
-        String[] xData = xAxis.toArray(new String[0]);
 
         LineData res = new LineData(lineData);
 
         lineChart.setData(res);
+        lineChart.setVisibleXRange(res.getXMin(), res.getXMax());
 
-        lineChart.setVisibleXRange(0,100);
+        Log.d("DATA", "YMin: " + res.getYMin());
+        Log.d("DATA", "YMax: " + res.getYMax());
+        lineChart.setVisibleYRange(res.getYMin(), res.getYMax(),lineChart.getAxisLeft().getAxisDependency());
+        lineChart.setDrawBorders(true);
         lineChart.notifyDataSetChanged();
-        lineChart.invalidate();
+        lineChart.animateXY(1000,1000);
+        lineChart.fitScreen();
+
+        Description des = new Description();
+        des.setText("Value");
+        des.setPosition(0,0);
+        des.setTextColor(Color.CYAN);
+        des.setTextSize(16f);
+        lineChart.setDescription(des);
+
+        XAxis x_axis = lineChart.getXAxis();
+
+        XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
+        x_axis.setPosition(position);
     }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
-    private void updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
+    private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
         String timeScale = "";
         switch (timeOption) {
             case "Today":
@@ -172,6 +200,7 @@ public class HomeFragment extends Fragment {
                 timeScale = "";
                 break;
         }
+        Log.d("DATA", timeScale);
 
         App config = (App) getActivity().getApplicationContext();
 
@@ -183,7 +212,6 @@ public class HomeFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         GetHome getHome = new GetHome(jsonObject);
         Thread getHomeThread = new Thread(getHome);
@@ -200,23 +228,27 @@ public class HomeFragment extends Fragment {
         JSONArray data = new JSONArray();
         try {
             data = serverResponse.getJSONArray("data");
+            Log.d("DATA", data.toString());
+            Log.d("DATA", String.valueOf(data.length()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        setCustom(timeOption.equals("Custom"));
-
-        for (int i =0; i< data.length(); i++) {
-            Entry val;
-            try {
-                val = new Entry(i,  (float) data.getDouble(i));
-            } catch (JSONException e) {
-                val = new Entry();
-                e.printStackTrace();
+        if (data.length() > 0){
+            for (int i =0; i< data.length(); i++) {
+                Entry val;
+                try {
+                    val = new Entry(i,  (float) data.getDouble(i));
+                } catch (JSONException e) {
+                    val = new Entry();
+                    e.printStackTrace();
+                }
+                yAxis.add(val);
+                xAxis.add(String.valueOf(i));
             }
-            yAxis.add(val);
-            xAxis.add(String.valueOf(i));
+            return true;
         }
+        return false;
     }
 
     private void setCustom(boolean val){
@@ -239,8 +271,8 @@ public class HomeFragment extends Fragment {
         public void run() {
             try {
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", "zeph@gmail.com")
-                        //.addHeaders("email", jsonObject.getString("email"))
+                        //.addHeaders("email", "zeph@gmail.com")
+                        .addHeaders("email", jsonObject.getString("email"))
                         //.addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
                         .addHeaders("time", jsonObject.getString("time"))
                         .setPriority(Priority.MEDIUM)
@@ -253,11 +285,21 @@ public class HomeFragment extends Fragment {
                 } else {
                     // handle error
                     ANError error = response.getError();
-                    error.printStackTrace();
+                    errorResponse(error);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                errorResponse(e);
             }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
         }
 
         public JSONObject getValue() {
