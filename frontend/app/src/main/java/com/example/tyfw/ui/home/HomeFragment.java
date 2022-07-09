@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment {
 
         JSONObject serverResponse = getBalance.getValue();
         if (serverResponse == null) {
-            Toast.makeText(getContext(), "Unable to get balance", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Unable to get balance, you might be rate limited ", Toast.LENGTH_SHORT);
         } else {
             Log.d(TAG, serverResponse.toString());
             try {
@@ -333,6 +333,8 @@ public class HomeFragment extends Fragment {
                 xAxis.add(String.valueOf(i));
             }
             return true;
+        } else {
+            Toast.makeText(getContext(), "Unable to load data, you might be rate limited.", Toast.LENGTH_SHORT);
         }
         return false;
     }
