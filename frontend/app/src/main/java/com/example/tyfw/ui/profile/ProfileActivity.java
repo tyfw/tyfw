@@ -261,7 +261,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     class GetProfile implements Runnable {
-        final static String TAG = "GetProfileRunnaable";
+        final static String TAG = "GetProfileRunnable";
         private JSONObject value;
         private JSONObject jsonObject;
         private String url = "http://34.105.106.85:8081/user/displayotheruserbyusername/";

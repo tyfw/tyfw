@@ -81,7 +81,7 @@ public class LeaderboardFragment extends Fragment {
         }
         JSONArray serverResponse = getAuth.getValue();
         if (serverResponse == null) {
-            Toast.makeText(getContext(), "Unable to access leaderboard", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Unable to access leaderboard, please retry.", Toast.LENGTH_SHORT).show();
         } else {
             Log.e(TAG, serverResponse.toString());
 
@@ -107,7 +107,6 @@ public class LeaderboardFragment extends Fragment {
             }
             adapter.notifyDataSetChanged();
         }
-
         return root;
     }
 
