@@ -78,6 +78,10 @@ async function googleAuthVerify(token) {
   //const userid = payload['sub'];
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 app.get("/", (req, res) => {
   res.send("Hello world!")
 })
@@ -231,10 +235,6 @@ app.get("/user/displaycurruser", async (req, res) => {
 
   }
 })
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
   console.debug("/user/displayotheruserbyusername\n\
