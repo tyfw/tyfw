@@ -125,7 +125,6 @@ public class LeaderboardFragment extends Fragment {
                     item = (LeaderboardRow) adapterView.getItemAtPosition(i);
 
                     Intent intent;
-
                     intent = new Intent(getActivity(), ProfileActivity.class);
                     intent.putExtra("username", item.getName());
                     intent.putExtra("walletAddress", item.getAddress());
@@ -133,14 +132,7 @@ public class LeaderboardFragment extends Fragment {
                     startActivity(intent);
                 }
             }
-
-            // TODO: make this a valid profile checker
-            private boolean isProfile(@NonNull String s){
-                Log.d(TAG, s);
-                return s.length() < 2;
-            }
         });
-
     }
 
     @Override
