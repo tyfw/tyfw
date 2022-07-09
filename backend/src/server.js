@@ -297,7 +297,6 @@ app.get("/user/search", async (req, res) => {
   console.debug("/user/search\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
-  const search_user = req.header("")
   try {
       const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
       if (queryMatches.length == 0) {
@@ -360,8 +359,8 @@ app.get("/user/getbalance", async (req, res) => {
   req.headers: ", req.headers)
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      console.log(getBalance(user.addresses[0]))
-      res.status(200).json({"balance":getBalance(user.addresses[0])})
+      const balance = await getBalance(user.addresses[0])
+      res.status(200).json({"balance": balance})
   }
   catch (err) {
       console.log(err)

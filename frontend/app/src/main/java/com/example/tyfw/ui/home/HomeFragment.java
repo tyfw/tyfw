@@ -37,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -93,9 +94,8 @@ public class HomeFragment extends Fragment {
             Log.d(TAG,e.toString());
         }
 
-        currVal.setText("0 USD");
-
         setUserData();
+        setBalance();
     }
 
 
@@ -139,6 +139,42 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setBalance(){
+        App config = (App) getActivity().getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        GetBalance getBalance = new GetBalance(jsonObject);
+        Thread getBalanceThread = new Thread(getBalance);
+        getBalanceThread.start();
+        try {
+            getBalanceThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getBalance.getValue();
+        if (serverResponse == null) {
+            Toast.makeText(getContext(), "Unable to get balance", Toast.LENGTH_SHORT);
+        } else {
+            Log.d(TAG, serverResponse.toString());
+            try {
+                DecimalFormat df = new DecimalFormat("0.00");
+                currVal.setText(df.format(serverResponse.getDouble("balance"))+ " USD");
+            } catch (JSONException e) {
+                currVal.setText("?");
+                Toast.makeText(getContext(), "Unable to retrieve current value from server",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
     }
 
     // Followed this API guide: https://developer.android.com/guide/topics/ui/controls/spinner.html#Populate
@@ -374,6 +410,51 @@ public class HomeFragment extends Fragment {
                     if (errorCode == 400) {
                         Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT);
                     }
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
+
+    class GetBalance implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/getbalance/";
+
+        public GetBalance(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
                     errorResponse(error);
                 }
             } catch (JSONException e) {
