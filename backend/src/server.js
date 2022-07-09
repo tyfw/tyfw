@@ -360,6 +360,7 @@ app.get("/user/getbalance", async (req, res) => {
   req.headers: ", req.headers)
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      console.log(getBalance(user.addresses[0]))
       res.status(200).json({"balance":getBalance(user.addresses[0])})
   }
   catch (err) {
@@ -369,6 +370,20 @@ app.get("/user/getbalance", async (req, res) => {
   }
 });
 
+app.get("/user/getuser", async (req, res) => {
+  console.debug("/user/getuser\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
+
+  try {
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    res.status(200).json({"data": user})
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+});
 
 
 run()
