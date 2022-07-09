@@ -136,7 +136,7 @@ app.get("/user/leaderboard", async (req, res) => {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
       for (let index in user.friends) {
         const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
-        var year_return = getYearPercentReturn(friend.addresses[0])
+        var year_return = await getYearPercentReturn(friend.addresses[0])
         leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
         leaderboard.sort((a, b) => {
           if (a.value > b.value) return -1
