@@ -40,7 +40,6 @@ const getERC20Balance = async (token_address, wallet_address) => {
   const res = await contract.methods.balanceOf(wallet_address).call();
   const format = web3.utils.fromWei(res);
   return format;
-  console.log(format);
 };
 
 // get transaction history of wallet address
@@ -137,13 +136,16 @@ const getAccountHistory = async (address, interval, numPoints, startTime, endTim
 };
 
 // Returns the current preformance of a given address
-const getPercentReturn = async (address, startTime, endTime) => {};
+const getYearPercentReturn = async (address) => {
+  const accountHistory = await getAccountHistory(address, "1w", 52);
+  return (accountHistory[accountHistory.length -1] - accountHistory[0])/accountHistory[0];
+};
 
 module.exports = {
   getEthBalance: getEthBalance,
   getBalance: getBalance,
   getTransactionHistory: getTransactionHistory,
   getERC20Price: getERC20Price,
-  getAccountHistory: getAccountHistory
+  getAccountHistory: getAccountHistory,
+  getYearPercentReturn: getYearPercentReturn,
 };
-

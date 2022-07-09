@@ -16,8 +16,6 @@ const logger = new graylog2.graylog({
 // Send a simple message to Graylog
 logger.log('Hello from tyfw server');
 
-// Crypto data functions
-const crypto = require("./data.js")
 
 class User {
     constructor(username, firstname, lastname, email, addresses) {
@@ -52,7 +50,7 @@ async function run() {
 
 // Google User Auth
 const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
-const { getBalance, getEthBalance, getAccountHistory} = require('./data.js');
+const { getBalance, getEthBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -138,16 +136,12 @@ app.get("/user/leaderboard", async (req, res) => {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
       for (let index in user.friends) {
         const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
-        var total_balance = 0
-        for (let j = 0; j < friend.addresses.length; j = j+1) {
-                var balance = await getBalance(friend.addresses[j])
-          total_balance += balance
-        }
-        leaderboard.push({"user": friend.username, "value": total_balance})
-              leaderboard.sort((a, b) => {
-                if (a.value > b.value) return -1
-                else return 1
-              })
+        var year_return = getYearPercentReturn(friend.addresses[0])
+        leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
+        leaderboard.sort((a, b) => {
+          if (a.value > b.value) return -1
+          else return 1
+        })
       }
       res.status(200).send(leaderboard)
     }
