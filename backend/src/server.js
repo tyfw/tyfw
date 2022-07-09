@@ -16,6 +16,9 @@ const logger = new graylog2.graylog({
 // Send a simple message to Graylog
 logger.log('Hello from tyfw server');
 
+//debug printout
+console.isDebugMode = true;
+
 // Crypto data functions
 const crypto = require("./data.js")
 
@@ -89,6 +92,10 @@ var server = app.listen(8081, (req, res) => {
 
 app.post("/user/authenticate", async (req, res) => {
   try {
+    console.debug("/user/authenticate \n\
+    Time: ", Date.now(), "\n\
+    req.body: ", req.body)
+    
     const verifyied = await googleAuthVerify(req.body.googleIdToken)
     if (!verifyied) {
       res.sendStatus(401)
@@ -112,6 +119,9 @@ app.post("/user/authenticate", async (req, res) => {
 })
 
 app.post("/user/register", async (req, res) => {
+  console.debug("/user/register \n\
+  Time: ", Date.now(), "\n\
+  req.body: ", req.body)
   try {
       // check if there is another user with the same username
       const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.username})
@@ -133,6 +143,9 @@ app.post("/user/register", async (req, res) => {
 })
 
 app.get("/user/leaderboard", async (req, res) => {
+  console.debug("/user/leaderboard\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
   try {
       var leaderboard = []
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
@@ -159,6 +172,9 @@ app.get("/user/leaderboard", async (req, res) => {
 })
   
 app.get("/user/displaycurruser", async (req, res) => {
+  console.debug("/user/displaycurruser\n\
+  Time: ", Date.now(), "\n\
+  req.body: ", req.headers)
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
       if (user == null) {
@@ -191,6 +207,9 @@ app.get("/user/displaycurruser", async (req, res) => {
 })
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
+  console.debug("/user/displayotheruserbyusername\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.header("otherUsername")})
       if (user == null) {
@@ -223,6 +242,9 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
 })
 
 app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
+  console.debug("/user/displayotheruserbyusername\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.header("otherWalletAddress")})
       if (user == null) {
@@ -256,6 +278,9 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
 
 
 app.post("/user/changename", async (req, res) => {
+  console.debug("/user/changename\n\
+  Time: ", Date.now(), "\n\
+  req.body: ", req.body)
   try {
       if (req.body.name == "first") {
         await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$set: {firstname: req.body.newName}})
@@ -274,6 +299,9 @@ app.post("/user/changename", async (req, res) => {
 })
 
 app.get("/user/search", async (req, res) => {
+  console.debug("/user/search\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
   try {
       const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
       if (queryMatches.length == 0) {
@@ -290,6 +318,9 @@ app.get("/user/search", async (req, res) => {
 })
 
 app.post("/user/addbyusername", async (req, res) => {
+  console.debug("/user/addbyusername\n\
+  Time: ", Date.now(), "\n\
+  req.body: ", req.body)
   try {
     //check that username exists
       const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.friendUsername})
@@ -308,6 +339,9 @@ app.post("/user/addbyusername", async (req, res) => {
 })
 
 app.post("/user/addbywalletaddress", async (req, res) => {
+  console.debug("/user/search\n\
+  Time: ", Date.now(), "\n\
+  req.body: ", req.body)
   try {
     //check that there is a user with the specified wallet address 
       const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.body.friendWalletAddress})
