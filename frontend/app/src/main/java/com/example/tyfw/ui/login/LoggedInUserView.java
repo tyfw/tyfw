@@ -10,8 +10,4 @@ class LoggedInUserView {
     LoggedInUserView(String displayName) {
         this.displayName = displayName;
     }
-
-    String getDisplayName() {
-        return displayName;
-    }
 }

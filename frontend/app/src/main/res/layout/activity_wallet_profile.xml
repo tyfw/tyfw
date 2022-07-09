@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.WalletProfileActivity">
+    tools:context=".ui.profile.ProfileActivity">
 
     <ImageView
-        android:id="@+id/profile_pic_wallet"
-        android:layout_width="123dp"
-        android:layout_height="134dp"
+        android:id="@+id/wallet_default_pic"
+        android:layout_width="161dp"
+        android:layout_height="141dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/profile_wallet_addr"
+        app:layout_constraintBottom_toTopOf="@+id/wallet_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,65 +19,62 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/profile_wallet_addr"
+        android:id="@+id/wallet_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="180dp"
         android:text="TextView"
-        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/cardView2"
+        app:layout_constraintBottom_toTopOf="@+id/follow_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.756"
+        app:layout_constraintVertical_bias="0.27"
         tools:text="@string/wallet_name" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
-        android:layout_width="0dp"
-        android:layout_height="66dp"
-        android:layout_marginTop="272dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/follow_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        android:text="@string/follow_wallet_button"
+        android:textColor="#455A64"
+        app:backgroundTint="@color/friend_button"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/btn_icons"
+        app:iconGravity="textEnd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.383"
+        tools:layout_editor_absoluteX="0dp" />
 
-        <!--TODO: implement this using steps given in: https://material.io/components/menus/android#exposed-dropdown-menus-->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/menu"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/label">
-
-            <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView3"
-        android:layout_width="412dp"
-        android:layout_height="298dp"
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/wallet_chart"
+        android:layout_width="match_parent"
+        android:layout_height="271dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.879">
+        app:layout_constraintTop_toBottomOf="@+id/wallet_graph_options">
 
+    </com.github.mikephil.charting.charts.LineChart>
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:layout_width="match_parent"
-            android:layout_height="271dp">
-
-        </com.github.mikephil.charting.charts.LineChart>
-
-    </androidx.cardview.widget.CardView>
+    <Spinner
+        android:id="@+id/wallet_graph_options"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/time_opt_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/follow_button"
+        app:layout_constraintVertical_bias="0.002" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

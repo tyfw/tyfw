@@ -52,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@+id/last_name" />
 
     <EditText
-        android:id="@+id/wallet_address"
+        android:id="@+id/wallet_profile"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -77,7 +77,7 @@
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wallet_address" />
+        app:layout_constraintTop_toBottomOf="@+id/wallet_profile" />
 
     <Button
         android:id="@+id/login"
@@ -90,7 +90,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wallet_address" />
+        app:layout_constraintTop_toBottomOf="@+id/wallet_profile" />
 
     <ProgressBar
         android:id="@+id/loading"
@@ -101,8 +101,8 @@
         android:layout_marginBottom="64dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/wallet_address"
-        app:layout_constraintStart_toStartOf="@+id/wallet_address"
+        app:layout_constraintEnd_toEndOf="@+id/wallet_profile"
+        app:layout_constraintStart_toStartOf="@+id/wallet_profile"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3" />
 
