@@ -11,7 +11,7 @@ import com.example.tyfw.data.LoginRepository;
  * Required given LoginViewModel has a non-empty constructor
  */
 public class LoginViewModelFactory implements ViewModelProvider.Factory {
-
+    // From UBC
     @NonNull
     @Override
     @SuppressWarnings("unchecked")

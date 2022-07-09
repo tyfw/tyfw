@@ -25,6 +25,7 @@
     <!-- For search page -->
     <string name="prompt_search">Search for user by username or wallet address</string>
     <string name="action_search">Search</string>
+    <string name="time_default">Please select a timescale to view your wallet</string>
 
     <!-- For profile page -->
     <string name="add_friend_button">Add Friend</string>

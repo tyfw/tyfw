@@ -74,6 +74,9 @@ public class ProfileActivity extends AppCompatActivity {
         dropdown = findViewById(R.id.profile_graph_options);
         friend = findViewById(R.id.friend_button);
 
+        // THIS WAS CAUSING THE CRASHES
+        lineChart = findViewById(R.id.wallet_chart);
+
         try {
             setTimeOptions();
             setChart();
@@ -151,7 +154,8 @@ public class ProfileActivity extends AppCompatActivity {
         // Assuming xAxis and yAxis are set:
         //TODO: make a better way of reloading
         if (!updateData(xData,yAxis)){
-            Toast.makeText(getBaseContext(),"Unable load data for this option. Please try again.", Toast.LENGTH_LONG).show();
+            // Toast.makeText(getBaseContext(),"Unable load data for this option. Please try again.", Toast.LENGTH_LONG).show();
+            return;
         }
 
         ArrayList<ILineDataSet> lineData = new ArrayList<>();
@@ -161,13 +165,9 @@ public class ProfileActivity extends AppCompatActivity {
         lineData.add(yData);
 
         LineData res = new LineData(lineData);
-
+        Log.e("res", lineData.toString());
         lineChart.setData(res);
-        lineChart.setVisibleXRange(res.getXMin(), res.getXMax());
-
-        Log.d("DATA", "YMin: " + res.getYMin());
-        Log.d("DATA", "YMax: " + res.getYMax());
-        lineChart.setVisibleYRange(res.getYMin(), res.getYMax(),lineChart.getAxisLeft().getAxisDependency());
+        lineChart.setAutoScaleMinMaxEnabled(true);
         lineChart.setDrawBorders(true);
         lineChart.notifyDataSetChanged();
         lineChart.animateXY(1000,1000);
@@ -215,7 +215,7 @@ public class ProfileActivity extends AppCompatActivity {
             jsonObject.put("email", config.getEmail());
             jsonObject.put("googleIdToken",  config.getGoogleIdToken());
             jsonObject.put("time", timeScale);
-            jsonObject.put("otherUsername", username);
+            jsonObject.put("friendUsername", username);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -235,8 +235,6 @@ public class ProfileActivity extends AppCompatActivity {
         JSONArray data = new JSONArray();
         try {
             data = serverResponse.getJSONArray("data");
-            Log.d("DATA", data.toString());
-            Log.d("DATA", String.valueOf(data.length()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -271,8 +269,7 @@ public class ProfileActivity extends AppCompatActivity {
         public void run() {
             try {
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("otherUsername", jsonObject.getString("otherUsername"))
-                        //.addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .addHeaders("otherUsername", jsonObject.getString("friendUsername"))
                         .addHeaders("time", jsonObject.getString("time"))
                         .setPriority(Priority.MEDIUM)
                         .build();
@@ -284,6 +281,7 @@ public class ProfileActivity extends AppCompatActivity {
                 } else {
                     // handle error
                     ANError error = response.getError();
+                    error.printStackTrace();
                     errorResponse(error);
                 }
             } catch (JSONException e) {
@@ -307,7 +305,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     class AddFriend implements Runnable {
-        final static String TAG = "GetProfileRunnaable";
+        final static String TAG = "GetProfileRunnable";
         private boolean value;
         private JSONObject jsonObject;
         private String url = "http://34.105.106.85:8081/user/addbyusername/";
@@ -317,25 +315,19 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         public void run() {
-            try {
-                ANRequest request = AndroidNetworking.post(url)
-                        .addBodyParameter("friendUsername", jsonObject.getString("otherUsername"))
-                        //.addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
+            ANRequest request = AndroidNetworking.post(url)
+                    .addJSONObjectBody(jsonObject)
+                    .setPriority(Priority.MEDIUM)
+                    .build();
 
-                ANResponse response = request.executeForJSONObject();
+            ANResponse response = request.executeForOkHttpResponse();
 
-                if (response.isSuccess()) {
-                    value = response.getOkHttpResponse().isSuccessful();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (response.isSuccess()) {
+                value = response.getOkHttpResponse().isSuccessful();
+            } else {
+                // handle error
+                ANError error = response.getError();
+                error.printStackTrace();
             }
         }
 

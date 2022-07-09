@@ -10,7 +10,7 @@ public class SocialViewModel extends ViewModel {
 
     public SocialViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is social fragment");
+        mText.setValue("This will be the chat functionality in a later milestone.");
     }
 
     public LiveData<String> getText() {

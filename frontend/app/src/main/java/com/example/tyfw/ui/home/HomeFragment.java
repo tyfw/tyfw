@@ -19,17 +19,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
-import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
-import com.example.tyfw.ui.leaderboard.LeaderboardFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -40,7 +37,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 public class HomeFragment extends Fragment {
 
@@ -56,10 +55,19 @@ public class HomeFragment extends Fragment {
 
     private final String TAG = "HOME";
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
+
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .build();
+
+        AndroidNetworking.initialize(getContext(), okHttpClient);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -158,10 +166,8 @@ public class HomeFragment extends Fragment {
 
         lineChart.setData(res);
         lineChart.setVisibleXRange(res.getXMin(), res.getXMax());
-
-        Log.d("DATA", "YMin: " + res.getYMin());
-        Log.d("DATA", "YMax: " + res.getYMax());
-        lineChart.setVisibleYRange(res.getYMin(), res.getYMax(),lineChart.getAxisLeft().getAxisDependency());
+        // Im goated for this
+        lineChart.setAutoScaleMinMaxEnabled(true);
         lineChart.setDrawBorders(true);
         lineChart.notifyDataSetChanged();
         lineChart.animateXY(1000,1000);
@@ -228,8 +234,6 @@ public class HomeFragment extends Fragment {
         JSONArray data = new JSONArray();
         try {
             data = serverResponse.getJSONArray("data");
-            Log.d("DATA", data.toString());
-            Log.d("DATA", String.valueOf(data.length()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -271,11 +275,8 @@ public class HomeFragment extends Fragment {
         public void run() {
             try {
                 ANRequest request = AndroidNetworking.get(url)
-                        //.addHeaders("email", "zeph@gmail.com")
                         .addHeaders("email", jsonObject.getString("email"))
-                        //.addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
                         .addHeaders("time", jsonObject.getString("time"))
-                        .setPriority(Priority.MEDIUM)
                         .build();
 
                 ANResponse response = request.executeForJSONObject();

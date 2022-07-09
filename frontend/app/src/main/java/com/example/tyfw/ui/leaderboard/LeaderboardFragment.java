@@ -20,10 +20,8 @@ import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
-import com.example.tyfw.SearchResultsActivity;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
-import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
 import com.example.tyfw.utils.SearchResultsRow;
@@ -99,9 +97,9 @@ public class LeaderboardFragment extends Fragment {
                     LeaderboardRow items = new LeaderboardRow();
                     items.setName(currFriend.getString("user"));
                     items.setValue(df.format(currFriend.getDouble("value")) + "%");
+                    items.setAddress(currFriend.getString("address"));
                     itemsList.add(items);
                     adapter.notifyDataSetChanged();
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Unable to access leaderboard element", Toast.LENGTH_SHORT);
@@ -122,19 +120,18 @@ public class LeaderboardFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i != 0){
-                    SearchResultsRow item;
+                    LeaderboardRow item;
 
-                    item = (SearchResultsRow) adapterView.getItemAtPosition(i);
+                    item = (LeaderboardRow) adapterView.getItemAtPosition(i);
 
                     Intent intent;
 
                     intent = new Intent(getActivity(), ProfileActivity.class);
-                    intent.putExtra("username", item.getUsername());
-                    intent.putExtra("walletAddress", item.getWallet());
+                    intent.putExtra("username", item.getName());
+                    intent.putExtra("walletAddress", item.getAddress());
 
                     startActivity(intent);
                 }
-
             }
 
             // TODO: make this a valid profile checker
