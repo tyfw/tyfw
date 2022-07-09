@@ -153,7 +153,7 @@ app.get("/user/leaderboard", async (req, res) => {
               var balance = await getBalance(user.addresses[i])
         user_balance += balance
       }
-      leaderboard.push({"user": user.username, "value": user_balance })
+      leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_balance })
       for (let index in user.friends) {
         const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
         var year_return = await getYearPercentReturn(friend.addresses[0])
