@@ -18,7 +18,7 @@
     <string name="invalid_first_name">Not a valid first name</string>
     <string name="invalid_last_name">Not a valid last name</string>
     <string name="invalid_email">Not a valid email</string>
-    <string name="invalid_wallet_address">Password must be >5 characters</string>
+    <string name="invalid_wallet_address">Password must be =42 characters and begin with 0x</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_search_results">Search Results</string>
     <string name="web_client_id">1019810872474-d834ghele0gkblegmi2d12drpmaoi57m.apps.googleusercontent.com</string>
