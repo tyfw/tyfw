@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,14 +22,15 @@ import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
-import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
+import com.example.tyfw.utils.SearchResultsRow;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,8 @@ public class LeaderboardFragment extends Fragment {
     private ListView listView;
     private LeaderboardListAdapter adapter;
     private FragmentLeaderboardBinding binding;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     private String TAG = "LEADERBOARD";
 
@@ -57,10 +61,7 @@ public class LeaderboardFragment extends Fragment {
         listView.setAdapter(adapter);
 
         // Call the leaderboard API
-
         App config = (App) getActivity().getApplicationContext();
-
-        // TODO: Authenticate on the backend
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -79,22 +80,33 @@ public class LeaderboardFragment extends Fragment {
             e.printStackTrace();
         }
         JSONArray serverResponse = getAuth.getValue();
-        Log.e(TAG, serverResponse.toString());
-        for (int i = 0; i < serverResponse.length(); i++) {
-            try {
-                JSONObject currFriend = serverResponse.getJSONObject(i);
-                LeaderboardRow items = new LeaderboardRow();
-                items.setName(currFriend.getString("user"));
-                items.setValue(String.valueOf(currFriend.getDouble("value")));
-                itemsList.add(items);
-                adapter.notifyDataSetChanged();
+        if (serverResponse == null) {
+            Toast.makeText(getContext(), "Unable to access leaderboard, please retry.", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.e(TAG, serverResponse.toString());
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            LeaderboardRow firstItem = new LeaderboardRow();
+            firstItem.setName("Username or wallet address");
+            firstItem.setValue("Change YOY (%)");
+            itemsList.add(firstItem);
+            adapter.notifyDataSetChanged();
+
+            for (int i = 0; i < serverResponse.length(); i++) {
+                try {
+                    JSONObject currFriend = serverResponse.getJSONObject(i);
+                    LeaderboardRow items = new LeaderboardRow();
+                    items.setName(currFriend.getString("user"));
+                    items.setValue(df.format(currFriend.getDouble("value")) + "%");
+                    items.setAddress(currFriend.getString("address"));
+                    itemsList.add(items);
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Unable to access leaderboard element", Toast.LENGTH_SHORT).show();
+                }
             }
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
-
         return root;
     }
 
@@ -106,28 +118,20 @@ public class LeaderboardFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i != 0){
+                    LeaderboardRow item;
 
-                String item = adapterView.getItemAtPosition(i).toString();
+                    item = (LeaderboardRow) adapterView.getItemAtPosition(i);
 
-                Intent intent;
-                if (isProfile(item)){
+                    Intent intent;
                     intent = new Intent(getActivity(), ProfileActivity.class);
-                    intent.putExtra("username", item);
-                } else {
-                    intent = new Intent(getActivity(), WalletProfileActivity.class);
-                    intent.putExtra("walletAddress", item);
+                    intent.putExtra("username", item.getName());
+                    intent.putExtra("walletAddress", item.getAddress());
+
+                    startActivity(intent);
                 }
-                startActivity(intent);
-
-            }
-
-            // TODO: make this a valid profile checker
-            private boolean isProfile(@NonNull String s){
-                Log.d(TAG, s);
-                return s.length() < 2;
             }
         });
-
     }
 
     @Override

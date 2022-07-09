@@ -11,17 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.ui.profile.WalletProfileActivity;
-import com.example.tyfw.utils.LeaderboardListAdapter;
-import com.example.tyfw.utils.LeaderboardRow;
 import com.example.tyfw.utils.SearchResultsListAdapter;
 import com.example.tyfw.utils.SearchResultsRow;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultsActivity extends AppCompatActivity {
-    final static String TAG = "SearchResultsActivity";
-
     private List<SearchResultsRow> itemsList = new ArrayList<SearchResultsRow>();
     private ListView listView;
     private SearchResultsListAdapter adapter;
@@ -39,10 +39,38 @@ public class SearchResultsActivity extends AppCompatActivity {
         adapter = new SearchResultsListAdapter(this, itemsList);
         listView.setAdapter(adapter);
 
-        for (int i = 0; i < 10; i++) {
-            SearchResultsRow items = new SearchResultsRow();
+        Intent intent = getIntent();
+        String jsonString = intent.getStringExtra("serverResponse");
+        JSONArray jsonArray = null;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            jsonArray = jsonObject.getJSONArray("queryMatches");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-            items.setValue(Integer.toString(i));
+        if (jsonArray == null) {
+            try {
+                jsonArray = new JSONArray("[]");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        SearchResultsRow firstSearchResultsRow = new SearchResultsRow();
+        firstSearchResultsRow.setUsername("Username");
+        firstSearchResultsRow.setWallet("Wallet address");
+        itemsList.add(firstSearchResultsRow);
+        adapter.notifyDataSetChanged();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            SearchResultsRow items = new SearchResultsRow();
+            try {
+                items.setUsername(jsonArray.getJSONObject(i).getString("username"));
+                items.setWallet(jsonArray.getJSONObject(i).getJSONArray("addresses").getString(0));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             itemsList.add(items);
             adapter.notifyDataSetChanged();
@@ -53,19 +81,19 @@ public class SearchResultsActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i!=0){
+                    SearchResultsRow item;
 
-                String item = adapterView.getItemAtPosition(i).toString();
+                    item = (SearchResultsRow) adapterView.getItemAtPosition(i);
 
-                Intent intent;
-                if (isProfile(item)){
+                    Intent intent;
+
                     intent = new Intent(SearchResultsActivity.this, ProfileActivity.class);
-                    intent.putExtra("username", item);
-                } else {
-                    intent = new Intent(SearchResultsActivity.this, WalletProfileActivity.class);
-                    intent.putExtra("walletAddress", item);
-                }
-                startActivity(intent);
+                    intent.putExtra("username", item.getUsername());
+                    intent.putExtra("walletAddress", item.getWallet());
 
+                    startActivity(intent);
+                }
             }
 
             // TODO: make this a valid profile checker

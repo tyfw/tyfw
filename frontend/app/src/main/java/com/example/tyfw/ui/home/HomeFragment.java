@@ -2,6 +2,8 @@ package com.example.tyfw.ui.home;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,21 +13,38 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
+import com.androidnetworking.common.ANResponse;
+import com.androidnetworking.error.ANError;
+import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 public class HomeFragment extends Fragment {
 
@@ -36,12 +55,24 @@ public class HomeFragment extends Fragment {
     private LineChart lineChart;
     private Spinner dropdown;
     private TextView currVal;
-    private TextView currStats;
+    private TextView currWallet;
+    private TextView currUser;
+
+    private final String TAG = "HOME";
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
+
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .build();
+
+        AndroidNetworking.initialize(getContext(), okHttpClient);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -56,12 +87,24 @@ public class HomeFragment extends Fragment {
         lineChart = view.findViewById(R.id.home_chart);
         dropdown = view.findViewById(R.id.home_graph_options);
         currVal = view.findViewById(R.id.currentvalue);
-        currStats = view.findViewById(R.id.currentstats);
+        currUser = view.findViewById(R.id.user);
+        currWallet = view.findViewById(R.id.wallet);
 
-        setChart();
-        setTimeOptions();
-        currVal.setText("69");
-        currStats.setText("420% worse");
+        lineChart.setNoDataText("Loading Wallet Data");
+        // https://stackoverflow.com/questions/30892275/mpandroidchart-change-message-no-chart-data-available
+        Paint p = lineChart.getPaint(Chart.PAINT_INFO);
+        p.setTextSize(64);
+
+        try {
+            setTimeOptions();
+            // setChart();
+        } catch (Exception e){
+            Log.d(TAG,e.toString());
+        }
+
+        setUserData();
+        setBalance();
+
     }
 
 
@@ -69,6 +112,81 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    // INTERNAL HELPER FUNCTIONS
+
+    private void setUserData(){
+
+        App config = (App) getActivity().getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        GetUser getUser = new GetUser(jsonObject);
+        Thread getUserThread = new Thread(getUser);
+        getUserThread.start();
+        try {
+            getUserThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getUser.getValue();
+        Log.d(TAG, serverResponse.toString());
+        JSONObject user = null;
+        try {
+            user = serverResponse.getJSONObject("data");
+            currUser.setText(user.getString("username"));
+            JSONArray addr = user.getJSONArray("addresses");
+            currWallet.setText(addr.get(0).toString());
+        } catch (JSONException e) {
+            currUser.setText("null");
+            currWallet.setText("null");
+            Toast.makeText(getContext(), "You are being rate limited, please reload and try again.",Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setBalance(){
+        App config = (App) getActivity().getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        GetBalance getBalance = new GetBalance(jsonObject);
+        Thread getBalanceThread = new Thread(getBalance);
+        getBalanceThread.start();
+        try {
+            getBalanceThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getBalance.getValue();
+        if (serverResponse == null) {
+            Toast.makeText(getContext(), "Unable to get balance, you might be rate limited ", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d(TAG, serverResponse.toString());
+            try {
+                DecimalFormat df = new DecimalFormat("0.00");
+                currVal.setText(df.format(serverResponse.getDouble("balance"))+ " USD");
+            } catch (JSONException e) {
+                currVal.setText("?");
+                Toast.makeText(getContext(), "You are being rate limited, please reload and try again.",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
     }
 
     // Followed this API guide: https://developer.android.com/guide/topics/ui/controls/spinner.html#Populate
@@ -94,65 +212,136 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void setChartGraphics(){
+        // background color
+        lineChart.setBackgroundColor(Color.WHITE);
+
+        // disable description text
+        lineChart.getDescription().setEnabled(false);
+
+        // enable touch gestures
+        lineChart.setTouchEnabled(true);
+
+        LimitLine ll1 = new LimitLine(30f,"Title");
+        ll1.setLineColor(getResources().getColor(R.color.rosy_brown));
+        ll1.setLineWidth(4f);
+        ll1.enableDashedLine(10f, 10f, 0f);
+        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+        ll1.setTextSize(10f);
+
+        LimitLine ll2 = new LimitLine(35f, "");
+        ll2.setLineWidth(4f);
+        ll2.enableDashedLine(10f, 10f, 0f);
+    }
+
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
     // TODO: add custom x-y-margins for graph for each option
     private void setChart(){
-        ArrayList<String> xAxis = new ArrayList<>(); // each index contains String of what that is
+        ArrayList<String> xData = new ArrayList<>(); // each index contains String of what that is
         ArrayList<Entry> yAxis = new ArrayList<>(); // each index contains data point
         // Assuming xAxis and yAxis are set:
-        updateData(xAxis, yAxis);
+        //TODO: make a better way of reloading
+        updateData(xData,yAxis);
 
         ArrayList<ILineDataSet> lineData = new ArrayList<>();
-
         LineDataSet yData = new LineDataSet(yAxis, "Value");
         yData.setCircleColor(Color.MAGENTA);
-        yData.setDrawCircles(true);
 
         lineData.add(yData);
-
-        String[] xData = xAxis.toArray(new String[0]);
 
         LineData res = new LineData(lineData);
 
         lineChart.setData(res);
-
-        lineChart.setVisibleXRange(0,100);
+        lineChart.setVisibleXRange(res.getXMin(), res.getXMax());
+        // Im goated for this
+        lineChart.setAutoScaleMinMaxEnabled(true);
+        lineChart.setDrawBorders(true);
         lineChart.notifyDataSetChanged();
-        lineChart.invalidate();
+        lineChart.animateXY(1000,1000);
+        lineChart.fitScreen();
+
+        Description des = new Description();
+        des.setText("Value");
+        des.setPosition(0,0);
+        des.setTextColor(Color.CYAN);
+        des.setTextSize(16f);
+        lineChart.setDescription(des);
+
+        XAxis x_axis = lineChart.getXAxis();
+
+        XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
+        x_axis.setPosition(position);
     }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
-    private void updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
-        float startTime = 0;
-        float endTime = 100;
-
-        float timeScale = (float) 0.01;
-
-        setCustom(timeOption.equals("Custom"));
-
+    private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
+        String timeScale = "";
         switch (timeOption) {
-            case "Daily":
-                timeScale = (float) 0.1;
+            case "Today":
+                timeScale = "day";
                 break;
-            case "Weekly":
-                timeScale = (float) 1.0;
+            case "Last Week":
+                timeScale = "week";
                 break;
-            case "Monthly":
-                timeScale = (float) 10.0;
+            case "Last Month":
+                timeScale = "month";
                 break;
-            case "Yearly":
-                timeScale = (float) 50.0;
+            case "Last Year":
+                timeScale = "year";
                 break;
             case "":
-                timeScale = (float) 0.05;
+                timeScale = "";
                 break;
         }
+        Log.d("DATA", timeScale);
 
-        for (float t = startTime; t < endTime; t += timeScale) {
-            Entry val = new Entry(t, Float.parseFloat(String.valueOf(Math.sin(t))));
-            yAxis.add(val);
-            xAxis.add(String.valueOf(t));
+        App config = (App) getActivity().getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+            jsonObject.put("time", timeScale);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
+        GetHome getHome = new GetHome(jsonObject);
+        Thread getHomeThread = new Thread(getHome);
+        getHomeThread.start();
+        try {
+            getHomeThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getHome.getValue();
+        Log.d(TAG, serverResponse.toString());
+
+        JSONArray data = new JSONArray();
+        try {
+            data = serverResponse.getJSONArray("data");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (data.length() > 0){
+            for (int i =0; i< data.length(); i++) {
+                Entry val;
+                try {
+                    val = new Entry(i,  (float) data.getDouble(i));
+                } catch (JSONException e) {
+                    val = new Entry();
+                    e.printStackTrace();
+                }
+                yAxis.add(val);
+                xAxis.add(String.valueOf(i));
+            }
+            return true;
+        } else {
+            Toast.makeText(getContext(), "Unable to load data, you might be rate limited.", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 
     private void setCustom(boolean val){
@@ -160,6 +349,148 @@ public class HomeFragment extends Fragment {
         lineChart.setDragEnabled(val);
         lineChart.setPinchZoom(val);
         lineChart.setScaleEnabled(val);
+    }
+
+    class GetHome implements Runnable {
+        final static String TAG = "GetHomeRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/displaycurruser/";
+
+        public GetHome(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("time", jsonObject.getString("time"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            //TODO: @Dryden this is where I put in the empty array FE handling
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            //Toast.makeText(getContext(), "Unable to load data for this time option. Please try again.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
+
+    class GetUser implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/getuser/";
+
+        public GetUser(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    int errorCode = error.getErrorCode();
+                    if (errorCode == 400) {
+                        Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT).show();
+                    }
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
+
+    class GetBalance implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/getbalance/";
+
+        public GetBalance(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
     }
 
 

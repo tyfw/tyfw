@@ -10,9 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentDashboardBinding;
-import com.github.mikephil.charting.charts.LineChart;
 
 public class DashboardFragment extends Fragment {
 

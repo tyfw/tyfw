@@ -68,21 +68,6 @@ public class AuthActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_auth);
 
-        /*
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home,  R.id.navigation_leaderboard,  R.id.navigation_search, R.id.navigation_social, R.id.navigation_settings)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
-         */
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -99,8 +84,6 @@ public class AuthActivity extends AppCompatActivity {
         findViewById(R.id.sign_in_button).setOnClickListener(v -> {
             signIn();
         });
-
-
     }
 
     private void signIn() {
@@ -164,12 +147,13 @@ public class AuthActivity extends AppCompatActivity {
             Integer serverResponse = getAuth.getValue();
 
             if (serverResponse == 200) {
-                Intent mainActivity = new Intent(AuthActivity.this, MainActivity.class);
+                Intent mainActivity = new Intent(this, MainActivity.class);
                 startActivity(mainActivity);
             } else if (serverResponse == 201) {
-                Intent loginActivity = new Intent(AuthActivity.this, LoginActivity.class);
+                Intent loginActivity = new Intent(this, LoginActivity.class);
                 startActivity(loginActivity);
             } else {
+                Log.e("TAG", serverResponse.toString());
                 System.out.print(serverResponse);
             }
         }

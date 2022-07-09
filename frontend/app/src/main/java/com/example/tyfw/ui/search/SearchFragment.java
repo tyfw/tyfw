@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
@@ -22,39 +23,43 @@ import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
-import com.example.tyfw.ui.login.LoginActivity;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class SearchFragment extends Fragment {
 
+    private String TAG = "SEARCH";
+
     private FragmentSearchBinding binding;
-    // private Button search_button;
-    // EditText firstNameEditText;
+    private Button search_button;
+    private EditText search_input;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SearchViewModel searchViewModel =
-                new ViewModelProvider(this).get(SearchViewModel.class);
 
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        final Button search_button = (Button) root.findViewById(R.id.search_button);
+        search_button = (Button) root.findViewById(R.id.search_button);
+        search_input = (EditText) root.findViewById(R.id.search_input);
 
         search_button.setOnClickListener(v -> {
-            String queryString = search_button.getText().toString();
+            String queryString = search_input.getText().toString();
 
+            Log.d(TAG,queryString);
             App config = (App) getContext().getApplicationContext();
 
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("queryString", queryString);
+                jsonObject.put("email", config.getEmail());
                 jsonObject.put("googleIdToken", config.getGoogleIdToken());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -70,21 +75,21 @@ public class SearchFragment extends Fragment {
             }
             JSONObject serverResponse = getSearch.getValue();
             Log.e("a", String.valueOf(serverResponse));
-            try {
-                Log.e("a", String.valueOf(serverResponse.getJSONArray("queryMatches").length()));
-                if (serverResponse.length() > 0) {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", queryString);
-                    searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
-                    startActivity(searchResultsActivity);
-                } else {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", queryString);
-                    searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
-                    startActivity(searchResultsActivity);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+            if (serverResponse == null) {
+                Toast.makeText(getContext(), "No users found with the requested search", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (serverResponse.length() > 0) {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", queryString);
+                searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
+                startActivity(searchResultsActivity);
+            } else {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", queryString);
+                searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
+                startActivity(searchResultsActivity);
             }
         });
 
@@ -98,7 +103,6 @@ public class SearchFragment extends Fragment {
     }
 
     class GetSearch implements Runnable {
-        final static String TAG = "GetAuthRunnable";
         private JSONObject value;
         private String url = "http://34.105.106.85:8081/user/search/";
         private JSONObject jsonObject;
@@ -111,6 +115,7 @@ public class SearchFragment extends Fragment {
             try {
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("queryString", jsonObject.getString("queryString"))
+                        .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
                         .setPriority(Priority.MEDIUM)
                         .build();

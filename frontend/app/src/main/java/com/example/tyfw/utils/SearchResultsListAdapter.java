@@ -44,19 +44,22 @@ public class SearchResultsListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.search_result_row, parent, false);
             userPair = new SearchResultRowHolder();
-            userPair.value = (TextView) convertView.findViewById(R.id.search_result_value);
+            userPair.username = (TextView) convertView.findViewById(R.id.search_result_username);
+            userPair.address = (TextView) convertView.findViewById(R.id.search_result_wallet);
             convertView.setTag(convertView);
         } else {
             userPair = (SearchResultRowHolder) convertView.getTag();
         }
 
         final SearchResultsRow val = searchResultsValues.get(position);
-        userPair.value.setText(val.getValue());
+        userPair.username.setText(val.getUsername());
+        userPair.address.setText(val.getWallet());
 
         return convertView;
     }
 
     static class SearchResultRowHolder {
-        TextView value;
+        TextView username;
+        TextView address;
     }
 }
