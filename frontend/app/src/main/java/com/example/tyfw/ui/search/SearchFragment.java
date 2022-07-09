@@ -53,6 +53,7 @@ public class SearchFragment extends Fragment {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("queryString", queryString);
+                jsonObject.put("email", config.getEmail());
                 jsonObject.put("googleIdToken", config.getGoogleIdToken());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -68,27 +69,22 @@ public class SearchFragment extends Fragment {
             }
             JSONObject serverResponse = getSearch.getValue();
             Log.e("a", String.valueOf(serverResponse));
-            try {
-                if (serverResponse == null) {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", "");
-                    searchResultsActivity.putExtra("serverResponse", "");
-                    startActivity(searchResultsActivity);
-                }
-                Log.e("a", String.valueOf(serverResponse.getJSONArray("queryMatches").length()));
-                if (serverResponse.length() > 0) {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", queryString);
-                    searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
-                    startActivity(searchResultsActivity);
-                } else {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", queryString);
-                    searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
-                    startActivity(searchResultsActivity);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (serverResponse == null) {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", "");
+                searchResultsActivity.putExtra("serverResponse", "");
+                startActivity(searchResultsActivity);
+            }
+            if (serverResponse.length() > 0) {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", queryString);
+                searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
+                startActivity(searchResultsActivity);
+            } else {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", queryString);
+                searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
+                startActivity(searchResultsActivity);
             }
         });
 
@@ -114,6 +110,7 @@ public class SearchFragment extends Fragment {
             try {
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("queryString", jsonObject.getString("queryString"))
+                        .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
                         .setPriority(Priority.MEDIUM)
                         .build();
