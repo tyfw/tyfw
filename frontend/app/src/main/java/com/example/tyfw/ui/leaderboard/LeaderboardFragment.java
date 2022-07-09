@@ -81,13 +81,13 @@ public class LeaderboardFragment extends Fragment {
         }
         JSONArray serverResponse = getAuth.getValue();
         if (serverResponse == null) {
-            Toast.makeText(getContext(), "Unable to access leaderboard", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Unable to access leaderboard", Toast.LENGTH_SHORT).show();
         } else {
             Log.e(TAG, serverResponse.toString());
 
             LeaderboardRow firstItem = new LeaderboardRow();
             firstItem.setName("Username or wallet address");
-            firstItem.setValue("Change year-over-year (%)");
+            firstItem.setValue("Change YOY (%)");
             itemsList.add(firstItem);
             adapter.notifyDataSetChanged();
 
@@ -102,7 +102,7 @@ public class LeaderboardFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Unable to access leaderboard element", Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(), "Unable to access leaderboard element", Toast.LENGTH_SHORT).show();
                 }
             }
             adapter.notifyDataSetChanged();

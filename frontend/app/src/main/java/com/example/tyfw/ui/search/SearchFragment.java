@@ -77,7 +77,7 @@ public class SearchFragment extends Fragment {
             Log.e("a", String.valueOf(serverResponse));
 
             if (serverResponse == null) {
-                Toast.makeText(getContext(), "Unable to get search results, please try again", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "Unable to get search results, please try again", Toast.LENGTH_LONG).show();
                 return;
             }
             if (serverResponse.length() > 0) {
@@ -127,9 +127,12 @@ public class SearchFragment extends Fragment {
                     // handle error
                     ANError error = response.getError();
                     error.printStackTrace();
+                    Toast.makeText(getContext(), "Unable to obtain search results. Please try again",Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+
+                Toast.makeText(getContext(), "Unable to obtain search results. Please try again",Toast.LENGTH_LONG).show();
             }
         }
 

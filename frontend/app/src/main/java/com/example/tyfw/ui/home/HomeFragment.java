@@ -94,6 +94,7 @@ public class HomeFragment extends Fragment {
         // https://stackoverflow.com/questions/30892275/mpandroidchart-change-message-no-chart-data-available
         Paint p = lineChart.getPaint(Chart.PAINT_INFO);
         p.setTextSize(64);
+
         try {
             setTimeOptions();
             // setChart();
@@ -103,6 +104,7 @@ public class HomeFragment extends Fragment {
 
         setUserData();
         setBalance();
+
     }
 
 
@@ -143,6 +145,9 @@ public class HomeFragment extends Fragment {
             JSONArray addr = user.getJSONArray("addresses");
             currWallet.setText(addr.get(0).toString());
         } catch (JSONException e) {
+            currUser.setText("null");
+            currWallet.setText("null");
+            Toast.makeText(getContext(), "You are being rate limited, please reload and try again.",Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -178,7 +183,7 @@ public class HomeFragment extends Fragment {
                 currVal.setText(df.format(serverResponse.getDouble("balance"))+ " USD");
             } catch (JSONException e) {
                 currVal.setText("?");
-                Toast.makeText(getContext(), "Unable to retrieve current value from server",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "You are being rate limited, please reload and try again.",Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
@@ -382,6 +387,7 @@ public class HomeFragment extends Fragment {
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
+            Toast.makeText(getContext(), "Unable to load data for this time option. Please try again.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 

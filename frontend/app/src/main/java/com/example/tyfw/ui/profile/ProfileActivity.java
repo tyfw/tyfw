@@ -297,6 +297,7 @@ public class ProfileActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
             e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Unable load user profile, please try again.", Toast.LENGTH_LONG).show();
         }
 
         public JSONObject getValue() {
