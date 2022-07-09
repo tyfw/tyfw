@@ -360,8 +360,8 @@ app.get("/user/getbalance", async (req, res) => {
   req.headers: ", req.headers)
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      console.log(getBalance(user.addresses[0]))
-      res.status(200).json({"balance":getBalance(user.addresses[0])})
+      const balance = await getBalance(user.addresses[0])
+      res.status(200).json({"balance": balance})
   }
   catch (err) {
       console.log(err)
