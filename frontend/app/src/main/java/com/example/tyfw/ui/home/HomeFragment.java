@@ -92,7 +92,10 @@ public class HomeFragment extends Fragment {
             Log.d(TAG,e.toString());
         }
 
+
         currVal.setText("69");
+
+        setUserData();
     }
 
 
@@ -100,6 +103,42 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    // INTERNAL HELPER FUNCTIONS
+
+    private void setUserData(){
+
+        App config = (App) getActivity().getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        GetUser getUser = new GetUser(jsonObject);
+        Thread getUserThread = new Thread(getUser);
+        getUserThread.start();
+        try {
+            getUserThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getUser.getValue();
+        Log.d(TAG, serverResponse.toString());
+        JSONObject user = null;
+        try {
+            user = serverResponse.getJSONObject("data");
+            currUser.setText(user.getString("username"));
+            JSONArray addr = user.getJSONArray("addresses");
+            currWallet.setText(addr.get(0).toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     // Followed this API guide: https://developer.android.com/guide/topics/ui/controls/spinner.html#Populate
@@ -307,5 +346,51 @@ public class HomeFragment extends Fragment {
             return value;
         }
     }
+
+    class GetUser implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/getuser/";
+
+        public GetUser(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
+
 
 }
