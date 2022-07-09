@@ -477,5 +477,50 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    class GetBalance implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/getbalance/";
+
+        public GetBalance(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
+
 
 }
