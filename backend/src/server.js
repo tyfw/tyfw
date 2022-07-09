@@ -368,6 +368,13 @@ app.get("/user/getwalletaddress", async (req, res) => {
       else {
         res.status(200).json({"addresses": user.addresses})
       }
+  }
+  catch (err) {
+      console.log(err)
+      logger.log(String(err))
+      res.sendStatus(400)
+  }
+});
       
 app.get("/user/getbalance", async (req, res) => {
   console.debug("/user/getbalance\n\
