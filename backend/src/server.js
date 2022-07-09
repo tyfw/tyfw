@@ -297,7 +297,6 @@ app.get("/user/search", async (req, res) => {
   console.debug("/user/search\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
-  const search_user = req.header("")
   try {
       const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
       if (queryMatches.length == 0) {
