@@ -145,7 +145,9 @@ app.get("/user/leaderboard", async (req, res) => {
   console.debug("/user/leaderboard\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
-  try {
+  let triesCounter = 0;
+  while (triesCounter < 2) {
+    try {
       var leaderboard = []
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
       var user_balance = 0
@@ -164,81 +166,121 @@ app.get("/user/leaderboard", async (req, res) => {
         })
       }
       res.status(200).send(leaderboard)
+      break
     }
-  catch (err) {
-      console.log(err)
-      logger.log(String(err))
-      res.sendStatus(400)
-  }
+    catch (err) {
+      if (err instanceof TypeError) {
+        console.log("caught TypeError, trying again")
+        await sleep(2000)
+        triesCounter++
+      }
+      else {
+        console.log(err)
+        logger.log(String(err))
+        res.sendStatus(400)
+        break
+      }
+    }
+}
 })
   
 app.get("/user/displaycurruser", async (req, res) => {
   console.debug("/user/displaycurruser\n\
   Time: ", Date.now(), "\n\
   req.body: ", req.headers)
-  try {
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      if (user == null) {
-        throw new Error('No users found')
+  let triesCounter = 0;
+  while (triesCounter < 2) {
+    try {
+        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+        if (user == null) {
+          throw new Error('No users found')
+        }
+        else {
+          var interval, numPoints;
+          if (req.header("time") == "day") {
+            interval = "1h"
+            numPoints = 24
+          } else if (req.header("time") == "week"){
+            interval = "1d"
+            numPoints = 7
+          } else if (req.header("time") == "month") {
+            interval = "1d"
+            numPoints = 30
+          } else if (req.header("time") == "year") {
+            interval = "1w"
+            numPoints = 52 
+          }
+          const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+          res.status(200).json({"timescale": interval, "data": accountHistory})
+          break
+        }
+    }
+    catch (err) {
+      if (err instanceof TypeError) {
+        console.log("caught TypeError, trying again")
+        await sleep(2000)
+        triesCounter++
       }
       else {
-        var interval, numPoints;
-        if (req.header("time") == "day") {
-          interval = "1h"
-          numPoints = 24
-        } else if (req.header("time") == "week"){
-          interval = "1d"
-          numPoints = 7
-        } else if (req.header("time") == "month") {
-          interval = "1d"
-          numPoints = 30
-        } else if (req.header("time") == "year") {
-          interval = "1w"
-          numPoints = 52 
-        }
-        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
-        res.status(200).json({"timescale": interval, "data": accountHistory})
+        console.log(err)
+        logger.log(String(err))
+        res.sendStatus(400)
+        break
       }
-  }
-  catch (err) {
-      console.log(err)
-      logger.log(String(err))
-      res.sendStatus(400)
+    } 
+
   }
 })
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
   console.debug("/user/displayotheruserbyusername\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
-  try {
+  let triesCounter = 0;
+  while (triesCounter < 2) {
+    try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.header("otherUsername")})
-      if (user == null) {
-        throw new Error('No users found')
+        if (user == null) {
+          throw new Error('No users found')
+        }
+        else {
+          var interval, numPoints;
+          if (req.header("time") == "day") {
+            interval = "1h"
+            numPoints = 24
+          } else if (req.header("time") == "week"){
+            interval = "1d"
+            numPoints = 7
+          } else if (req.header("time") == "month") {
+            interval = "1d"
+            numPoints = 30
+          } else if (req.header("time") == "year") {
+            interval = "1w"
+            numPoints = 52 
+          }
+          const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+          res.status(200).json({"timescale": interval, "data": accountHistory})
+          break
+        }
+      }
+    catch (err) {
+      if (err instanceof TypeError) {
+        console.log("caught TypeError, trying again")
+        await sleep(2000)
+        triesCounter++
       }
       else {
-        var interval, numPoints;
-        if (req.header("time") == "day") {
-          interval = "1h"
-          numPoints = 24
-        } else if (req.header("time") == "week"){
-          interval = "1d"
-          numPoints = 7
-        } else if (req.header("time") == "month") {
-          interval = "1d"
-          numPoints = 30
-        } else if (req.header("time") == "year") {
-          interval = "1w"
-          numPoints = 52 
-        }
-        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
-        res.status(200).json({"timescale": interval, "data": accountHistory})
+        console.log(err)
+        logger.log(String(err))
+        res.sendStatus(400)
+        break
       }
-    }
-  catch (err) {
-      console.log(err)
-      logger.log(String(err))
-      res.sendStatus(400)
+    } 
+
   }
 })
 
@@ -246,7 +288,9 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
   console.debug("/user/displayotheruserbyusername\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
-  try {
+  let triesCounter = 0;
+  while (triesCounter < 2) {
+    try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.header("otherWalletAddress")})
       if (user == null) {
         throw new Error('No users found')
@@ -268,12 +312,22 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
         }
         const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
         res.status(200).json({"timescale": interval, "data": accountHistory})
+        break
       }
     }
-  catch (err) {
-      console.log(err)
-      logger.log(String(err))
-      res.sendStatus(400)
+    catch (err) {
+      if (err instanceof TypeError) {
+        console.log("caught TypeError, trying again")
+        await sleep(2000)
+        triesCounter++
+      }
+      else {
+        console.log(err)
+        logger.log(String(err))
+        res.sendStatus(400)
+        break
+      }
+    } 
   }
 })
 
@@ -380,15 +434,27 @@ app.get("/user/getbalance", async (req, res) => {
   console.debug("/user/getbalance\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
-  try {
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      const balance = await getBalance(user.addresses[0])
-      res.status(200).json({"balance": balance})
-  }
-  catch (err) {
-      console.log(err)
-      logger.log(String(err))
-      res.sendStatus(400)
+  let triesCounter = 0;
+  while (triesCounter < 2) {
+    try {
+        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+        const balance = await getBalance(user.addresses[0])
+        res.status(200).json({"balance": balance})
+        break
+        }
+    catch (err) {
+      if (err instanceof TypeError) {
+        console.log("caught TypeError, trying again")
+        await sleep(2000)
+        triesCounter++
+      }
+      else {
+        console.log(err)
+        logger.log(String(err))
+        res.sendStatus(400)
+        break
+      }
+    } 
   }
 });
 
