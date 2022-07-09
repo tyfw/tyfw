@@ -87,7 +87,7 @@ public class LeaderboardFragment extends Fragment {
 
             LeaderboardRow firstItem = new LeaderboardRow();
             firstItem.setName("Username or wallet address");
-            firstItem.setValue("Change (%)");
+            firstItem.setValue("Change year-over-year (%)");
             itemsList.add(firstItem);
             adapter.notifyDataSetChanged();
 

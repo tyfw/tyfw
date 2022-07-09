@@ -2,6 +2,8 @@ package com.example.tyfw.ui.home;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
@@ -87,9 +90,13 @@ public class HomeFragment extends Fragment {
         currUser = view.findViewById(R.id.user);
         currWallet = view.findViewById(R.id.wallet);
 
+        lineChart.setNoDataText("Loading Wallet Data");
+        // https://stackoverflow.com/questions/30892275/mpandroidchart-change-message-no-chart-data-available
+        Paint p = lineChart.getPaint(Chart.PAINT_INFO);
+        p.setTextSize(64);
         try {
             setTimeOptions();
-            setChart();
+            // setChart();
         } catch (Exception e){
             Log.d(TAG,e.toString());
         }

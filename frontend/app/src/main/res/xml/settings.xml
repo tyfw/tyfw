@@ -18,6 +18,16 @@
         android:selectAllOnFocus="true"
         android:persistent="false"
         android:title="Change your last name" />
+
+    <Preference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="Logout"
+        android:key="Logout"
+        android:selectAllOnFocus="true"
+        android:persistent="false"
+        android:title="Logout" />
+
     <!--
     <SwitchPreferenceCompat
         app:key="notifications"

@@ -1,6 +1,7 @@
 package com.example.tyfw.ui.settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +18,15 @@ import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
+import com.example.tyfw.AuthActivity;
 import com.example.tyfw.R;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,9 +36,18 @@ enum FirstOrLast {
 }
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+    private GoogleApiClient googleApiClient;
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(getContext())
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
         Context context = getPreferenceManager().getContext();
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
@@ -115,6 +133,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Unable to change name", Toast.LENGTH_SHORT);
                 }
+                return true;
+            }
+        });
+
+        final Preference signOutPreference = getPreferenceManager().findPreference("Logout");
+        signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                GoogleSignInOptions gso = new GoogleSignInOptions.
+                        Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
+                        build();
+
+                GoogleSignInClient googleSignInClient=GoogleSignIn.getClient(context,gso);
+                googleSignInClient.signOut();
+
+                Toast.makeText(getContext(),"Logging out",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), AuthActivity.class);
+                startActivity(intent);
                 return true;
             }
         });
