@@ -133,12 +133,6 @@ public class LeaderboardFragment extends Fragment {
                     startActivity(intent);
                 }
             }
-
-            // TODO: make this a valid profile checker
-            private boolean isProfile(@NonNull String s){
-                Log.d(TAG, s);
-                return s.length() < 2;
-            }
         });
 
     }
