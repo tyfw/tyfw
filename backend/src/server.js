@@ -136,6 +136,12 @@ app.get("/user/leaderboard", async (req, res) => {
   try {
       var leaderboard = []
       const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      var user_balance = 0
+      for (let i = 0; i < user.addresses.length; i = i+1) {
+              var balance = await getBalance(user.addresses[i])
+        user_balance += balance
+      }
+      leaderboard.push({"user": user.username, "value": user_balance })
       for (let index in user.friends) {
         const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
         var total_balance = 0
@@ -275,7 +281,7 @@ app.post("/user/changename", async (req, res) => {
 
 app.get("/user/search", async (req, res) => {
   try {
-      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
+      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$and: [{$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}, {"email": {$not: {$regex: req.header("email")}}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
       if (queryMatches.length == 0) {
         throw new Error('No users found')
       }
@@ -316,6 +322,23 @@ app.post("/user/addbywalletaddress", async (req, res) => {
       }
       await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$addToSet: {friends: newFriend.email}})
       res.status(200).send("Success")
+  }
+  catch (err) {
+      console.log(err)
+      logger.log(String(err))
+      res.sendStatus(400)
+  }
+})
+
+app.get("/user/getwalletaddress", async (req, res) => {
+  try {
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.header("username")})
+      if (user == null) {
+        throw new Error('No users found')
+      }
+      else {
+        res.status(200).json({"addresses": user.addresses})
+      }
   }
   catch (err) {
       console.log(err)
