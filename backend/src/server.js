@@ -397,7 +397,7 @@ app.post("/user/addbyusername", async (req, res) => {
 })
 
 app.post("/user/addbywalletaddress", async (req, res) => {
-  console.debug("/user/search\n\
+  console.debug("/user/addbywalletaddress\n\
   Time: ", Date.now(), "\n\
   req.body: ", req.body)
   try {
