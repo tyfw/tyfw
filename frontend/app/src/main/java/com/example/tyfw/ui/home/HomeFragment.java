@@ -162,14 +162,18 @@ public class HomeFragment extends Fragment {
         }
 
         JSONObject serverResponse = getBalance.getValue();
-        Log.d(TAG, serverResponse.toString());
-        try {
-            DecimalFormat df = new DecimalFormat("0.00");
-            currVal.setText(df.format(serverResponse.getDouble("balance"))+ " USD");
-        } catch (JSONException e) {
-            currVal.setText("?");
-            Toast.makeText(getContext(), "Unable to retrieve current value from server",Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+        if (serverResponse == null) {
+            Toast.makeText(getContext(), "Unable to get balance", Toast.LENGTH_SHORT);
+        } else {
+            Log.d(TAG, serverResponse.toString());
+            try {
+                DecimalFormat df = new DecimalFormat("0.00");
+                currVal.setText(df.format(serverResponse.getDouble("balance"))+ " USD");
+            } catch (JSONException e) {
+                currVal.setText("?");
+                Toast.makeText(getContext(), "Unable to retrieve current value from server",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
         }
     }
 
@@ -386,6 +390,55 @@ public class HomeFragment extends Fragment {
         private String url = "http://34.105.106.85:8081/user/getuser/";
 
         public GetUser(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    int errorCode = error.getErrorCode();
+                    if (errorCode == 400) {
+                        Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT);
+                    }
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        public JSONObject getValue() {
+            return value;
+        }
+    }
+
+    class GetBalance implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private JSONObject jsonObject;
+        private String url = "http://34.105.106.85:8081/user/getbalance/";
+
+        public GetBalance(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 

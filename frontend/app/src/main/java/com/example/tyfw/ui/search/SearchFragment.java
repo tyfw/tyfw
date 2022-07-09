@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -69,11 +70,10 @@ public class SearchFragment extends Fragment {
             }
             JSONObject serverResponse = getSearch.getValue();
             Log.e("a", String.valueOf(serverResponse));
+
             if (serverResponse == null) {
-                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                searchResultsActivity.putExtra("queryString", "");
-                searchResultsActivity.putExtra("serverResponse", "");
-                startActivity(searchResultsActivity);
+                Toast.makeText(getContext(), "Unable to get search results, please try again", Toast.LENGTH_SHORT);
+                return;
             }
             if (serverResponse.length() > 0) {
                 Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);

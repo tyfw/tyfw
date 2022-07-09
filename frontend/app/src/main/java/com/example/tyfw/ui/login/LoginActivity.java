@@ -29,6 +29,7 @@ import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.databinding.ActivityLoginBinding;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -161,11 +162,14 @@ public class LoginActivity extends AppCompatActivity {
 
         JSONObject jsonObject = new JSONObject();
         try {
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(walletAddress);
+
             jsonObject.put("email", config.getEmail());
             jsonObject.put("username", username);
             jsonObject.put("firstName", firstName);
             jsonObject.put("lastName", lastName);
-            jsonObject.put("walletAddress", walletAddress);
+            jsonObject.put("walletAddress", jsonArray);
             jsonObject.put("googleIdToken", config.getGoogleIdToken());
         } catch (JSONException e) {
             e.printStackTrace();
