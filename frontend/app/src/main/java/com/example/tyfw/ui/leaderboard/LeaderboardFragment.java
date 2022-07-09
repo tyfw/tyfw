@@ -125,7 +125,6 @@ public class LeaderboardFragment extends Fragment {
                     item = (LeaderboardRow) adapterView.getItemAtPosition(i);
 
                     Intent intent;
-
                     intent = new Intent(getActivity(), ProfileActivity.class);
                     intent.putExtra("username", item.getName());
                     intent.putExtra("walletAddress", item.getAddress());
@@ -134,7 +133,6 @@ public class LeaderboardFragment extends Fragment {
                 }
             }
         });
-
     }
 
     @Override
