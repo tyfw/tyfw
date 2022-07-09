@@ -175,7 +175,7 @@ public class HomeFragment extends Fragment {
 
         JSONObject serverResponse = getBalance.getValue();
         if (serverResponse == null) {
-            Toast.makeText(getContext(), "Unable to get balance, you might be rate limited ", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Unable to get balance, you might be rate limited ", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, serverResponse.toString());
             try {
@@ -339,7 +339,7 @@ public class HomeFragment extends Fragment {
             }
             return true;
         } else {
-            Toast.makeText(getContext(), "Unable to load data, you might be rate limited.", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Unable to load data, you might be rate limited.", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
@@ -383,13 +383,14 @@ public class HomeFragment extends Fragment {
         }
 
         private void errorResponse(Exception e){
+            //TODO: @Dryden this is where I put in the empty array FE handling
             value = new JSONObject();
             try {
                 value.putOpt("data", new JSONArray());
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
-            Toast.makeText(getContext(), "Unable to load data for this time option. Please try again.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getContext(), "Unable to load data for this time option. Please try again.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
@@ -423,7 +424,7 @@ public class HomeFragment extends Fragment {
                     ANError error = response.getError();
                     int errorCode = error.getErrorCode();
                     if (errorCode == 400) {
-                        Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT);
+                        Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT).show();
                     }
                     errorResponse(error);
                 }
