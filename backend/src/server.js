@@ -419,6 +419,31 @@ app.post("/user/addbywalletaddress", async (req, res) => {
   }
 })
 
+
+app.get("/user/getfirstname", async (req, res) => {
+  try {
+        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      res.status(200).send(user.firstname)
+
+  }
+  catch (err) {
+      console.log(err)
+      res.sendStatus(400)
+  }
+})
+
+app.get("/user/getlastname", async (req, res) => {
+  try {
+        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      res.status(200).send(user.lastname)
+
+  }
+  catch (err) {
+      console.log(err)
+      res.sendStatus(400)
+  }
+})
+
 app.get("/user/getwalletaddress", async (req, res) => {
   try {
       const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.header("username")})
