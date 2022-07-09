@@ -7,13 +7,9 @@ public class LeaderboardRow {
 
     private String name;
     private String value;
+    private String walletAddress;
 
     public LeaderboardRow() {
-    }
-
-    public LeaderboardRow(String name, String value) {
-        this.name = name;
-        this.value = value;
     }
 
     public String getName() { return name; }
@@ -27,5 +23,12 @@ public class LeaderboardRow {
     }
 
     public void setValue(String value) { this.value = value; }
+
+    public String getAddress() {
+        return walletAddress;
+    }
+
+    public void setAddress(String walletAddress) { this.walletAddress = walletAddress; }
+
 
 }

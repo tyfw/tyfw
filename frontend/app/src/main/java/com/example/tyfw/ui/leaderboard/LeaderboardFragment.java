@@ -22,9 +22,9 @@ import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
-import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
+import com.example.tyfw.utils.SearchResultsRow;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,9 +97,9 @@ public class LeaderboardFragment extends Fragment {
                     LeaderboardRow items = new LeaderboardRow();
                     items.setName(currFriend.getString("user"));
                     items.setValue(df.format(currFriend.getDouble("value")) + "%");
+                    items.setAddress(currFriend.getString("address"));
                     itemsList.add(items);
                     adapter.notifyDataSetChanged();
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Unable to access leaderboard element", Toast.LENGTH_SHORT);
@@ -119,19 +119,19 @@ public class LeaderboardFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i != 0){
+                    LeaderboardRow item;
 
-                String item = adapterView.getItemAtPosition(i).toString();
+                    item = (LeaderboardRow) adapterView.getItemAtPosition(i);
 
-                Intent intent;
-                if (isProfile(item)){
+                    Intent intent;
+
                     intent = new Intent(getActivity(), ProfileActivity.class);
-                    intent.putExtra("username", item);
-                } else {
-                    intent = new Intent(getActivity(), WalletProfileActivity.class);
-                    intent.putExtra("walletAddress", item);
-                }
-                startActivity(intent);
+                    intent.putExtra("username", item.getName());
+                    intent.putExtra("walletAddress", item.getAddress());
 
+                    startActivity(intent);
+                }
             }
 
             // TODO: make this a valid profile checker

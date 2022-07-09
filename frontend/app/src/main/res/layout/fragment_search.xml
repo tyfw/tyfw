@@ -17,6 +17,7 @@
         android:layout_marginTop="128dp"
         android:hint="@string/prompt_search"
         android:inputType="textPersonName"
+        android:minHeight="48dp"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
