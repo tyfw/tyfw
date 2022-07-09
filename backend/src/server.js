@@ -182,7 +182,7 @@ app.get("/user/leaderboard", async (req, res) => {
       }
     }
   }
-  console.log("All retries used. Failed to get leaderboard")
+  console.log("All retries used. Failed.")
   res.sendStatus(400)
 })
   
@@ -231,7 +231,7 @@ app.get("/user/displaycurruser", async (req, res) => {
       }
     } 
   }
-  console.log("All retries used. Failed to get leaderboard")
+  console.log("All retries used. Failed.")
   res.sendStatus(400)
 })
 
@@ -280,7 +280,7 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
       }
     } 
   }
-  console.log("All retries used. Failed to get leaderboard")
+  console.log("All retries used. Failed.")
   res.sendStatus(400)
 })
 
@@ -382,6 +382,9 @@ app.post("/user/addbyusername", async (req, res) => {
       if (newFriend == null) {
         throw new Error('No User with this username')
       }
+      else if (newFriend.email == req.body.email) {
+        throw new Error('User cannot add themself')
+      }
       await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$addToSet: {friends: newFriend.email}})
       res.status(200).send("Success")
   }
@@ -402,6 +405,9 @@ app.post("/user/addbywalletaddress", async (req, res) => {
       const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.body.friendWalletAddress})
       if (newFriend == null) {
         throw new Error('No User with this wallet address')
+      }
+      else if (newFriend.email == req.body.email) {
+        throw new Error('User cannot add themself')
       }
       await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$addToSet: {friends: newFriend.email}})
       res.status(200).send("Success")
@@ -460,7 +466,7 @@ app.get("/user/getbalance", async (req, res) => {
       }
     } 
   }
-  console.log("All retries used. Failed to get leaderboard")
+  console.log("All retries used. Failed.")
   res.sendStatus(400)
 });
 
