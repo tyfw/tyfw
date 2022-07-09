@@ -8,10 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
@@ -23,17 +23,15 @@ import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
-import com.example.tyfw.ui.login.LoginActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class SearchFragment extends Fragment {
+
+    private String TAG = "SEARCH";
 
     private FragmentSearchBinding binding;
     private Button search_button;
@@ -50,11 +48,13 @@ public class SearchFragment extends Fragment {
         search_button.setOnClickListener(v -> {
             String queryString = search_input.getText().toString();
 
+            Log.d(TAG,queryString);
             App config = (App) getContext().getApplicationContext();
 
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("queryString", queryString);
+                jsonObject.put("email", config.getEmail());
                 jsonObject.put("googleIdToken", config.getGoogleIdToken());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -70,27 +70,21 @@ public class SearchFragment extends Fragment {
             }
             JSONObject serverResponse = getSearch.getValue();
             Log.e("a", String.valueOf(serverResponse));
-            try {
-                if (serverResponse == null) {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", "");
-                    searchResultsActivity.putExtra("serverResponse", "");
-                    startActivity(searchResultsActivity);
-                }
-                Log.e("a", String.valueOf(serverResponse.getJSONArray("queryMatches").length()));
-                if (serverResponse.length() > 0) {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", queryString);
-                    searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
-                    startActivity(searchResultsActivity);
-                } else {
-                    Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
-                    searchResultsActivity.putExtra("queryString", queryString);
-                    searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
-                    startActivity(searchResultsActivity);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+            if (serverResponse == null) {
+                Toast.makeText(getContext(), "Unable to get search results, please try again", Toast.LENGTH_SHORT);
+                return;
+            }
+            if (serverResponse.length() > 0) {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", queryString);
+                searchResultsActivity.putExtra("serverResponse", serverResponse.toString());
+                startActivity(searchResultsActivity);
+            } else {
+                Intent searchResultsActivity = new Intent(getActivity(), SearchResultsActivity.class);
+                searchResultsActivity.putExtra("queryString", queryString);
+                searchResultsActivity.putExtra("serverResponse", (new JSONArray()).toString());
+                startActivity(searchResultsActivity);
             }
         });
 
@@ -116,6 +110,7 @@ public class SearchFragment extends Fragment {
             try {
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("queryString", jsonObject.getString("queryString"))
+                        .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
                         .setPriority(Priority.MEDIUM)
                         .build();

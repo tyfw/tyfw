@@ -18,7 +18,7 @@
         android:selectAllOnFocus="true"
         android:persistent="false"
         android:title="Change your last name" />
-
+    <!--
     <SwitchPreferenceCompat
         app:key="notifications"
         app:enabled="false"
@@ -28,5 +28,5 @@
         app:key="feedback"
         app:title="Send feedback"
         app:summary="Report technical issues or suggest new features"/>
-
+       -->
 </PreferenceScreen>

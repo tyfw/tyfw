@@ -55,7 +55,6 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    // A placeholder username validation check
     private boolean isFirstNameValid(String firstName) {
         if (firstName == null) {
             return false;
@@ -72,14 +71,15 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    // A placeholder password validation check
     private boolean isEmailValid(String email) {
         return email != null && email.trim().length() > 5 && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    // A placeholder wallet address validation check
-    // TODO: implement this logic
-    private boolean isWalletAddressValid(String email) {
-        return true;
+    private boolean isWalletAddressValid(String walletAddress ) {
+        if (walletAddress.length() > 2) {
+            return walletAddress.length() == 42 && walletAddress.startsWith("0x");
+        } else {
+            return false;
+        }
     }
 }

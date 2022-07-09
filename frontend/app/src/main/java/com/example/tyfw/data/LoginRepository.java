@@ -7,7 +7,7 @@ import com.example.tyfw.data.model.LoggedInUser;
  * maintains an in-memory cache of login status and user credentials information.
  */
 public class LoginRepository {
-
+    // Set from Google Android defaults
     private static volatile LoginRepository instance;
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
