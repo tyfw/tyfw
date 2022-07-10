@@ -79,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         try {
             setTimeOptions();
-            setChart();
+            // setChart();
         } catch (Exception e){
             Log.d(TAG,e.toString());
         }
@@ -234,7 +234,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(),"Unable load user profile, please try again.", Toast.LENGTH_LONG).show();
             return false;
         }
-        Log.d(TAG, serverResponse.toString());
+        Log.e(TAG, serverResponse.toString());
 
         JSONArray data = new JSONArray();
         try {

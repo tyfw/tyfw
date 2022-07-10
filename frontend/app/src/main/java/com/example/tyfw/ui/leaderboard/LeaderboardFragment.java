@@ -165,6 +165,7 @@ public class LeaderboardFragment extends Fragment {
                 } else {
                     // handle error
                     ANError error = response.getError();
+                    Log.e("Leaderboard", String.valueOf(error.getErrorCode()));
                     error.printStackTrace();
                 }
             } catch (JSONException e) {
