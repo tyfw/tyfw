@@ -20,7 +20,9 @@ import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
+import com.example.tyfw.MainActivity;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
+import com.example.tyfw.ui.home.HomeFragment;
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LeaderboardFragment extends Fragment {
     // This code is taken from and adapted from (this includes relevant .xml files):
@@ -123,12 +126,29 @@ public class LeaderboardFragment extends Fragment {
 
                     item = (LeaderboardRow) adapterView.getItemAtPosition(i);
 
-                    Intent intent;
-                    intent = new Intent(getActivity(), ProfileActivity.class);
-                    intent.putExtra("username", item.getName());
-                    intent.putExtra("walletAddress", item.getAddress());
+                    App config = (App) getActivity().getApplicationContext();
 
-                    startActivity(intent);
+                    if (!(config.getUsername() == null)) {
+                        if (Objects.equals(config.getUsername(), item.getName())){
+                            Intent intent;
+                            intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Log.e("ehre", config.getUsername());
+                            Log.e("ehre", item.getName());
+                            Intent intent;
+                            intent = new Intent(getActivity(), ProfileActivity.class);
+                            intent.putExtra("username", item.getName());
+                            intent.putExtra("walletAddress", item.getAddress());
+                            startActivity(intent);
+                        }
+                    } else {
+                        Intent intent;
+                        intent = new Intent(getActivity(), ProfileActivity.class);
+                        intent.putExtra("username", item.getName());
+                        intent.putExtra("walletAddress", item.getAddress());
+                        startActivity(intent);
+                    }
                 }
             }
         });

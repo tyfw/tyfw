@@ -144,6 +144,8 @@ public class HomeFragment extends Fragment {
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
             currWallet.setText(addr.get(0).toString());
+
+            config.setUsername(user.getString("username"));
         } catch (JSONException e) {
             currUser.setText("null");
             currWallet.setText("null");
