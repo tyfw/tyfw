@@ -15,7 +15,7 @@ const client = new Spot(
 );
 
 // load api keys from .env file
-require("dotenv").config();
+require("dotenv").config({path: '../.env'});
 
 // axios for fetching from etherscan
 const axios = require("axios");
