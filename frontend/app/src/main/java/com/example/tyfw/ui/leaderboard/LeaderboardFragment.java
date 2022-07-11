@@ -98,8 +98,14 @@ public class LeaderboardFragment extends Fragment {
                 try {
                     JSONObject currFriend = serverResponse.getJSONObject(i);
                     LeaderboardRow items = new LeaderboardRow();
+
+                    try{
+                        items.setValue(df.format(currFriend.getDouble("value")) + "%");
+                    } catch (JSONException e) {
+                        items.setValue(df.format(0.0) + "%");
+                    }
+
                     items.setName(currFriend.getString("user"));
-                    items.setValue(df.format(currFriend.getDouble("value")) + "%");
                     items.setAddress(currFriend.getString("address"));
                     itemsList.add(items);
                     adapter.notifyDataSetChanged();
