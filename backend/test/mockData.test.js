@@ -21,16 +21,10 @@ const mockDataModule = {
         ]);
     }),
     getEthPrice: jest.fn(() => {
-        return Promise.resolve([
-            {time: "1616805252", value: 1195.26},
-            {time: "1616805253", value: 1113.07},
-        ]);
+        return Promise.resolve(1195.26);
     }),
     getERC20Price: jest.fn((token_address) => {
-        return Promise.resolve([
-            {time: "1616805252", value: 195.26},
-            {time: "1616805253", value: 113.07},
-        ]);
+        return Promise.resolve(1195.26);
     }),
     getAccountHistory: jest.fn((address, interval, numPoints, startTime, endTime) => {
         return Promise.resolve([
@@ -76,18 +70,12 @@ test("test mockGetPriceHistory", async () => {
 
 test("test mockGetEthPrice", async () => {
     const history = await mockDataModule.getEthPrice();
-    expect(history).toStrictEqual([
-        {time: "1616805252", value: 1195.26},
-        {time: "1616805253", value: 1113.07},
-    ]);
+    expect(history).toStrictEqual(1195.26);
 });
 
 test("test mockGetERC20Price", async () => {
     const history = await mockDataModule.getERC20Price("0x12345");
-    expect(history).toStrictEqual([
-        {time: "1616805252", value: 195.26},
-        {time: "1616805253", value: 113.07},
-    ]);
+    expect(history).toStrictEqual(1195.26);
 });
 
 test("test mockGetAccountHistory", async () => {
