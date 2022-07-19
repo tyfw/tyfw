@@ -22,6 +22,9 @@
             android:name=".AiPredictionActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.social.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.profile.WalletProfileActivity"
             android:exported="false" />
         <activity
