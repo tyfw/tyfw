@@ -26,7 +26,7 @@ const mockDataModule = {
     getERC20Price: jest.fn((token_address) => {
         return Promise.resolve(1195.26);
     }),
-    getAccountHistory: jest.fn((address, interval, numPoints, startTime, endTime) => {
+  getAccountHistory: jest.fn(
         return Promise.resolve([
             0.010188593518029595,
             0.010188593518029597,
