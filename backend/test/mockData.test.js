@@ -2,13 +2,13 @@ const mockDataModule = {
   getBalance: jest.fn((address) => {
     return Promise.resolve(12.34);
     }),
-    getEthBalance: jest.fn((address) => {
+  getEthBalance: jest.fn((address) => {
         return Promise.resolve(0.001234);
     }),
     getERC20Balance: jest.fn((token_address, wallet_address) => {
         return Promise.resolve(0.001234);
     }),
-    getTransactionHistory: jest.fn((wallet_address) => {
+  getTransactionHistory: jest.fn((wallet_address) => {
         return Promise.resolve([
             {time: "1616805252", value: 0.010188593518029595},
             {time: "1616805253", value: 0.010188593518029597},
@@ -16,12 +16,12 @@ const mockDataModule = {
     }),
     getPriceHistory: jest.fn((price_abv, interval, options) => {
         return Promise.resolve([
-            {time: "1616805252", value: 1195.26},
+      { time: "1616805252", value: 1195.26 },
             {time: "1616805253", value: 1113.07},
         ]);
     }),
   getEthPrice: jest.fn(() => {
-        return Promise.resolve(1195.26);
+    return Promise.resolve(1195.26);
     }),
     getERC20Price: jest.fn((token_address) => {
         return Promise.resolve(1195.26);
@@ -33,7 +33,7 @@ const mockDataModule = {
         ]);
     }),
     getYearPercentReturn: jest.fn((address) => {
-        return Promise.resolve(1.23);
+    return Promise.resolve(1.23);
     }),
 };
 
@@ -44,7 +44,7 @@ test("test mockGetBalance", async () => {
 
 test("test mockGetEthBalance", async () => {
     const balance = await mockDataModule.getEthBalance("0x12345");
-    expect(balance).toBe(0.001234);
+  expect(balance).toBe(0.001234);
 });
 
 test("test mockGetERC20Balance", async () => {
