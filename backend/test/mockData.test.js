@@ -12,7 +12,7 @@ const mockDataModule = {
         return Promise.resolve([
             {time: "1616805252", value: 0.010188593518029595},
             {time: "1616805253", value: 0.010188593518029597},
-        ]);
+    ]);
     }),
     getPriceHistory: jest.fn((price_abv, interval, options) => {
         return Promise.resolve([
