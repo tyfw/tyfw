@@ -20,7 +20,7 @@ const mockDataModule = {
             {time: "1616805253", value: 1113.07},
         ]);
     }),
-    getEthPrice: jest.fn(() => {
+  getEthPrice: jest.fn(() => {
         return Promise.resolve(1195.26);
     }),
     getERC20Price: jest.fn((token_address) => {
