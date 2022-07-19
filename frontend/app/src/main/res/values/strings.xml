@@ -34,8 +34,7 @@
     <string name="follow_wallet_button">Follow</string>
     <string name="time_opt_default">Choose a time range</string>
 
-    <string-array
-        name="time_options">
+    <string-array name="time_options">
         <item>Today</item>
         <item>Last Week</item>
         <item>Last Month</item>
