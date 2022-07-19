@@ -38,7 +38,7 @@ const mockDataModule = {
 };
 
 test("test mockGetBalance", async () => {
-    const balance = await mockDataModule.getBalance("0x12345");
+  const balance = await mockDataModule.getBalance("0x12345");
     expect(balance).toBe(12.34);
 });
 
