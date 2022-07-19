@@ -1,5 +1,5 @@
 const mockDataModule = {
-    getBalance: jest.fn((address) => {
+  getBalance: jest.fn((address) => {
     return Promise.resolve(12.34);
     }),
     getEthBalance: jest.fn((address) => {
