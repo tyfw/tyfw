@@ -7,12 +7,12 @@ import java.util.UUID;
  */
 public class LoggedInUser {
 
-    private String username;
-    private String walletAddress;
-    private String firstName;
-    private String lastName;
+    private final String username;
+    private final String walletAddress;
+    private final String firstName;
+    private final String lastName;
     private String googleIdToken;
-    private String email;
+    private final String email;
     private UUID uuid;
 
     public LoggedInUser(String username, String walletAddress, String firstName, String lastName, String email) {

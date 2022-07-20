@@ -74,9 +74,8 @@ public class HomeFragment extends Fragment {
         AndroidNetworking.initialize(getContext(), okHttpClient);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-       return root;
+        return binding.getRoot();
     }
 
 
@@ -209,7 +208,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            parent.setSelection(0);   // Enforce a default selection when nothing is selected
         }
     }
 
@@ -344,19 +343,11 @@ public class HomeFragment extends Fragment {
         }
         return false;
     }
-
-    private void setCustom(boolean val){
-        lineChart.setTouchEnabled(val);
-        lineChart.setDragEnabled(val);
-        lineChart.setPinchZoom(val);
-        lineChart.setScaleEnabled(val);
-    }
-
+    
     class GetHome implements Runnable {
         final static String TAG = "GetHomeRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/displaycurruser/";
+        private final JSONObject jsonObject;
 
         public GetHome(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -364,6 +355,7 @@ public class HomeFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/displaycurruser/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("time", jsonObject.getString("time"))
@@ -403,8 +395,7 @@ public class HomeFragment extends Fragment {
     class GetUser implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/getuser/";
+        private final JSONObject jsonObject;
 
         public GetUser(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -412,6 +403,7 @@ public class HomeFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/getuser/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .build();
@@ -449,11 +441,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class GetBalance implements Runnable {
+    static class GetBalance implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/getbalance/";
+        private final JSONObject jsonObject;
 
         public GetBalance(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -461,6 +452,7 @@ public class HomeFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/getbalance/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .build();
