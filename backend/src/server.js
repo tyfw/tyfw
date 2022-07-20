@@ -107,7 +107,7 @@ app.post("/user/authenticate", async (req, res) => {
     
     if (existingUser == null) {
       console.log("User not found")
-      res.sendStatus(201)
+      res.sendStatus(404)
       return;
     }
     res.sendStatus(200)
@@ -342,7 +342,17 @@ app.post("/user/changename", async (req, res) => {
 app.get("/user/search", async (req, res) => {
   console.debug("/user/search\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   try {
-      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$and: [{$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}, {"email": {$not: {$regex: req.header("email")}}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
+      var query = {
+        $and : [
+          {"email": {$not: {$regex: req.header("email")}}},
+          {$or:[
+            {"username": {$regex: req.header("queryString"), $options: "$i"}},
+            {"addresses": {$regex: req.header("queryString"), $options: "$i"}}
+          ]}
+        ]
+      }
+      const queryMatches = await mongo_client.db("tyfw").collection("users").find(query).project({username: 1, addresses: 1, _id: 0}).toArray()
+
       if (queryMatches.length == 0) {
         throw new Error('No users found')
       }
