@@ -49,12 +49,12 @@ async function run() {
     } catch(err) {
         console.log(err)
         await mongo_client.close()
-    }
+    } 
   }
 
 // Google User Auth
-const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
-const { getBalance, getEthBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
+const {OAuth2Client} = require('google-auth-library');
+const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -67,6 +67,9 @@ async function googleAuthVerify(token) {
         audience: CLIENT_ID,
     });
     // TODO: Check if more info from the ticket needs to be validated
+    const payload = ticket.getPayload();
+    const userid = payload['sub']
+    console.log("User ID: %s", userid)
     return true
 
   } catch (err) {
@@ -143,41 +146,27 @@ app.post("/user/register", async (req, res) => {
 
 app.get("/user/leaderboard", async (req, res) => {
   console.debug("/user/leaderboard\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
-    try {
-      var leaderboard = []
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      const user_year_return = await getYearPercentReturn(user.addresses[0])
-      leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_year_return})
-      for (let index in user.friends) {
-        const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
-        var year_return = await getYearPercentReturn(friend.addresses[0])
-        leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
-        leaderboard.sort((a, b) => {
-          if (a.value > b.value) return -1
-          else return 1
-        })
-      }
-      res.status(200).send(leaderboard)
-      return
+  try {
+    var leaderboard = []
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    const user_year_return = await getYearPercentReturn(user.addresses[0])
+    leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_year_return})
+    for (let index in user.friends) {
+      const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
+      var year_return = await getYearPercentReturn(friend.addresses[0])
+      leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
+      leaderboard.sort((a, b) => {
+        if (a.value > b.value) return -1
+        else return 1
+      })
     }
-    catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
-      }
-      else {
-        console.log(err)
-        logger.log(String(err))
-        res.sendStatus(400)
-        return
-      }
+    res.status(200).send(leaderboard)
     }
-  }
-  console.log("All retries used. Failed.")
-  res.sendStatus(400)
+  catch (err) {
+      console.log(err)
+      logger.log(String(err))
+      res.sendStatus(400)
+    }
 })
   
 app.get("/user/displaycurruser", async (req, res) => {
