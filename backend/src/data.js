@@ -105,8 +105,8 @@ const getAccountHistory = async (address, interval, numPoints, startTime, endTim
   if (!interval) interval = "1d";
   let ethBalance = await getEthBalance(address);
   let priceHistory = await getPriceHistory("ETHUSDC", interval, {
-    startTime: startTime,
-    endTime: endTime,
+    startTime,
+    endTime,
     limit: numPoints,
   });
   priceHistory = priceHistory.reverse();
@@ -142,10 +142,11 @@ const getYearPercentReturn = async (address) => {
 };
 
 module.exports = {
-  getEthBalance: getEthBalance,
-  getBalance: getBalance,
-  getTransactionHistory: getTransactionHistory,
-  getERC20Price: getERC20Price,
-  getAccountHistory: getAccountHistory,
-  getYearPercentReturn: getYearPercentReturn,
+  getEthBalance,
+  getBalance,
+  getTransactionHistory,
+  getERC20Price,
+  getERC20Balance,
+  getAccountHistory,
+  getYearPercentReturn,
 };
