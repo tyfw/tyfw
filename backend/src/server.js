@@ -49,12 +49,12 @@ async function run() {
     } catch(err) {
         console.log(err)
         await mongo_client.close()
-    }
+    } 
   }
 
 // Google User Auth
-const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
-const { getBalance, getEthBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
+const {OAuth2Client} = require('google-auth-library');
+const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -67,6 +67,9 @@ async function googleAuthVerify(token) {
         audience: CLIENT_ID,
     });
     // TODO: Check if more info from the ticket needs to be validated
+    const payload = ticket.getPayload();
+    const userid = payload['sub']
+    console.log("User ID: %s", userid)
     return true
 
   } catch (err) {
@@ -107,7 +110,7 @@ app.post("/user/authenticate", async (req, res) => {
     
     if (existingUser == null) {
       console.log("User not found")
-      res.sendStatus(201)
+      res.sendStatus(404)
       return;
     }
     res.sendStatus(200)
@@ -143,41 +146,27 @@ app.post("/user/register", async (req, res) => {
 
 app.get("/user/leaderboard", async (req, res) => {
   console.debug("/user/leaderboard\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
-    try {
-      var leaderboard = []
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      const user_year_return = await getYearPercentReturn(user.addresses[0])
-      leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_year_return})
-      for (let index in user.friends) {
-        const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
-        var year_return = await getYearPercentReturn(friend.addresses[0])
-        leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
-        leaderboard.sort((a, b) => {
-          if (a.value > b.value) return -1
-          else return 1
-        })
-      }
-      res.status(200).send(leaderboard)
-      return
+  try {
+    var leaderboard = []
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    const user_year_return = await getYearPercentReturn(user.addresses[0])
+    leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_year_return})
+    for (let index in user.friends) {
+      const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
+      var year_return = await getYearPercentReturn(friend.addresses[0])
+      leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
+      leaderboard.sort((a, b) => {
+        if (a.value > b.value) return -1
+        else return 1
+      })
     }
-    catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
-      }
-      else {
-        console.log(err)
-        logger.log(String(err))
-        res.sendStatus(400)
-        return
-      }
+    res.status(200).send(leaderboard)
     }
-  }
-  console.log("All retries used. Failed.")
-  res.sendStatus(400)
+  catch (err) {
+      console.log(err)
+      logger.log(String(err))
+      res.sendStatus(400)
+    }
 })
   
 app.get("/user/displaycurruser", async (req, res) => {
@@ -342,7 +331,17 @@ app.post("/user/changename", async (req, res) => {
 app.get("/user/search", async (req, res) => {
   console.debug("/user/search\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   try {
-      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$and: [{$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}, {"email": {$not: {$regex: req.header("email")}}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
+      var query = {
+        $and : [
+          {"email": {$not: {$regex: req.header("email")}}},
+          {$or:[
+            {"username": {$regex: req.header("queryString"), $options: "$i"}},
+            {"addresses": {$regex: req.header("queryString"), $options: "$i"}}
+          ]}
+        ]
+      }
+      const queryMatches = await mongo_client.db("tyfw").collection("users").find(query).project({username: 1, addresses: 1, _id: 0}).toArray()
+
       if (queryMatches.length == 0) {
         throw new Error('No users found')
       }
