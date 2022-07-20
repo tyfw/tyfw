@@ -3,6 +3,7 @@ package com.example.tyfw.ui.profile;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,18 +41,13 @@ import java.util.ArrayList;
 
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView usernameTextView;
-    private TextView walletAddr;
 
-    private ImageView profilePic;
     private LineChart lineChart;
     private Spinner dropdown;
     private String username;
-    private String walletName;
     private static String timeOption = "";
 
-    private String TAG = "Profile";
-    private MaterialButton friend;
+    private final String TAG = "Profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,20 +55,20 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         username = getIntent().getStringExtra("username");
-        walletName = getIntent().getStringExtra("walletAddress");
+        String walletName = getIntent().getStringExtra("walletAddress");
 
-        usernameTextView = findViewById(R.id.profile_username);
+        TextView usernameTextView = findViewById(R.id.profile_username);
         usernameTextView.setText(username);
 
-        walletAddr = findViewById(R.id.wallet_address);
+        TextView walletAddr = findViewById(R.id.wallet_address);
         walletAddr.setText(walletName);
 
-        profilePic = (ImageView) findViewById(R.id.profile_default_pic);
+        ImageView profilePic = (ImageView) findViewById(R.id.profile_default_pic);
         profilePic.setImageResource(R.drawable.ic_baseline_people_24);
         profilePic.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
 
         dropdown = findViewById(R.id.profile_graph_options);
-        friend = findViewById(R.id.friend_button);
+        MaterialButton friend = findViewById(R.id.friend_button);
 
         // THIS WAS CAUSING THE CRASHES
         lineChart = findViewById(R.id.wallet_chart);
@@ -85,6 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         friend.addOnCheckedChangeListener(new MaterialButton.OnCheckedChangeListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onCheckedChanged(MaterialButton button, boolean isChecked) {
                 App config = (App) getApplicationContext();
@@ -107,8 +104,8 @@ public class ProfileActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                Boolean serverResponse = addFriend.success();
-                Log.d(TAG, serverResponse.toString());
+                boolean serverResponse = addFriend.success();
+                Log.d(TAG, Boolean.toString(serverResponse));
 
                 if (isChecked){
                     if (serverResponse){
@@ -142,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            parent.setSelection(0);
         }
     }
 
@@ -153,10 +150,8 @@ public class ProfileActivity extends AppCompatActivity {
         ArrayList<Entry> yAxis = new ArrayList<>(); // each index contains data point
         // Assuming xAxis and yAxis are set:
         //TODO: make a better way of reloading
-        if (!updateData(xData,yAxis)){
-            // Toast.makeText(getBaseContext(),"Unable load data for this option. Please try again.", Toast.LENGTH_LONG).show();
-            return;
-        }
+        updateData(xData,yAxis);
+
 
         ArrayList<ILineDataSet> lineData = new ArrayList<>();
         LineDataSet yData = new LineDataSet(yAxis, "Value");
@@ -187,7 +182,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
-    private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
+    private void updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
         String timeScale = "";
         switch (timeOption) {
             case "Today":
@@ -202,7 +197,7 @@ public class ProfileActivity extends AppCompatActivity {
             case "Last Year":
                 timeScale = "year";
                 break;
-            case "":
+            default:
                 timeScale = "";
                 break;
         }
@@ -230,10 +225,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         JSONObject serverResponse = getProfile.getValue();
-        if (serverResponse == null) {
-            Toast.makeText(getBaseContext(),"Unable load user profile, please try again.", Toast.LENGTH_LONG).show();
-            return false;
-        }
         Log.e(TAG, serverResponse.toString());
 
         JSONArray data = new JSONArray();
@@ -243,28 +234,25 @@ public class ProfileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if (data.length() > 0){
-            for (int i =0; i< data.length(); i++) {
-                Entry val;
-                try {
-                    val = new Entry(i,  (float) data.getDouble(i));
-                } catch (JSONException e) {
-                    val = new Entry();
-                    e.printStackTrace();
-                }
+
+        for (int i =0; i< data.length(); i++) {
+            Entry val;
+            try {
+                val = new Entry(i,  (float) data.getDouble(i));
+            } catch (JSONException e) {
+                val = new Entry();
+                e.printStackTrace();
+            }
                 yAxis.add(val);
                 xAxis.add(String.valueOf(i));
             }
-            return true;
-        }
-        return false;
     }
+
 
     class GetProfile implements Runnable {
         final static String TAG = "GetProfileRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/displayotheruserbyusername/";
+        private final JSONObject jsonObject;
 
         public GetProfile(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -272,6 +260,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/displayotheruserbyusername/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("otherUsername", jsonObject.getString("friendUsername"))
                         .addHeaders("time", jsonObject.getString("time"))
@@ -308,17 +297,17 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    class AddFriend implements Runnable {
+    static class AddFriend implements Runnable {
         final static String TAG = "GetProfileRunnable";
         private boolean value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/addbyusername/";
+        private final JSONObject jsonObject;
 
         public AddFriend(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/addbyusername/";
             ANRequest request = AndroidNetworking.post(url)
                     .addJSONObjectBody(jsonObject)
                     .setPriority(Priority.MEDIUM)

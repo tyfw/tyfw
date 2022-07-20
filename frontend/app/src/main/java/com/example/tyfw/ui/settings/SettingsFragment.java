@@ -36,7 +36,6 @@ enum FirstOrLast {
 }
 
 public class SettingsFragment extends PreferenceFragmentCompat {
-    private GoogleApiClient googleApiClient;
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
@@ -45,7 +44,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .requestEmail()
                 .build();
 
-        googleApiClient = new GoogleApiClient.Builder(getContext())
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -158,10 +157,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     class GetName implements Runnable {
         final static String TAG = "GetAuthRunnable";
-        private FirstOrLast firstOrLast;
+        private final FirstOrLast firstOrLast;
         private String value;
-        private String url = "http://34.105.106.85:8081/user/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public GetName(JSONObject jsonObject, FirstOrLast firstOrLast) {
             this.jsonObject = jsonObject;
@@ -170,10 +168,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         public void run() {
             String req_url;
+            String url = "http://34.105.106.85:8081/user/";
             if (this.firstOrLast == FirstOrLast.FIRST) {
-                req_url = this.url + "getfirstname/";
+                req_url = url + "getfirstname/";
             } else {
-                req_url = this.url + "getlastname/";
+                req_url = url + "getlastname/";
             }
             try {
                 ANRequest request = AndroidNetworking.get(req_url)
@@ -204,14 +203,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         final static String TAG = "GetAuthRunnable";
         private FirstOrLast firstOrLast;
         private Integer value;
-        private String url = "http://34.105.106.85:8081/user/changename";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public ChangeName(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/changename";
             ANRequest request = AndroidNetworking.post(url)
                     .addJSONObjectBody(jsonObject)
                     .setPriority(Priority.MEDIUM)

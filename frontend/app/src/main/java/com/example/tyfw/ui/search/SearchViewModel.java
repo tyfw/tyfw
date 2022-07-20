@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class SearchViewModel extends ViewModel {
-    private MutableLiveData<SearchFormState> searchFormState = new MutableLiveData<>();
+    private final MutableLiveData<SearchFormState> searchFormState = new MutableLiveData<>();
     public SearchViewModel() {
     }
 }

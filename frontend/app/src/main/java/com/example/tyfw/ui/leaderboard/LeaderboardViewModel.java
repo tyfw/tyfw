@@ -6,6 +6,5 @@ import androidx.lifecycle.ViewModel;
 
 public class LeaderboardViewModel extends ViewModel {
 
-    public LeaderboardViewModel() {
-    }
+    public LeaderboardViewModel() {}
 }
