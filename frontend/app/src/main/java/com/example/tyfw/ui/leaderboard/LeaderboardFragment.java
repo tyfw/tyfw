@@ -22,11 +22,9 @@ import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
-import com.example.tyfw.ui.home.HomeFragment;
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
 import com.example.tyfw.utils.LeaderboardRow;
-import com.example.tyfw.utils.SearchResultsRow;
 
 import org.json.JSONArray;
 import org.json.JSONException;

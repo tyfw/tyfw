@@ -18,7 +18,7 @@ test("Test getTransactionHistory", async () => {
   expect(history).toStrictEqual([
     {
       time: "1616805252",
-      value: 0.010188593518029595,
+      value: 0.010188593518029594,
     },
   ]);
 });

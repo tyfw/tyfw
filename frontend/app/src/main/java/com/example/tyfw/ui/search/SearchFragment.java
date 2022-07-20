@@ -23,11 +23,6 @@ import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;

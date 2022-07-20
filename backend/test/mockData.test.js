@@ -10,8 +10,8 @@ const mockDataModule = {
     }),
   getTransactionHistory: jest.fn((wallet_address) => {
         return Promise.resolve([
-            {time: "1616805252", value: 0.010188593518029595},
-            {time: "1616805253", value: 0.010188593518029597},
+            {time: "1616805252", value: 0.010188593518029594},
+            {time: "1616805253", value: 0.010188593518029598},
     ]);
     }),
     getPriceHistory: jest.fn((price_abv, interval, options) => {
@@ -26,10 +26,10 @@ const mockDataModule = {
     getERC20Price: jest.fn((token_address) => {
         return Promise.resolve(1195.26);
     }),
-  getAccountHistory: jest.fn(
+  getAccountHistory: jest.fn((address, interval, numPoints, startTime, endTime) => {
         return Promise.resolve([
-            0.010188593518029595,
-            0.010188593518029597,
+            0.010188593518029594,
+            0.010188593518029598,
         ]);
     }),
     getYearPercentReturn: jest.fn((address) => {

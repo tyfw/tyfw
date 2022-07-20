@@ -36,7 +36,7 @@
         <entry key="app/src/main/res/drawable/sample_pfp.xml" value="0.178" />
         <entry key="app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.17552083333333332" />
-        <entry key="app/src/main/res/layout/activity_login.xml" value="0.17552083333333332" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_search_results.xml" value="0.291213768115942" />
