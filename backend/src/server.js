@@ -178,25 +178,23 @@ app.get("/user/displaycurruser", async (req, res) => {
         if (user == null) {
           throw new Error('No users found')
         }
-        else {
-          var interval, numPoints;
-          if (req.header("time") == "day") {
-            interval = "1h"
-            numPoints = 24
-          } else if (req.header("time") == "week"){
-            interval = "1d"
-            numPoints = 7
-          } else if (req.header("time") == "month") {
-            interval = "1d"
-            numPoints = 30
-          } else if (req.header("time") == "year") {
-            interval = "1w"
-            numPoints = 52 
-          }
-          const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
-          res.status(200).json({"timescale": interval, "data": accountHistory})
-          return
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
         }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
+        return
     }
     catch (err) {
       if (err instanceof TypeError) {
