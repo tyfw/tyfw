@@ -3,7 +3,6 @@ package com.example.tyfw.ui.home;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
