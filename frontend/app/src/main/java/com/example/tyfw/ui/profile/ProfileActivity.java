@@ -21,10 +21,8 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.home.HomeFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -51,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static String timeOption = "";
 
     private String TAG = "Profile";
-    private MaterialButton friend;
+    MaterialButton friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
