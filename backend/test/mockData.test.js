@@ -55,8 +55,8 @@ test("test mockGetERC20Balance", async () => {
 test("test mockGetTransactionHistory", async () => {
     const history = await mockDataModule.getTransactionHistory("0x12345");
     expect(history).toStrictEqual([
-        {time: "1616805252", value: 0.010188593518029595},
-        {time: "1616805253", value: 0.010188593518029597},
+        {time: "1616805252", value: 0.010188593518029594},
+        {time: "1616805253", value: 0.010188593518029598},
     ]);
 });
 
@@ -81,8 +81,8 @@ test("test mockGetERC20Price", async () => {
 test("test mockGetAccountHistory", async () => {
     const history = await mockDataModule.getAccountHistory("0x12345", "1h", 10, 0, 0);
     expect(history).toStrictEqual([
-        0.010188593518029595,
-        0.010188593518029597,
+        0.010188593518029594,
+        0.010188593518029598,
     ]);
 });
 
