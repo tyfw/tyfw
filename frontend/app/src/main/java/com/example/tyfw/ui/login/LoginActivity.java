@@ -38,6 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
 
+    private EditText firstNameEditText = binding.firstName;
+    private EditText lastNameEditText = binding.lastName;
+    private EditText emailEditText = binding.email;
+    private EditText walletAddressEditText = binding.walletProfile;
+    private EditText usernameEditText = binding.username;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,12 +56,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-
-        final EditText firstNameEditText = binding.firstName;
-        final EditText lastNameEditText = binding.lastName;
-        final EditText emailEditText = binding.email;
-        final EditText walletAddressEditText = binding.walletProfile;
-        final EditText usernameEditText = binding.username;
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
