@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tyfw.ui.profile.ProfileActivity;
-import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.SearchResultsListAdapter;
 import com.example.tyfw.utils.SearchResultsRow;
 

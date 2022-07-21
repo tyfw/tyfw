@@ -13,7 +13,7 @@ public class LoggedInUser {
     private final String email;
     UUID uuid;
 
-    public LoggedInUser(String username, String walletAddress, String firstName, String lastName, String email) {
+    public LoggedInUser(String username, String firstName, String lastName, String email) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;

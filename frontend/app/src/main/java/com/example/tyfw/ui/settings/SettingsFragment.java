@@ -28,8 +28,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 enum FirstOrLast {
     FIRST, LAST
 }

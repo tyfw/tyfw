@@ -31,7 +31,7 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String firstName, String lastName, String email, String walletAddress) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(firstName, lastName, email, walletAddress);
+        Result<LoggedInUser> result = loginRepository.login(firstName, lastName, email);
 
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();

@@ -37,11 +37,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
 
-    private EditText firstNameEditText = binding.firstName;
-    private EditText lastNameEditText = binding.lastName;
-    private EditText emailEditText = binding.email;
-    private EditText walletAddressEditText = binding.walletProfile;
-    private EditText usernameEditText = binding.username;
+    private EditText firstNameEditText;
+    private EditText lastNameEditText;
+    private EditText emailEditText;
+    private EditText walletAddressEditText;
+    private EditText usernameEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,13 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
+        firstNameEditText = binding.firstName;
+        lastNameEditText = binding.lastName;
+        emailEditText = binding.email;
+        walletAddressEditText = binding.walletProfile;
+        usernameEditText = binding.username;
+
+
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
 
@@ -68,8 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         getLoginFormState(loginViewModel, firstNameEditText, lastNameEditText,
                 emailEditText , walletAddressEditText, loginButton); // reduce complexity
 
-        getLoginResult( loginViewModel,  firstNameEditText,  lastNameEditText,
-                emailEditText ,  walletAddressEditText, usernameEditText,  loadingProgressBar );
+        getLoginResult( loginViewModel,  firstNameEditText,  lastNameEditText, walletAddressEditText, usernameEditText,  loadingProgressBar );
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
@@ -143,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void getLoginResult(LoginViewModel loginViewModel, EditText firstNameEditText, EditText lastNameEditText,
-                                EditText emailEditText , EditText walletAddressEditText,EditText usernameEditText, ProgressBar loadingProgressBar ){
+                                EditText walletAddressEditText,EditText usernameEditText, ProgressBar loadingProgressBar ){
         loginViewModel.getLoginResult().observe(this, loginResult -> {
             if (loginResult == null) {
                 return;

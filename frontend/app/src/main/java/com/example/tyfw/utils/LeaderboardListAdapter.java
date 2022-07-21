@@ -36,26 +36,27 @@ public class LeaderboardListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View tempView = convertView;
         LeaderboardRowHolder userPair;
         if (inflater == null) {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.leaderboard_row, parent, false);
+        if (tempView == null) {
+            tempView = inflater.inflate(R.layout.leaderboard_row, parent, false);
             userPair = new LeaderboardRowHolder();
-            userPair.name =(TextView) convertView.findViewById(R.id.leaderboard_friend_name);
-            userPair.value =(TextView) convertView.findViewById(R.id.leaderboard_friend_value);
-            convertView.setTag(convertView);
+            userPair.name =(TextView) tempView.findViewById(R.id.leaderboard_friend_name);
+            userPair.value =(TextView) tempView.findViewById(R.id.leaderboard_friend_value);
+            tempView.setTag(tempView);
         } else {
-            userPair = (LeaderboardRowHolder) convertView.getTag();
+            userPair = (LeaderboardRowHolder) tempView.getTag();
         }
 
         final LeaderboardRow val = leaderboardValues.get(position);
         userPair.name.setText(val.getName());
         userPair.value.setText(val.getValue());
 
-        return convertView;
+        return tempView;
     }
 
     static class LeaderboardRowHolder {

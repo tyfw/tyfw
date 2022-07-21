@@ -36,8 +36,8 @@ public class LoginRepository {
         this.user = user;
     }
 
-    public Result<LoggedInUser> login(String firstName, String lastName, String email, String walletAddress) {
-        LoggedInUser currUser = new LoggedInUser(java.util.UUID.randomUUID().toString(), walletAddress, firstName, lastName, email);
+    public Result<LoggedInUser> login(String firstName, String lastName, String email) {
+        LoggedInUser currUser = new LoggedInUser(java.util.UUID.randomUUID().toString(), firstName, lastName, email);
         setLoggedInUser(currUser);
         return new Result.Success<>(currUser);
     }

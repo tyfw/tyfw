@@ -35,9 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -255,8 +252,9 @@ public class ProfileActivity extends AppCompatActivity {
                 return "month";
             case "Last Year":
                 return "year";
+            default:
+                return null;
         }
-        return null;
     }
 
     class GetProfile implements Runnable {
