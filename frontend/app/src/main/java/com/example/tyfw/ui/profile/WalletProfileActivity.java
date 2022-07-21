@@ -13,13 +13,13 @@ public class WalletProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ImageView profilePic = findViewById(R.id.wallet_default_pic);;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallet_profile);
 
         TextView walletAddr = findViewById(R.id.wallet_profile);
 
         walletAddr.setText(getIntent().getStringExtra("walletAddress"));
-
-        ImageView profilePic = findViewById(R.id.wallet_default_pic);
     }
 }

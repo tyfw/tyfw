@@ -7,13 +7,13 @@ import java.util.UUID;
  */
 public class LoggedInUser {
 
-    private final String username;
-    private final String walletAddress;
-    private final String firstName;
-    private final String lastName;
+    private String username;
+    String walletAddress;
+    private String firstName;
+    private String lastName;
     private String googleIdToken;
-    private final String email;
-    private UUID uuid;
+    private String email;
+    UUID uuid;
 
     public LoggedInUser(String username, String walletAddress, String firstName, String lastName, String email) {
         this.username = username;
@@ -21,7 +21,7 @@ public class LoggedInUser {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.uuid = UUID.randomUUID();
+        uuid = UUID.randomUUID();
     }
 
     public String getUsername() {

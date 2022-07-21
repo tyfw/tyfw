@@ -21,10 +21,8 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.home.HomeFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -40,21 +38,22 @@ import java.util.ArrayList;
 
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView usernameTextView;
     private TextView walletAddr;
 
     private ImageView profilePic;
     private LineChart lineChart;
     private Spinner dropdown;
     private String username;
-    private String walletName;
     private static String timeOption = "";
 
     private String TAG = "Profile";
-    private MaterialButton friend;
+    MaterialButton friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TextView usernameTextView;
+        String walletName;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -202,7 +201,7 @@ public class ProfileActivity extends AppCompatActivity {
             case "Last Year":
                 timeScale = "year";
                 break;
-            case "":
+            default:
                 timeScale = "";
                 break;
         }
