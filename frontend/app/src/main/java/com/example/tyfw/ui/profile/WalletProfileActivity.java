@@ -13,8 +13,6 @@ public class WalletProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ImageView profilePic = findViewById(R.id.wallet_default_pic);;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallet_profile);
 
