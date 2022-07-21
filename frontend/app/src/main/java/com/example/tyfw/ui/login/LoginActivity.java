@@ -41,10 +41,11 @@ public class LoginActivity extends AppCompatActivity {
     private EditText lastNameEditText;
     private EditText emailEditText;
     private EditText walletAddressEditText;
-    private EditText usernameEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        EditText usernameEditText;
+
         super.onCreate(savedInstanceState);
 
         App config = (App) getApplicationContext();
