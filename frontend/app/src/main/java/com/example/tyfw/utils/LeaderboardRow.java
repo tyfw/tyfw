@@ -9,9 +9,6 @@ public class LeaderboardRow {
     private String value;
     private String walletAddress;
 
-    public LeaderboardRow() {
-    }
-
     public String getName() { return name; }
 
     public void setName(String name) {

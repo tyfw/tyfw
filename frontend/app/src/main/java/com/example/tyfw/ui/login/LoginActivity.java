@@ -37,6 +37,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
 
+    private EditText firstNameEditText = binding.firstName;
+    private EditText lastNameEditText = binding.lastName;
+    private EditText emailEditText = binding.email;
+    private EditText walletAddressEditText = binding.walletProfile;
+    private EditText usernameEditText = binding.username;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,17 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         App config = (App) getApplicationContext();
         String email = config.getEmail();
 
-        com.example.tyfw.databinding.ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-
-        final EditText firstNameEditText = binding.firstName;
-        final EditText lastNameEditText = binding.lastName;
-        final EditText emailEditText = binding.email;
-        final EditText walletAddressEditText = binding.walletProfile;
-        final EditText usernameEditText = binding.username;
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
@@ -65,46 +65,11 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
-        loginViewModel.getLoginFormState().observe(this, loginFormState -> {
-            if (loginFormState == null) {
-                return;
-            }
-            loginButton.setEnabled(loginFormState.isDataValid());
-            if (loginFormState.getFirstNameError() != null) {
-                firstNameEditText.setError(getString(loginFormState.getFirstNameError()));
-            }
-            if (loginFormState.getLastNameError() != null) {
-                lastNameEditText.setError(getString(loginFormState.getLastNameError()));
-            }
-            if (loginFormState.getEmailError() != null) {
-                emailEditText.setError(getString(loginFormState.getEmailError()));
-            }
-            if (loginFormState.getWalletAddressError() != null) {
-                walletAddressEditText.setError(getString(loginFormState.getWalletAddressError()));
-            }
-        });
+        getLoginFormState(loginViewModel, firstNameEditText, lastNameEditText,
+                emailEditText , walletAddressEditText, loginButton); // reduce complexity
 
-        loginViewModel.getLoginResult().observe(this, loginResult -> {
-            if (loginResult == null) {
-                return;
-            }
-            loadingProgressBar.setVisibility(View.GONE);
-            if (loginResult.getError() != null) {
-                showLoginFailed(loginResult.getError());
-            }
-            if (loginResult.getSuccess() != null) {
-                updateUiWithUser(
-                        loginResult.getSuccess(),
-                        firstNameEditText.getText().toString(),
-                        lastNameEditText.getText().toString(),
-                        walletAddressEditText.getText().toString(),
-                        usernameEditText.getText().toString());
-            }
-            setResult(Activity.RESULT_OK);
-
-            //Complete and destroy login activity once successful
-            finish();
-        });
+        getLoginResult( loginViewModel,  firstNameEditText,  lastNameEditText,
+                emailEditText ,  walletAddressEditText, usernameEditText,  loadingProgressBar );
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
@@ -153,10 +118,61 @@ public class LoginActivity extends AppCompatActivity {
             );
         });
     }
+    
+    private void getLoginFormState(LoginViewModel loginViewModel, EditText firstNameEditText, EditText lastNameEditText,
+                                   EditText emailEditText , EditText walletAddressEditText, Button loginButton){
+        
+        loginViewModel.getLoginFormState().observe(this, loginFormState -> {
+            if (loginFormState == null) {
+                return;
+            }
+            loginButton.setEnabled(loginFormState.isDataValid());
+            if (loginFormState.getFirstNameError() != null) {
+                firstNameEditText.setError(getString(loginFormState.getFirstNameError()));
+            }
+            if (loginFormState.getLastNameError() != null) {
+                lastNameEditText.setError(getString(loginFormState.getLastNameError()));
+            }
+            if (loginFormState.getEmailError() != null) {
+                emailEditText.setError(getString(loginFormState.getEmailError()));
+            }
+            if (loginFormState.getWalletAddressError() != null) {
+                walletAddressEditText.setError(getString(loginFormState.getWalletAddressError()));
+            }
+        });
+    }
+    
+    private void getLoginResult(LoginViewModel loginViewModel, EditText firstNameEditText, EditText lastNameEditText,
+                                EditText emailEditText , EditText walletAddressEditText,EditText usernameEditText, ProgressBar loadingProgressBar ){
+        loginViewModel.getLoginResult().observe(this, loginResult -> {
+            if (loginResult == null) {
+                return;
+            }
+            loadingProgressBar.setVisibility(View.GONE);
+            if (loginResult.getError() != null) {
+                showLoginFailed(loginResult.getError());
+            }
 
+            if (loginResult.getSuccess() != null) {
+                updateUiWithUser(
+                        loginResult.getSuccess(),
+                        firstNameEditText.getText().toString(),
+                        lastNameEditText.getText().toString(),
+                        walletAddressEditText.getText().toString(),
+                        usernameEditText.getText().toString());
+            }
+            setResult(Activity.RESULT_OK);
+
+            //Complete and destroy login activity once successful
+            finish();
+        });
+    }
+    
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
         // TODO : initiate successful logged in experience
         App config = (App) getApplicationContext();
+
+        model.notify();
 
         JSONObject jsonObject = new JSONObject();
         try {

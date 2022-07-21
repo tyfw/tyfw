@@ -21,10 +21,8 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.home.HomeFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -37,24 +35,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView usernameTextView;
-    private TextView walletAddr;
 
-    private ImageView profilePic;
     private LineChart lineChart;
     private Spinner dropdown;
     private String username;
-    private String walletName;
     private static String timeOption = "";
 
-    private String TAG = "Profile";
-    private MaterialButton friend;
+    private final String TAG = "Profile";
+    MaterialButton friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TextView usernameTextView;
+        String walletName;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -64,10 +63,10 @@ public class ProfileActivity extends AppCompatActivity {
         usernameTextView = findViewById(R.id.profile_username);
         usernameTextView.setText(username);
 
-        walletAddr = findViewById(R.id.wallet_address);
+        TextView walletAddr = findViewById(R.id.wallet_address);
         walletAddr.setText(walletName);
 
-        profilePic = (ImageView) findViewById(R.id.profile_default_pic);
+        ImageView profilePic = (ImageView) findViewById(R.id.profile_default_pic);
         profilePic.setImageResource(R.drawable.ic_baseline_people_24);
         profilePic.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
 
@@ -142,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            // nothing
         }
     }
 
@@ -189,23 +188,9 @@ public class ProfileActivity extends AppCompatActivity {
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
         String timeScale = "";
-        switch (timeOption) {
-            case "Today":
-                timeScale = "day";
-                break;
-            case "Last Week":
-                timeScale = "week";
-                break;
-            case "Last Month":
-                timeScale = "month";
-                break;
-            case "Last Year":
-                timeScale = "year";
-                break;
-            case "":
-                timeScale = "";
-                break;
-        }
+
+        timeScale = getTimeScale();
+
         Log.d("DATA", timeScale);
 
         App config = (App) this.getApplicationContext();
@@ -258,6 +243,20 @@ public class ProfileActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private String getTimeScale(){
+        switch (timeOption) {
+            case "Today":
+                return "day";
+            case "Last Week":
+                return "week";
+            case "Last Month":
+                return "month";
+            case "Last Year":
+                return "year";
+        }
+        return null;
     }
 
     class GetProfile implements Runnable {

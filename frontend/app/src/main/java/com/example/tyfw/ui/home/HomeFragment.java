@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
@@ -62,8 +61,6 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
 
         OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
                 .connectTimeout(15, TimeUnit.SECONDS)
@@ -212,28 +209,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void setChartGraphics(){
-        // background color
-        lineChart.setBackgroundColor(Color.WHITE);
-
-        // disable description text
-        lineChart.getDescription().setEnabled(false);
-
-        // enable touch gestures
-        lineChart.setTouchEnabled(true);
-
-        LimitLine ll1 = new LimitLine(30f,"Title");
-        ll1.setLineColor(getResources().getColor(R.color.rosy_brown));
-        ll1.setLineWidth(4f);
-        ll1.enableDashedLine(10f, 10f, 0f);
-        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        ll1.setTextSize(10f);
-
-        LimitLine ll2 = new LimitLine(35f, "");
-        ll2.setLineWidth(4f);
-        ll2.enableDashedLine(10f, 10f, 0f);
-    }
-
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
     // TODO: add custom x-y-margins for graph for each option
     private void setChart(){
@@ -289,7 +264,7 @@ public class HomeFragment extends Fragment {
             case "Last Year":
                 timeScale = "year";
                 break;
-            case "":
+            default:
                 timeScale = "";
                 break;
         }
