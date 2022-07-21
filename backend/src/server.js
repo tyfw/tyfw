@@ -81,9 +81,6 @@ async function googleAuthVerify(token) {
   //const userid = payload['sub'];
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 app.get("/", (req, res) => {
   res.send("Hello world!")
