@@ -36,7 +36,6 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
-    private ActivityLoginBinding binding;
 
     private EditText firstNameEditText = binding.firstName;
     private EditText lastNameEditText = binding.lastName;
@@ -51,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         App config = (App) getApplicationContext();
         String email = config.getEmail();
 
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        com.example.tyfw.databinding.ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
@@ -98,7 +97,6 @@ public class LoginActivity extends AppCompatActivity {
                         loginResult.getSuccess(),
                         firstNameEditText.getText().toString(),
                         lastNameEditText.getText().toString(),
-                        emailEditText.getText().toString(),
                         walletAddressEditText.getText().toString(),
                         usernameEditText.getText().toString());
             }
@@ -156,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress, String username) {
+    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
         // TODO : initiate successful logged in experience
         App config = (App) getApplicationContext();
 
@@ -201,14 +199,14 @@ public class LoginActivity extends AppCompatActivity {
     class RegisterUser implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private Integer value;
-        private String url = "http://34.105.106.85:8081/user/register/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public RegisterUser(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/register/";
             ANRequest request= AndroidNetworking.post(url)
                     .addJSONObjectBody(this.jsonObject)
                     .setPriority(Priority.MEDIUM)

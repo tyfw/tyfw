@@ -30,8 +30,7 @@ public class AuthActivity extends AppCompatActivity {
     // private ActivityMainBinding binding;
 
     private GoogleSignInClient googleSignInClient;
-    private Integer RC_SIGN_IN = 1;
-    private Class nextActivity = MainActivity.class;
+    private final Integer RC_SIGN_IN = 1;
 
     final static String TAG = "MainActivity";
 
@@ -135,14 +134,14 @@ public class AuthActivity extends AppCompatActivity {
     class GetAuth implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private Integer value;
-        private String url = "http://34.105.106.85:8081/user/authenticate/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public GetAuth(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/authenticate/";
             ANRequest request= AndroidNetworking.post(url)
                     .addJSONObjectBody(this.jsonObject)
                     .setPriority(Priority.MEDIUM)

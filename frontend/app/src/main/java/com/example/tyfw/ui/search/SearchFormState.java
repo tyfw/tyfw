@@ -7,8 +7,8 @@ import androidx.annotation.Nullable;
  */
 class SearchFormState {
     @Nullable
-    private Integer searchStringError;
-    private boolean isDataValid;
+    private final Integer searchStringError;
+    private final boolean isDataValid;
 
     SearchFormState(@Nullable Integer searchStringError) {
         this.searchStringError = searchStringError;

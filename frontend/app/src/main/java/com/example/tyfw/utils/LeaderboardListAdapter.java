@@ -16,9 +16,9 @@ public class LeaderboardListAdapter extends BaseAdapter {
     // https://stackoverflow.com/questions/34518421/adding-a-scoreboard-to-an-android-studio-application
     // https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
-    private Context context;
+    private final Context context;
     private LayoutInflater inflater;
-    private List<LeaderboardRow> leaderboardValues;
+    private final List<LeaderboardRow> leaderboardValues;
 
     public LeaderboardListAdapter(Context context, List<LeaderboardRow> leaderboardValues) {
         this.leaderboardValues = leaderboardValues;
