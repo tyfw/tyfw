@@ -38,14 +38,12 @@ import java.util.ArrayList;
 
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView usernameTextView;
     private TextView walletAddr;
 
     private ImageView profilePic;
     private LineChart lineChart;
     private Spinner dropdown;
     private String username;
-    private String walletName;
     private static String timeOption = "";
 
     private String TAG = "Profile";
@@ -53,6 +51,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TextView usernameTextView;
+        String walletName;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -200,7 +201,7 @@ public class ProfileActivity extends AppCompatActivity {
             case "Last Year":
                 timeScale = "year";
                 break;
-            case "":
+            default:
                 timeScale = "";
                 break;
         }
