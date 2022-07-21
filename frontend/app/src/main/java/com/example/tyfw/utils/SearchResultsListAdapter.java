@@ -16,9 +16,9 @@ public class SearchResultsListAdapter extends BaseAdapter {
     // https://stackoverflow.com/questions/34518421/adding-a-scoreboard-to-an-android-studio-application
     // https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
-    private Context context;
+    private final Context context;
     private LayoutInflater inflater;
-    private List<SearchResultsRow> searchResultsValues;
+    private final List<SearchResultsRow> searchResultsValues;
 
     public SearchResultsListAdapter(Context context, List<SearchResultsRow> searchResultsValues) {
         this.searchResultsValues = searchResultsValues;

@@ -13,9 +13,9 @@ import com.example.tyfw.R;
 
 public class LoginViewModel extends ViewModel {
 
-    private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
+    private final MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
+    private final MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
+    private final LoginRepository loginRepository;
 
     LoginViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
@@ -51,7 +51,7 @@ public class LoginViewModel extends ViewModel {
         } else if (!isWalletAddressValid(walletAddress)) {
             loginFormState.setValue(new LoginFormState(null, null, null, R.string.invalid_wallet_address));
         } else {
-            loginFormState.setValue(new LoginFormState(true));
+            loginFormState.setValue(new LoginFormState());
         }
     }
 

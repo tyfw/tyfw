@@ -10,7 +10,6 @@ import com.example.tyfw.R;
 
 
 public class WalletProfileActivity extends AppCompatActivity {
-    private TextView walletAddr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +18,7 @@ public class WalletProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallet_profile);
 
-        walletAddr = findViewById(R.id.wallet_profile);
+        TextView walletAddr = findViewById(R.id.wallet_profile);
 
         walletAddr.setText(getIntent().getStringExtra("walletAddress"));
     }

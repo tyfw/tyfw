@@ -7,9 +7,9 @@ const app = express();
 app.use(express.json());
 
 // Graylog logging
-const graylog2 = require('graylog2');
+const Graylog2 = require('graylog2');
 
-const logger = new graylog2.graylog({
+const logger = new Graylog2.graylog({
   servers: [{ host: '4m1pqj.stackhero-network.com', port: 12201 }] // Replace the "host" per your Graylog domain
 });
 
@@ -49,12 +49,12 @@ async function run() {
     } catch(err) {
         console.log(err)
         await mongo_client.close()
-    }
+    } 
   }
 
 // Google User Auth
-const {OAuth2Client, UserRefreshClient} = require('google-auth-library');
-const { getBalance, getEthBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
+const {OAuth2Client} = require('google-auth-library');
+const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -67,6 +67,9 @@ async function googleAuthVerify(token) {
         audience: CLIENT_ID,
     });
     // TODO: Check if more info from the ticket needs to be validated
+    const payload = ticket.getPayload();
+    const userid = payload['sub']
+    console.log("User ID: %s", userid)
     return true
 
   } catch (err) {
@@ -95,9 +98,7 @@ var server = app.listen(8081, (req, res) => {
 
 app.post("/user/authenticate", async (req, res) => {
   try {
-    console.debug("/user/authenticate \n\
-    Time: ", Date.now(), "\n\
-    req.body: ", req.body)
+    console.debug("/user/authenticate \n    Time: ", Date.now(), "\n    req.body: ", req.body)
     
     const verifyied = await googleAuthVerify(req.body.googleIdToken)
     if (!verifyied) {
@@ -109,7 +110,7 @@ app.post("/user/authenticate", async (req, res) => {
     
     if (existingUser == null) {
       console.log("User not found")
-      res.sendStatus(201)
+      res.sendStatus(404)
       return;
     }
     res.sendStatus(200)
@@ -122,9 +123,7 @@ app.post("/user/authenticate", async (req, res) => {
 })
 
 app.post("/user/register", async (req, res) => {
-  console.debug("/user/register \n\
-  Time: ", Date.now(), "\n\
-  req.body: ", req.body)
+  console.debug("/user/register \n  Time: ", Date.now(), "\n  req.body: ", req.body)
   try {
       // check if there is another user with the same username
       const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.username})
@@ -146,50 +145,32 @@ app.post("/user/register", async (req, res) => {
 })
 
 app.get("/user/leaderboard", async (req, res) => {
-  console.debug("/user/leaderboard\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
-    try {
-      var leaderboard = []
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-      const user_year_return = await getYearPercentReturn(user.addresses[0])
-      leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_year_return})
-      for (let index in user.friends) {
-        const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
-        var year_return = await getYearPercentReturn(friend.addresses[0])
-        leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
-        leaderboard.sort((a, b) => {
-          if (a.value > b.value) return -1
-          else return 1
-        })
-      }
-      res.status(200).send(leaderboard)
-      return
+  console.debug("/user/leaderboard\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
+  try {
+    var leaderboard = []
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    const user_year_return = await getYearPercentReturn(user.addresses[0])
+    leaderboard.push({"user": user.username, "address": user.addresses[0], "value": user_year_return})
+    for (let index in user.friends) {
+      const friend = await mongo_client.db("tyfw").collection("users").findOne({"email": user.friends[index]})
+      var year_return = await getYearPercentReturn(friend.addresses[0])
+      leaderboard.push({"user": friend.username, "address":friend.addresses[0], "value": year_return})
+      leaderboard.sort((a, b) => {
+        if (a.value > b.value) return -1
+        else return 1
+      })
     }
-    catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
-      }
-      else {
-        console.log(err)
-        logger.log(String(err))
-        res.sendStatus(400)
-        return
-      }
+    res.status(200).send(leaderboard)
     }
-  }
-  console.log("All retries used. Failed.")
-  res.sendStatus(400)
+  catch (err) {
+      console.log(err)
+      logger.log(String(err))
+      res.sendStatus(400)
+    }
 })
   
 app.get("/user/displaycurruser", async (req, res) => {
-  console.debug("/user/displaycurruser\n\
-  Time: ", Date.now(), "\n\
-  req.body: ", req.headers)
+  console.debug("/user/displaycurruser\n  Time: ", Date.now(), "\n  req.body: ", req.headers)
   let triesCounter = 0;
   while (triesCounter < 3) {
     try {
@@ -197,25 +178,23 @@ app.get("/user/displaycurruser", async (req, res) => {
         if (user == null) {
           throw new Error('No users found')
         }
-        else {
-          var interval, numPoints;
-          if (req.header("time") == "day") {
-            interval = "1h"
-            numPoints = 24
-          } else if (req.header("time") == "week"){
-            interval = "1d"
-            numPoints = 7
-          } else if (req.header("time") == "month") {
-            interval = "1d"
-            numPoints = 30
-          } else if (req.header("time") == "year") {
-            interval = "1w"
-            numPoints = 52 
-          }
-          const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
-          res.status(200).json({"timescale": interval, "data": accountHistory})
-          return
+        var interval, numPoints;
+        if (req.header("time") == "day") {
+          interval = "1h"
+          numPoints = 24
+        } else if (req.header("time") == "week"){
+          interval = "1d"
+          numPoints = 7
+        } else if (req.header("time") == "month") {
+          interval = "1d"
+          numPoints = 30
+        } else if (req.header("time") == "year") {
+          interval = "1w"
+          numPoints = 52 
         }
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        res.status(200).json({"timescale": interval, "data": accountHistory})
+        return
     }
     catch (err) {
       if (err instanceof TypeError) {
@@ -236,9 +215,7 @@ app.get("/user/displaycurruser", async (req, res) => {
 })
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
-  console.debug("/user/displayotheruserbyusername\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/displayotheruserbyusername\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   let triesCounter = 0;
   while (triesCounter < 3) {
     try {
@@ -285,9 +262,7 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
 })
 
 app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
-  console.debug("/user/displayotheruserbywalletaddress\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/displayotheruserbywalletaddress\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   let triesCounter = 0;
   while (triesCounter < 3) {
     try {
@@ -333,9 +308,7 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
 
 
 app.post("/user/changename", async (req, res) => {
-  console.debug("/user/changename\n\
-  Time: ", Date.now(), "\n\
-  req.body: ", req.body)
+  console.debug("/user/changename\n  Time: ", Date.now(), "\n  req.body: ", req.body)
   try {
       if (req.body.name == "first") {
         await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$set: {firstname: req.body.newName}})
@@ -354,15 +327,23 @@ app.post("/user/changename", async (req, res) => {
 })
 
 app.get("/user/search", async (req, res) => {
-  console.debug("/user/search\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/search\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   try {
-      const queryMatches = await mongo_client.db("tyfw").collection("users").find({$and: [{$or: [{"username": {$regex: req.header("queryString"), $options: "$i"}}, {"addresses": {$regex: req.header("queryString"), $options: "$i"}}]}, {"email": {$not: {$regex: req.header("email")}}}]}).project({username: 1, addresses: 1, _id: 0}).toArray()
+      var query = {
+        $and : [
+          {"email": {$not: {$regex: req.header("email")}}},
+          {$or:[
+            {"username": {$regex: req.header("queryString"), $options: "$i"}},
+            {"addresses": {$regex: req.header("queryString"), $options: "$i"}}
+          ]}
+        ]
+      }
+      const queryMatches = await mongo_client.db("tyfw").collection("users").find(query).project({username: 1, addresses: 1, _id: 0}).toArray()
+
       if (queryMatches.length == 0) {
         throw new Error('No users found')
       }
-      res.status(200).json({"queryMatches": queryMatches})
+      res.status(200).json({queryMatches})
   }
   catch (err) {
       console.log(err)
@@ -373,9 +354,7 @@ app.get("/user/search", async (req, res) => {
 })
 
 app.post("/user/addbyusername", async (req, res) => {
-  console.debug("/user/addbyusername\n\
-  Time: ", Date.now(), "\n\
-  req.body: ", req.body)
+  console.debug("/user/addbyusername\n  Time: ", Date.now(), "\n  req.body: ", req.body)
   try {
     //check that username exists
       const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.friendUsername})
@@ -397,9 +376,7 @@ app.post("/user/addbyusername", async (req, res) => {
 })
 
 app.post("/user/addbywalletaddress", async (req, res) => {
-  console.debug("/user/addbywalletaddress\n\
-  Time: ", Date.now(), "\n\
-  req.body: ", req.body)
+  console.debug("/user/addbywalletaddress\n Time: ", Date.now(), "\n  req.body: ", req.body)
   try {
     //check that there is a user with the specified wallet address 
       const newFriend = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.body.friendWalletAddress})
@@ -462,9 +439,7 @@ app.get("/user/getwalletaddress", async (req, res) => {
 });
       
 app.get("/user/getbalance", async (req, res) => {
-  console.debug("/user/getbalance\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/getbalance\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   let triesCounter = 0;
   while (triesCounter < 3) {
     try {
@@ -474,7 +449,7 @@ app.get("/user/getbalance", async (req, res) => {
                 var balance = await getBalance(user.addresses[i])
           user_balance += balance
         }
-        res.status(200).json({"balance": balance})
+        res.status(200).json({"balance": user_balance})
         return
         }
     catch (err) {
@@ -496,9 +471,7 @@ app.get("/user/getbalance", async (req, res) => {
 });
 
 app.get("/user/getuser", async (req, res) => {
-  console.debug("/user/getuser\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/getuser\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
 
   try {
     const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})

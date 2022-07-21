@@ -40,9 +40,8 @@ public class LeaderboardFragment extends Fragment {
     // https://stackoverflow.com/questions/34518421/adding-a-scoreboard-to-an-android-studio-application
     // https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
-    private List<LeaderboardRow> itemsList = new ArrayList<LeaderboardRow>();
+    private final List<LeaderboardRow> itemsList = new ArrayList<LeaderboardRow>();
     private ListView listView;
-    private LeaderboardListAdapter adapter;
     private FragmentLeaderboardBinding binding;
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
@@ -58,7 +57,7 @@ public class LeaderboardFragment extends Fragment {
         View root = binding.getRoot();
 
         listView = (ListView) binding.list;
-        adapter = new LeaderboardListAdapter(root.getContext(), itemsList);
+        LeaderboardListAdapter adapter = new LeaderboardListAdapter(root.getContext(), itemsList);
         listView.setAdapter(adapter);
 
         // Call the leaderboard API
@@ -120,6 +119,7 @@ public class LeaderboardFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "VIEW CREATED");
 
         // Followed this SOF post: https://stackoverflow.com/questions/32827787/intent-in-listview
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -167,8 +167,7 @@ public class LeaderboardFragment extends Fragment {
     class GetLeaderboard implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private JSONArray value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/leaderboard/";
+        private final JSONObject jsonObject;
 
         public GetLeaderboard(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -176,6 +175,7 @@ public class LeaderboardFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/leaderboard/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
