@@ -171,8 +171,6 @@ app.get("/user/leaderboard", async (req, res) => {
   
 app.get("/user/displaycurruser", async (req, res) => {
   console.debug("/user/displaycurruser\n  Time: ", Date.now(), "\n  req.body: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
     try {
         const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
         if (user == null) {
@@ -197,76 +195,17 @@ app.get("/user/displaycurruser", async (req, res) => {
         return
     }
     catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
-      }
-      else {
         console.log(err)
         logger.log(String(err))
         res.sendStatus(400)
         return
-      }
     } 
-  }
-  console.log("All retries used. Failed.")
-  res.sendStatus(400)
 })
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
   console.debug("/user/displayotheruserbyusername\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
-    try {
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.header("otherUsername")})
-        if (user == null) {
-          throw new Error('No users found')
-        }
-        else {
-          var interval, numPoints;
-          if (req.header("time") == "day") {
-            interval = "1h"
-            numPoints = 24
-          } else if (req.header("time") == "week"){
-            interval = "1d"
-            numPoints = 7
-          } else if (req.header("time") == "month") {
-            interval = "1d"
-            numPoints = 30
-          } else if (req.header("time") == "year") {
-            interval = "1w"
-            numPoints = 52 
-          }
-          const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
-          res.status(200).json({"timescale": interval, "data": accountHistory})
-          return
-        }
-      }
-    catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
-      }
-      else {
-        console.log(err)
-        logger.log(String(err))
-        res.sendStatus(400)
-        return
-      }
-    } 
-  }
-  console.log("All retries used. Failed.")
-  res.sendStatus(400)
-})
-
-app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
-  console.debug("/user/displayotheruserbywalletaddress\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
-    try {
-      const user = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.header("otherWalletAddress")})
+  try {
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"username": req.header("otherUsername")})
       if (user == null) {
         throw new Error('No users found')
       }
@@ -290,20 +229,47 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
         return
       }
     }
-    catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
+  catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+    return
+  } 
+})
+
+app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
+  console.debug("/user/displayotheruserbywalletaddress\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
+  try {
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"addresses": req.header("otherWalletAddress")})
+    if (user == null) {
+      throw new Error('No users found')
+    }
+    else {
+      var interval, numPoints;
+      if (req.header("time") == "day") {
+        interval = "1h"
+        numPoints = 24
+      } else if (req.header("time") == "week"){
+        interval = "1d"
+        numPoints = 7
+      } else if (req.header("time") == "month") {
+        interval = "1d"
+        numPoints = 30
+      } else if (req.header("time") == "year") {
+        interval = "1w"
+        numPoints = 52 
       }
-      else {
-        console.log(err)
-        logger.log(String(err))
-        res.sendStatus(400)
-        return
-      }
-    } 
+      const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+      res.status(200).json({"timescale": interval, "data": accountHistory})
+      return
+    }
   }
+  catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+    return
+    } 
 })
 
 
@@ -440,34 +406,22 @@ app.get("/user/getwalletaddress", async (req, res) => {
       
 app.get("/user/getbalance", async (req, res) => {
   console.debug("/user/getbalance\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-  let triesCounter = 0;
-  while (triesCounter < 3) {
-    try {
-        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
-        var user_balance = 0
-        for (let i = 0; i < user.addresses.length; i = i+1) {
-                var balance = await getBalance(user.addresses[i])
-          user_balance += balance
-        }
-        res.status(200).json({"balance": user_balance})
-        return
-        }
-    catch (err) {
-      if (err instanceof TypeError) {
-        console.log("caught TypeError, trying again")
-        await sleep(1000)
-        triesCounter++
+  try {
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      var user_balance = 0
+      for (let i = 0; i < user.addresses.length; i = i+1) {
+              var balance = await getBalance(user.addresses[i])
+        user_balance += balance
       }
-      else {
-        console.log(err)
-        logger.log(String(err))
-        res.sendStatus(400)
-        return
+      res.status(200).json({"balance": user_balance})
+      return
       }
-    } 
-  }
-  console.log("All retries used. Failed.")
-  res.sendStatus(400)
+  catch (err) {
+      console.log(err)
+      logger.log(String(err))
+      res.sendStatus(400)
+      return
+  } 
 });
 
 app.get("/user/getuser", async (req, res) => {
