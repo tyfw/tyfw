@@ -28,6 +28,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 enum FirstOrLast {
     FIRST, LAST
 }
@@ -41,12 +43,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .requestEmail()
                 .build();
 
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(getContext())
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(requireContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        Log.d("Settings", "Google Client connection status: " + googleApiClient.isConnected());
+
         Context context = getPreferenceManager().getContext();
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+
+        Log.d("Settings", "Existing settings: " + screen.toString());
 
         String firstName = "John";
         String lastName = "Doe";

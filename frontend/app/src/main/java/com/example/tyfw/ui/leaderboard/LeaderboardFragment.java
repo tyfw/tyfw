@@ -50,8 +50,9 @@ public class LeaderboardFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        LeaderboardViewModel leaderboardViewModel =
-                new ViewModelProvider(this).get(LeaderboardViewModel.class);
+        LeaderboardViewModel leaderboardViewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
+
+        leaderboardViewModel.notifyAll();
 
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -132,7 +133,7 @@ public class LeaderboardFragment extends Fragment {
 
                     App config = (App) getActivity().getApplicationContext();
 
-                    if (!(config.getUsername() == null)) {
+                    if (config.getUsername() != null) {
                         if (Objects.equals(config.getUsername(), item.getName())){
                             Intent intent;
                             intent = new Intent(getActivity(), MainActivity.class);
