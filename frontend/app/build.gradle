@@ -41,6 +41,7 @@ repositories {
 dependencies {
     // For google sign in
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    androidTestImplementation 'org.mockito:mockito-core:2.19.0'
 
     // For API calls
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
@@ -64,6 +65,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
 
