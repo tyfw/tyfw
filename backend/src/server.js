@@ -32,6 +32,22 @@ class User {
     }
 }
 
+class Chat {
+    constructor(user1, user2) {
+      this.user1 = user1
+      this.user2 = user2
+      this.messages = [];
+    }
+}
+
+class Message {
+    constructor(message, fromUser, toUser) {
+      this.message = message;
+      this.fromUser = fromUser;
+      this.toUser = toUser;
+    }
+}
+
 // mongo-db
 const { MongoClient } = require('mongodb');
 const uri = "mongodb://localhost:27017"
@@ -59,7 +75,8 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
 const SocketServer = require('websocket').server
-const http = require('http')
+const http = require('http');
+const { json } = require('express');
 const socket_server = http.createServer((req, res) => {})
 
 socket_server.listen(3000, ()=>{
@@ -76,9 +93,22 @@ wsServer.on('request', (req) => {
   connections.push(connection)
 
   connection.on('message', mes => {
-    connections.forEach(element => {
+    connections.forEach(async (element) => {
       if (element != connection)
         element.sendUTF(mes.utf8Data)
+        var receivedJSON = JSON.parse(mes.utf8Data)
+        var message = new Message(receivedJSON.message, receivedJSON.fromUser, receivedJSON.toUser)
+        var existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": receivedJSON.fromUser, "user2": receivedJSON.toUser}, {"user1": receivedJSON.toUser, "user2": receivedJSON.fromUser}]})
+        if (existingChat == null) {
+          var chat = new Chat(receivedJSON.fromUser, receivedJSON.toUser)
+          chat.messages.push(message)
+          await mongo_client.db("tyfw").collection("chat").insertOne(chat)
+          console.log("added new chat to db")
+        }
+        else {
+          await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{"user1": existingChat.user1}, {"user2": existingChat.user2}]}, {$addToSet: {"messages": message}})
+        }
+        
     })
 
   connection.on('close', (resCode, des) => {
@@ -540,6 +570,23 @@ app.get("/user/getuser", async (req, res) => {
   }
 });
 
+app.get("/user/chathistory", async (req, res) => {
+  console.debug("/user/chathistory\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
+
+  try {
+    var existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": req.header("fromUser"), "user2": req.header("toUser")}, {"user1": req.header("toUser"), "user2": req.header("fromUser")}]})
+    if (existingChat == null) {
+      res.status(404)
+    }
+    res.status(200).json(existingChat.messages)
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+});
 
 
 run()
