@@ -120,9 +120,13 @@ public class AuthActivity extends AppCompatActivity {
 
             if (serverResponse == 200) {
                 Intent mainActivity = new Intent(this, MainActivity.class);
+                mainActivity.putExtra("email", account.getEmail());
+                mainActivity.putExtra("googleIdToken", account.getIdToken());
                 startActivity(mainActivity);
             } else if (serverResponse == 201) {
                 Intent loginActivity = new Intent(this, LoginActivity.class);
+                loginActivity.putExtra("email", account.getEmail());
+                loginActivity.putExtra("googleIdToken", account.getIdToken());
                 startActivity(loginActivity);
             } else {
                 Log.e("TAG", serverResponse.toString());

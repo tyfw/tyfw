@@ -22,6 +22,7 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
+import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
 import com.github.mikephil.charting.charts.Chart;
@@ -114,10 +115,17 @@ public class HomeFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        String email = mainActivity.email;
+        String googleIdToken = mainActivity.googleIdToken;
+
+        // Log.e("HERE", email);
+        // Log.e("HERE", googleIdToken);
+
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+            jsonObject.put("email", email);
+            jsonObject.put("googleIdToken",  googleIdToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -271,10 +279,15 @@ public class HomeFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        String email = mainActivity.email;
+        String googleIdToken = mainActivity.googleIdToken;
+
+
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+            jsonObject.put("email", email);
+            jsonObject.put("googleIdToken", googleIdToken);
             jsonObject.put("time", timeScale);
         } catch (JSONException e) {
             e.printStackTrace();
