@@ -52,7 +52,7 @@ public class LeaderboardFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         LeaderboardViewModel leaderboardViewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
 
-        leaderboardViewModel.notifyAll();
+        // leaderboardViewModel.notifyAll();
 
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

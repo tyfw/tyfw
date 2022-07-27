@@ -115,17 +115,10 @@ public class HomeFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        String email = mainActivity.email;
-        String googleIdToken = mainActivity.googleIdToken;
-
-        // Log.e("HERE", email);
-        // Log.e("HERE", googleIdToken);
-
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("email", email);
-            jsonObject.put("googleIdToken",  googleIdToken);
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -279,15 +272,10 @@ public class HomeFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        String email = mainActivity.email;
-        String googleIdToken = mainActivity.googleIdToken;
-
-
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("email", email);
-            jsonObject.put("googleIdToken", googleIdToken);
+            jsonObject.put("email", config.getEmail());
+            jsonObject.put("googleIdToken", config.getGoogleIdToken());
             jsonObject.put("time", timeScale);
         } catch (JSONException e) {
             e.printStackTrace();

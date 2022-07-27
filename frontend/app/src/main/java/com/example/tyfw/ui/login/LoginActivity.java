@@ -42,11 +42,20 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText;
     private EditText walletAddressEditText;
 
+    private String email;
+    private String googleIdToken;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         EditText usernameEditText;
 
+        email = getIntent().getStringExtra("email");
+        googleIdToken = getIntent().getStringExtra("googleIdToken");
+
         super.onCreate(savedInstanceState);
+
+        email = getIntent().getStringExtra("email");
+        googleIdToken = getIntent().getStringExtra("googleIdToken");
 
         App config = (App) getApplicationContext();
         String email = config.getEmail();
@@ -176,9 +185,6 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
-        // TODO : initiate successful logged in experience
-        App config = (App) getApplicationContext();
-
         model.notify();
 
         JSONObject jsonObject = new JSONObject();
@@ -186,12 +192,12 @@ public class LoginActivity extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray();
             jsonArray.put(walletAddress);
 
-            jsonObject.put("email", config.getEmail());
+            jsonObject.put("email", this.email);
             jsonObject.put("username", username);
             jsonObject.put("firstName", firstName);
             jsonObject.put("lastName", lastName);
             jsonObject.put("walletAddress", jsonArray);
-            jsonObject.put("googleIdToken", config.getGoogleIdToken());
+            jsonObject.put("googleIdToken", this.googleIdToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -208,6 +214,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (serverResponse == 200) {
             Intent mainActivity = new Intent(this, MainActivity.class);
+            mainActivity.putExtra("email", this.email);
+            mainActivity.putExtra("googleIdToken", this.googleIdToken);
             startActivity(mainActivity);
         } else {
             Log.e("as", serverResponse.toString());

@@ -15,17 +15,23 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    public String email;
-    public String googleIdToken;
+    private String email;
+    private String googleIdToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        email = intent.getStringExtra("email");
-        googleIdToken = intent.getStringExtra("googleIdToken");
+        email = getIntent().getStringExtra("email");
+        googleIdToken = getIntent().getStringExtra("googleIdToken");
 
+        App config = (App) getApplicationContext();
+        if (config.getGoogleIdToken() == null) {
+            config.setGoogleIdToken(googleIdToken);
+        }
+        if (config.getEmail() == null) {
+            config.setGoogleIdToken(email);
+        }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
