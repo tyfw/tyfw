@@ -434,6 +434,17 @@ app.get("/user/getuser", async (req, res) => {
   }
 });
 
+app.get("/user/getfriends", async (req, res) => {
+  console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
 
+  try {
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    res.status(200).json({"friends": user.friends})
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+});
 
 run()
