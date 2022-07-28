@@ -26,12 +26,9 @@ public class MainActivity extends AppCompatActivity {
         googleIdToken = getIntent().getStringExtra("googleIdToken");
 
         App config = (App) getApplicationContext();
-        if (config.getGoogleIdToken() == null) {
-            config.setGoogleIdToken(googleIdToken);
-        }
-        if (config.getEmail() == null) {
-            config.setGoogleIdToken(email);
-        }
+        config.setEmail(email);
+        config.setGoogleIdToken(googleIdToken);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

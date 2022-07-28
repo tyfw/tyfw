@@ -52,13 +52,14 @@ public class LoginActivity extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
         googleIdToken = getIntent().getStringExtra("googleIdToken");
 
+        App config = (App) getApplicationContext();
+        config.setEmail(email);
+        config.setGoogleIdToken(googleIdToken);
+
         super.onCreate(savedInstanceState);
 
         email = getIntent().getStringExtra("email");
         googleIdToken = getIntent().getStringExtra("googleIdToken");
-
-        App config = (App) getApplicationContext();
-        String email = config.getEmail();
 
         ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -185,7 +186,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
-        model.notify();
+        // model.notify();
 
         JSONObject jsonObject = new JSONObject();
         try {
