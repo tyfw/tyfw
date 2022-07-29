@@ -97,17 +97,15 @@ app.post("/user/authenticate", async (req, res) => {
   try {
     console.debug("/user/authenticate \n    Time: ", Date.now(), "\n    req.body: ", req.body)
     
-    const verifyied = await googleAuthVerify(req.body.googleIdToken)
-    if (!verifyied) {
-      res.sendStatus(401)
-      return;
-    }
-
     const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
     
     if (existingUser == null) {
-      console.log("User not found")
-      res.sendStatus(404)
+      throw new Error('User not found')
+    }
+    
+    const verifyied = await googleAuthVerify(req.body.googleIdToken)
+    if (!verifyied) {
+      res.sendStatus(401)
       return;
     }
     res.sendStatus(200)
@@ -273,6 +271,10 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
 app.post("/user/changename", async (req, res) => {
   console.debug("/user/changename\n  Time: ", Date.now(), "\n  req.body: ", req.body)
   try {
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
+      if (user == null) {
+      throw new Error('No users found')
+    }
       if (req.body.name == "first") {
         await mongo_client.db("tyfw").collection("users").updateOne({"email": req.body.email}, {$set: {firstname: req.body.newName}})
       }
@@ -362,7 +364,10 @@ app.post("/user/addbywalletaddress", async (req, res) => {
 
 app.get("/user/getfirstname", async (req, res) => {
   try {
-        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      if (user == null) {
+        throw new Error('No users found')
+      }
       res.status(200).send(user.firstname)
 
   }
@@ -374,7 +379,10 @@ app.get("/user/getfirstname", async (req, res) => {
 
 app.get("/user/getlastname", async (req, res) => {
   try {
-        const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+      if (user == null) {
+        throw new Error('No users found')
+      }
       res.status(200).send(user.lastname)
 
   }
@@ -426,6 +434,9 @@ app.get("/user/getuser", async (req, res) => {
 
   try {
     const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    if (user == null) {
+      throw new Error('No users found')
+    }
     res.status(200).json({"data": user})
   } catch (err) {
     console.log(err)
@@ -435,5 +446,6 @@ app.get("/user/getuser", async (req, res) => {
 });
 
 
+module.exports = server
 
 run()
