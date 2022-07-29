@@ -107,7 +107,7 @@ app.post("/user/authenticate", async (req, res) => {
     
     if (existingUser == null) {
       console.log("User not found")
-      res.sendStatus(404)
+      res.sendStatus(201)
       return;
     }
     res.sendStatus(200)
