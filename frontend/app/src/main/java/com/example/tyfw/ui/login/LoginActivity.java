@@ -143,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
             if (loginFormState == null) {
                 return;
             }
-            loginButton.setEnabled(loginFormState.isDataValid());
+            // loginButton.setEnabled(loginFormState.isDataValid());
             if (loginFormState.getFirstNameError() != null) {
                 firstNameEditText.setError(getString(loginFormState.getFirstNameError()));
             }
@@ -155,6 +155,10 @@ public class LoginActivity extends AppCompatActivity {
             }
             if (loginFormState.getWalletAddressError() != null) {
                 walletAddressEditText.setError(getString(loginFormState.getWalletAddressError()));
+            }
+            if (loginFormState.getFirstNameError() == null && loginFormState.getLastNameError() == null &&
+                    loginFormState.getEmailError() == null && loginFormState.getWalletAddressError() == null){
+                loginButton.setEnabled(true);
             }
         });
     }
