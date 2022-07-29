@@ -1,8 +1,5 @@
-// import request from 'supertest' 
 const request = require('supertest')
 const server = require('../src/server.js')
-// import server from './server.js'
-// const user = require("../src/server.js");
 
 describe ("POST /user/register", () => {
     describe("unique username and email", () => {
