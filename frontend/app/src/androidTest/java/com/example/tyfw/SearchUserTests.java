@@ -91,7 +91,7 @@ public class SearchUserTests {
         // Verify that the Search fragment is shown on screen
         onView(withId(R.id.search_container)).check(matches(isDisplayed()));
 
-        // Verify that the Search text iput and Search button exists and can be used
+        // Verify that the Search text input and Search button exists and can be used
         onView(withId(R.id.search_input)).check(matches(isDisplayed())).check(matches(isClickable()));
 
         onView(withId(R.id.search_button)).check(matches(isDisplayed())).check(matches(isClickable()));
