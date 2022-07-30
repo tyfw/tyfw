@@ -26,6 +26,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - run: |
+          touch .env
+          echo ${{secrets.DOTENV}} >> .env
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
