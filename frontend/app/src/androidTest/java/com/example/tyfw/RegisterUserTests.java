@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
-public class LoginUserTests {
+public class RegisterUserTests {
     static String invalid_wallet_address = "Address must be =42 characters and begin with 0x";
     static String invalid_first_name = "Not a valid first name";
     static String invalid_last_name = "Not a valid last name";
@@ -68,7 +68,6 @@ public class LoginUserTests {
     public void invalidLastName() {
         onView(withId(R.id.first_name)).perform(typeText("John"));
         onView(withId(R.id.last_name)).perform(typeText(" "));
-        SystemClock.sleep(15000);
         onView(withId(R.id.last_name)).check(matches(hasErrorText(invalid_last_name)));
     }
 
@@ -87,6 +86,9 @@ public class LoginUserTests {
     @Test
     public void validEthereumAddress() {
         Intents.init();
+
+        // Wait for intent from @Rule to be setup properly
+        SystemClock.sleep(500);
 
         onView(withId(R.id.first_name)).perform(typeText("John"));
         onView(withId(R.id.last_name)).perform(typeText("Doe"));
