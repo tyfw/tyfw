@@ -29,6 +29,7 @@ jobs:
       - run: |
           touch .env
           echo ${{secrets.DOTENV}} >> .env
+          pwd
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
