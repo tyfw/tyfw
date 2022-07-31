@@ -54,9 +54,13 @@ async function run() {
 
 // Google User Auth
 const {OAuth2Client} = require('google-auth-library');
-const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
+
+
+const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
+const ml = require('./ml.js');
+
 
 
 // verifacation of token provided by frontend
@@ -434,6 +438,11 @@ app.get("/user/getuser", async (req, res) => {
   }
 });
 
-
+app.get("/user/getprediction", async (req, res) => {
+  console.debug("/user/getprediction\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
+  const riskTolerance = req.header("riskTolerance")
+  const predict = await ml.predict(riskTolerance); 
+  res.status(200).json({"prediction": predict})
+});
 
 run()

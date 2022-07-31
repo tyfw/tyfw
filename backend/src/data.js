@@ -149,4 +149,5 @@ module.exports = {
   getERC20Balance,
   getAccountHistory,
   getYearPercentReturn,
+  getPriceHistory,
 };

@@ -1,15 +1,33 @@
-const tf = require('@tensorflow/tfjs');
+const tf = require("@tensorflow/tfjs");
 require("@tensorflow/tfjs-node");
-const fs = require('fs');
 
-const main = async () => {
+const data = require("./data.js");
 
-    const model = await tf.loadLayersModel('file://data/model.json');
-    let a = tf.tensor([0.1, 0.2, 0.3, 0.4, 0.5, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.1, 0.2, 0.3, 0.4, 0.5, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
-    a = a.expandDims(1);
-    a = a.reshape([-1,24,1]);   
+//normalization constants
+const min = 83.5925;
+const max = 4773.12;
 
-    model.predict(a).print();
-    //console.log(predict.dataSync());
+const predict = async () => {
+  const model = await tf.loadLayersModel("file://data/model.json");
+  const priceHistInput = await data.getPriceHistory("ETHUSDC", "1d", {
+    limit: 30,
+  });
+  let inputTensor = tf.tensor(
+    priceHistInput.map((point) => {
+      return (point.avgPrice - min) / (max - min);
+    })
+  );
+
+  inputTensor = inputTensor.expandDims(1);
+  inputTensor = inputTensor.reshape([-1, 30, 1]);
+
+  const predictions = model.predict(inputTensor).dataSync;
+
+  return predictions.map((prediction) => {
+    return prediction * (max - min) + min;
+  });
+};
+
+module.exports = {
+    predict
 }
-main().then(() => {}).catch((err) => {console.log(err)});
