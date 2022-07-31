@@ -176,6 +176,7 @@ public class LeaderboardFragment extends Fragment {
 
         public void run() {
             try {
+                Log.e("a", jsonObject.toString());
                 String url = "http://34.105.106.85:8081/user/leaderboard/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))

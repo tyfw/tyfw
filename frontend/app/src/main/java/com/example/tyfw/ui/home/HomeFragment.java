@@ -55,9 +55,9 @@ public class HomeFragment extends Fragment {
     private TextView currVal;
     private TextView currWallet;
     private TextView currUser;
+    private TextView recommendation;
 
     private final String TAG = "HOME";
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -84,6 +84,7 @@ public class HomeFragment extends Fragment {
         currVal = view.findViewById(R.id.currentvalue);
         currUser = view.findViewById(R.id.user);
         currWallet = view.findViewById(R.id.wallet);
+        recommendation = view.findViewById(R.id.recommendation);
 
         lineChart.setNoDataText("Loading Wallet Data");
         // https://stackoverflow.com/questions/30892275/mpandroidchart-change-message-no-chart-data-available
@@ -99,9 +100,8 @@ public class HomeFragment extends Fragment {
 
         setUserData();
         setBalance();
-
+        getPrediction();
     }
-
 
     @Override
     public void onDestroyView() {
@@ -110,6 +110,38 @@ public class HomeFragment extends Fragment {
     }
 
     // INTERNAL HELPER FUNCTIONS
+
+    private void getPrediction(){
+        App config = (App) getContext().getApplicationContext();
+        int riskTolerance = config.getRiskTolerance();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Log.e("HERE", String.valueOf(riskTolerance));
+            jsonObject.put("risktolerance", riskTolerance);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        GetPrediction getPrediction = new GetPrediction(jsonObject);
+        Thread getPredictionThread = new Thread(getPrediction);
+        getPredictionThread.start();
+        try {
+            getPredictionThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        JSONObject serverResponse = getPrediction.getValue();
+        try {
+            //AI Recommendation:
+            if(Boolean.valueOf(serverResponse.getString("prediction"))) {
+                recommendation.setText("AI Recommendation: Sell");
+            } else {
+                recommendation.setText("AI Recommendation: hold");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void setUserData(){
 
@@ -455,11 +487,52 @@ public class HomeFragment extends Fragment {
             }
             e.printStackTrace();
         }
-
         public JSONObject getValue() {
             return value;
         }
     }
 
+    static class GetPrediction implements Runnable {
+        final static String TAG = "GetUserRunnable";
+        private JSONObject value;
+        private final JSONObject jsonObject;
 
+        public GetPrediction(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                String url = "http://34.105.106.85:8081/user/getprediction/";
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("risktolerance", jsonObject.getString("risktolerance"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    errorResponse(error);
+                }
+            } catch (JSONException e) {
+                errorResponse(e);
+            }
+        }
+
+        private void errorResponse(Exception e){
+            value = new JSONObject();
+            try {
+                value.putOpt("data", new JSONArray());
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        public JSONObject getValue() {
+            return value;
+        }
+    }
 }
