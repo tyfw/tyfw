@@ -52,7 +52,7 @@ public class LeaderboardFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         LeaderboardViewModel leaderboardViewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
 
-        leaderboardViewModel.notifyAll();
+        // leaderboardViewModel.notifyAll();
 
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -135,24 +135,24 @@ public class LeaderboardFragment extends Fragment {
 
                     if (config.getUsername() != null) {
                         if (Objects.equals(config.getUsername(), item.getName())){
-                            Intent intent;
-                            intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
+                            Intent mainActivity;
+                            mainActivity = new Intent(getActivity(), MainActivity.class);
+                            mainActivity.putExtra("email", config.getEmail());
+                            mainActivity.putExtra("googleIdToken", config.getGoogleIdToken());
+                            startActivity(mainActivity);
                         } else {
-                            Log.e("ehre", config.getUsername());
-                            Log.e("ehre", item.getName());
-                            Intent intent;
-                            intent = new Intent(getActivity(), ProfileActivity.class);
-                            intent.putExtra("username", item.getName());
-                            intent.putExtra("walletAddress", item.getAddress());
-                            startActivity(intent);
+                            Log.e("Here", config.getUsername());
+                            Log.e("Here", item.getName());
+                            Intent profileActivity = new Intent(getActivity(), ProfileActivity.class);
+                            profileActivity.putExtra("username", item.getName());
+                            profileActivity.putExtra("walletAddress", item.getAddress());
+                            startActivity(profileActivity);
                         }
                     } else {
-                        Intent intent;
-                        intent = new Intent(getActivity(), ProfileActivity.class);
-                        intent.putExtra("username", item.getName());
-                        intent.putExtra("walletAddress", item.getAddress());
-                        startActivity(intent);
+                        Intent profileActivity = new Intent(getActivity(), ProfileActivity.class);
+                        profileActivity.putExtra("username", item.getName());
+                        profileActivity.putExtra("walletAddress", item.getAddress());
+                        startActivity(profileActivity);
                     }
                 }
             }

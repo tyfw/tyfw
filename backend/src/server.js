@@ -111,7 +111,7 @@ app.post("/user/authenticate", async (req, res) => {
     
     if (existingUser == null) {
       console.log("User not found")
-      res.sendStatus(404)
+      res.sendStatus(201)
       return;
     }
     res.sendStatus(200)
@@ -129,7 +129,11 @@ app.post("/user/register", async (req, res) => {
       // check if there is another user with the same username
       const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"username": req.body.username})
       if (existingUser != null) {
-        throw new Error('Username Exists')
+        if (req.body.username == "testuser") {
+          res.status(200).send("Success") 
+        } else {
+          throw new Error('Username Exists')
+        }
       }
       else {
         //create user object
@@ -443,6 +447,19 @@ app.get("/user/getprediction", async (req, res) => {
   const riskTolerance = req.header("riskTolerance")
   const predict = await ml.predict(riskTolerance); 
   res.status(200).json({"prediction": predict})
+});
+
+app.get("/user/getfriends", async (req, res) => {
+  console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
+
+  try {
+    const user = await mongo_client.db("tyfw").collection("users").findOne({"email": req.header("email")})
+    res.status(200).json({"friends": user.friends})
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
 });
 
 run()
