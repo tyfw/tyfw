@@ -28,8 +28,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: |
           touch .env
-          echo ${{secrets.DOTENV}} >> .env
+          echo ${{ secrets.DOTENV }} >> .env
           pwd
+          cat .env
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
