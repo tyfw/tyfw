@@ -21,7 +21,7 @@ const predict = async () => {
   inputTensor = inputTensor.expandDims(1);
   inputTensor = inputTensor.reshape([-1, 30, 1]);
 
-  const predictions = model.predict(inputTensor).dataSync;
+  const predictions = model.predict(inputTensor).dataSync();
 
   return predictions.map((prediction) => {
     return prediction * (max - min) + min;
