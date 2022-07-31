@@ -32,8 +32,10 @@ const predict = async (riskTolerance) => {
   console.log("Risk tolerance: " + riskTolerance);
   console.log("Risk Ratio:",(tomorrowPrice - todayPrice) / todayPrice )
 
-  return -((tomorrowPrice - todayPrice) / todayPrice) > riskTolerance;
-
+  return {
+    "prediction": -((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100),
+    "price": tomorrowPrice,
+  };
 };
 
 module.exports = {

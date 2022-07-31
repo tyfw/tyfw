@@ -446,7 +446,7 @@ app.get("/user/getprediction", async (req, res) => {
   console.debug("/user/getprediction\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   const riskTolerance = req.header("riskTolerance")
   const predict = await ml.predict(riskTolerance); 
-  res.status(200).json({"prediction": predict})
+  res.status(200).json(predict)
 });
 
 app.get("/user/getfriends", async (req, res) => {
