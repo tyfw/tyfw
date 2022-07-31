@@ -28,9 +28,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: |
           touch .env
-          echo ${{ secrets.DOTENV }} >> .env
-          pwd
-          cat .env
+          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+          echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+          echo BINANCE_API_KEY=${{ secrets.BINANCE_API_KEY }} >> .env
+          echo BINANCE_SECRET=${{ secrets.BINANCE_SECRET }} >> .env
+          echo ETHERSCAN_API_KEY=${{ secrets.ETHERSCAN_API_KEY}} >> .env
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
