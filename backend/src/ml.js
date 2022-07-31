@@ -27,14 +27,11 @@ const predict = async (riskTolerance) => {
   const todayPrice = priceHistInput[priceHistInput.length - 1].avgPrice
   const tomorrowPrice = predictions[predictions.length-1] * (max - min) + min;
 
-  console.log("Today's price: " + todayPrice);
-  console.log("Model prediction: " + tomorrowPrice);
-  console.log("Risk tolerance: " + riskTolerance);
-  console.log("Risk Ratio:",(tomorrowPrice - todayPrice) / todayPrice )
 
   return {
     "prediction": -((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100),
-    "price": tomorrowPrice,
+    "todayPrice": todayPrice,
+    "tomorrowPrice": tomorrowPrice,
   };
 };
 
