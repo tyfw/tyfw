@@ -34,14 +34,6 @@ const getBalance = async (address) => {
   return etheriumBalance * conversion;
 };
 
-// get balance of erc 20 token by querying token contract
-const getERC20Balance = async (token_address, wallet_address) => {
-  const contract = new web3.eth.Contract(erc20abi, token_address);
-  const res = await contract.methods.balanceOf(wallet_address).call();
-  const format = web3.utils.fromWei(res);
-  return format;
-};
-
 // get transaction history of wallet address
 const getTransactionHistory = async (wallet_address) => {
   const url =
@@ -90,15 +82,6 @@ const getEthPrice = async () => {
   return point[0]["avgPrice"];
 };
 
-// get current price of ERC20 token
-const getERC20Price = async (token_address) => {
-  const url =
-    "https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=" +
-    token_address +
-    "&vs_currencies=USD";
-  let res = await axios.get(url);
-  return res.data[token_address.toLowerCase()]["usd"];
-};
 
 // Get account ballance history
 const getAccountHistory = async (address, interval, numPoints, startTime, endTime) => {
@@ -145,8 +128,6 @@ module.exports = {
   getEthBalance,
   getBalance,
   getTransactionHistory,
-  getERC20Price,
-  getERC20Balance,
   getAccountHistory,
   getYearPercentReturn,
 };

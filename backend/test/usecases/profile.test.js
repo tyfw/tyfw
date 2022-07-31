@@ -1,93 +1,5 @@
 const request = require('supertest')
-const server = require('../src/server.js')
-
-describe ("POST /user/register", () => {
-    describe("unique username and email", () => {
-        //should succesfully register user
-        //should respond w 200 status code
-        test("should respond w 200 status code", async () => {
-            const random = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
-            const response = await request(server).post("/user/register").send({
-                username: random,
-                email: random + "@mail.com",
-                firstName: "test",
-                lastName: "user",
-                walletAddress: ["0x9BF4001d307dFd62B26A2F1307ee0C0307632d59"]
-            })
-            expect(response.statusCode).toBe(200)
-        })
-    })
-
-    describe("non-unique username and non-unique email", () => {
-        test("should respond w 401 status code", async () => {
-            const response = await request(server).post("/user/register").send({
-                username: "Tesla",
-                email: "tesla@mail.com",
-                firstName: "Nikola",
-                lastName: "Tesla",
-                walletAddress: ["0x9BF4001d307dFd62B26A2F1307ee0C0307632d59"]
-            })
-            expect(response.statusCode).toBe(401)
-            
-        })
-        
-    })
-    
-})
-
-describe ("POST /user/authenticate", () => {
-    describe("failed authentication due to invalid token", () => {
-        test("should respond w 401 status code", async () => {
-            const response = await request(server).post("/user/authenticate").send({
-                googleIdToken : "fakeToken",
-                email: "tesla@mail.com"
-        })
-            expect(response.statusCode).toBe(401)
-        })
-    })
-    describe("failed authentication due to user not found", () => {
-        test("should respond w 400 status code", async () => {
-            const response = await request(server).post("/user/authenticate").send({
-                googleIdToken : "fakeToken",
-                email: "notauser@mail.com"
-        })
-            expect(response.statusCode).toBe(401)
-        })
-    })
-})
-    
-
-describe ("GET /user/leaderboard", () => {
-    describe("Get leaderboard for a user with no friends added", () => {
-        test("should respond w 200 status code", async () => {
-            const response = await request(server).get("/user/leaderboard").set(
-                "email", "tesla@mail.com"
-            )
-            expect(response.statusCode).toBe(400)
-            // expect(response.statusCode).toBe(200)
-
-        })
-    })
-    describe("Get leaderboard for a user with 2 friends added", () => {
-        test("should respond w 200 status code", async () => {
-            const response = await request(server).get("/user/leaderboard").set(
-                "email", "zeph@gmail.com"
-            )
-            expect(response.statusCode).toBe(200)
-
-        })
-    })
-    describe("Get leaderboard for a user not in DB", () => {
-        test("should respond w 404 status code", async () => {
-            const response = await request(server).get("/user/leaderboard").set(
-                "email", "notauser@gmail.com"
-            )
-            expect(response.statusCode).toBe(400)
-
-        })
-    })
-})
-
+const server = require('../../src/server.js')
 
 describe ("GET /user/displayotheruserbyusername", () => {
     describe("Get other user profile by username with day time scale", () => {
@@ -195,24 +107,6 @@ describe ("GET /user/displaycurruser", () => {
         })
         })
     })
-
-describe ("GET /user/search", () => {
-    describe("search for users with query matching 1 or more users", () => {
-        test("should respond w 200 status code", async () => {
-            const response = await (await request(server).get("/user/search").set("queryString", "Tesla").set("email", "charles@mail.com"))
-            expect(response.statusCode).toBe(200)
-
-        })
-    })
-    describe("search for users with query matching no users", () => {
-        test("should respond w 404 status code", async () => {
-            const response = await (await request(server).get("/user/search").set("queryString", "notinthedatabase").set("email", "tesla@mail.com"))
-            expect(response.statusCode).toBe(400)
-
-        })
-    })
-})
-
 describe ("POST /user/addbyusername and /user/addbywalletaddress", () => {
     describe("add existing user by username", () => {
         test("should respond w 200 status code", async () => {
@@ -276,7 +170,6 @@ describe ("POST /user/addbyusername and /user/addbywalletaddress", () => {
                 email: "tesla@mail.com",
             })
             expect(response.statusCode).toBe(200)
-            // expect(response.statusCode).toBe(400)
         })
     })
 })
@@ -339,50 +232,6 @@ describe ("GET /user/getlastname", () => {
     describe("get last name for non-existing user", () => {
         test("should respond w 400 status code", async () => {
             const response = await (await request(server).get("/user/getlastname").set("email", "notauser@mail.com"))
-            expect(response.statusCode).toBe(400)
-        })
-    })
-})
-
-describe ("GET /user/getwalletaddress", () => {
-    describe("get wallet address for user", () => {
-        test("should respond w 200 status code", async () => {
-            const response = await (await request(server).get("/user/getwalletaddress").set("username", "Tesla"))
-            expect(response.statusCode).toBe(200)
-        })
-    })
-    describe("get last name for non-existing user", () => {
-        test("should respond w 400 status code", async () => {
-            const response = await (await request(server).get("/user/getwalletaddress").set("email", "notauser@mail.com"))
-            expect(response.statusCode).toBe(400)
-        })
-    })
-})
-
-describe ("GET /user/getbalance", () => {
-    describe("get balance for user", () => {
-        test("should respond w 200 status code", async () => {
-            const response = await (await request(server).get("/user/getbalance").set("email", "tesla@mail.com"))
-            expect(response.statusCode).toBe(200)
-        })
-    })
-    describe("get balance for non-existing user", () => {
-        test("should respond w 400 status code", async () => {
-            const response = await (await request(server).get("/user/getbalance").set("email", "notauser@mail.com"))
-            expect(response.statusCode).toBe(400)
-        })
-    })
-})
-describe ("GET /user/getuser", () => {
-    describe("get user", () => {
-        test("should respond w 200 status code", async () => {
-            const response = await (await request(server).get("/user/getuser").set("email", "tesla@mail.com"))
-            expect(response.statusCode).toBe(200)
-        })
-    })
-    describe("get non-existing user", () => {
-        test("should respond w 400 status code", async () => {
-            const response = await (await request(server).get("/user/getuser").set("email", "notauser@mail.com"))
             expect(response.statusCode).toBe(400)
         })
     })
