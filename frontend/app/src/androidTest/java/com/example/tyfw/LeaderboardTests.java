@@ -15,6 +15,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.IsNot.not;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,7 +60,7 @@ public class LeaderboardTests {
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
-        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).onChildView(withText("You")).check(matches(withText("You")));
+        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).onChildView(withText("Username or wallet address")).check(matches(withText("Username or wallet address"))).check(matches(not(isClickable())));
     }
 
     @Test
@@ -73,7 +74,7 @@ public class LeaderboardTests {
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
-        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).onChildView(withText("You")).check(matches(withText("You"))).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(1).perform(click());
 
         onView(withId(R.id.home_frag)).check(matches(isDisplayed()));
     }
@@ -115,48 +116,8 @@ public class LeaderboardTests {
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
-        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(1).onChildView(withText("Cooper")).check(matches(withText("Cooper"))).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(3).perform(click());
 
         onView(withId(R.id.profileActivity)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void addAndRemoveFriend() {
-        // Navigate to Search fragment
-        onView(allOf(withId(R.id.navigation_search), withContentDescription("Search"))).perform(click());
-
-        // Verify that the Search fragment is shown on screen
-        onView(withId(R.id.search_input)).perform(replaceText("Cooper"), closeSoftKeyboard());
-
-        SystemClock.sleep(1000);
-
-        onView(withId(R.id.search_button)).perform(click());
-
-        SystemClock.sleep(1000);
-
-        onView(withId(R.id.search_results_list)).check(matches(isDisplayed()));
-
-        onData(anything()).inAdapterView(withId(R.id.search_results_list)).atPosition(1).perform(click());
-
-        onView(withId(R.id.profileActivity)).check(matches(isDisplayed()));
-
-        // Verify that the friend button exists and works
-        onView(withId(R.id.friend_button)).check(matches(isDisplayed())).check(matches(isClickable())).check(matches(withText(R.string.add_friend_button)));
-        SystemClock.sleep(1000);
-        onView(withId(R.id.friend_button)).perform(click()).check(matches(withText("Friends")));
-
-        pressBack(); // exit to search
-        pressBack(); // exit to main activity
-
-        SystemClock.sleep(2000);
-        // Navigate to Leaderboard fragment
-        onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
-
-        // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.leaderboard_layout)).check(matches(isDisplayed()));
-
-        // Verify that the Leaderboard list is shown on screen
-        onView(withId(R.id.list)).check(matches(isDisplayed()));
-        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(1).onChildView(withText("Cooper")).check(matches(withText("Cooper")));
     }
 }
