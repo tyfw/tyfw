@@ -43,8 +43,8 @@ const getUserByWalletAddress = async (address) => {
     return user
 }
 
-const registerUser = async (username, firstName, lastName, email, walletAddress) => {
-    const user = new User(username, firstName, lastName, email, walletAddress)
+const registerUser = async (username, firstName, lastName, email, walletAddress, risktolerance) => {
+    const user = new User(username, firstName, lastName, email, walletAddress, risktolerance)
     await mongo_client.db("tyfw").collection("users").insertOne(user)
     return true
 }
