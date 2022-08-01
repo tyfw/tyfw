@@ -2,8 +2,6 @@ const { MongoClient } = require('mongodb')
 const uri = "mongodb://localhost:27017"
 const mongo_client = new MongoClient(uri)
 
-const {getBalance} = require('./data.js')
-
 class User {
     constructor(username, firstname, lastname, email, addresses) {
         this.username = username;
@@ -50,12 +48,17 @@ const registerUser = async (username, firstName, lastName, email, walletAddress)
     return true
 }
 
-const changeName = async (name, email, newName) => {
+const changeName = async (email, name, newName) => {
       if (name == "first") {
         await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$set: {firstname: newName}})
+        return true
+      }
+      else if (name == "last") {
+        await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$set: {lastname: newName}})
+        return true
       }
       else {
-        await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$set: {lastname: newName}})
+        return false
       }
 }
 
@@ -75,6 +78,7 @@ const search = async(email, queryString) => {
 
 const addFriend = async(email, newFriendEmail) => {
     await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$addToSet: {friends: newFriendEmail}})
+    return true
 }
 
 module.exports = {
