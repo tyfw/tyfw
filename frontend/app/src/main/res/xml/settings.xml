@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SeekBarPreference
-        android:key="risk_tolerance"
-        android:title="Risk tolerance"
-        android:summary="Input your risk tolerance as a % here. This will help our AI price prediction model give a tailored buy/sell prediction to you.\nCurrent tolerance: "
-        android:defaultValue="50"
-        android:max="100"
-        android:min="0"
-        android:stepSize="1"/>
-        />
-
     <EditTextPreference
         android:defaultValue="Default value"
         android:key="preference_first_name"

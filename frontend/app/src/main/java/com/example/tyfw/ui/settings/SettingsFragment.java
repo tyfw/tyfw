@@ -147,17 +147,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             startActivity(intent);
             return true;
         });
-
-        // Help from
-        // https://keithbeattyblog.wordpress.com/2017/12/16/seekbarpreference-android-api-built-in/
-        final SeekBarPreference riskTolerancePrefrence = getPreferenceManager().findPreference("risk_tolerance");
-        riskTolerancePrefrence.setSummary("Input your risk tolerance as a % here. This will help our AI price prediction model give a tailored buy/sell prediction to you.\nCurrent tolerance: " + riskTolerancePrefrence.getValue());
-        riskTolerancePrefrence.setOnPreferenceChangeListener((preference, newValue) -> {
-            riskTolerancePrefrence.setSummary("Input your risk tolerance as a % here. This will help our AI price prediction model give a tailored buy/sell prediction to you.\nCurrent tolerance: " + newValue);
-            config.setRiskTolerance((Integer) newValue);
-
-            return true;
-        });
     }
 
     class GetName implements Runnable {
