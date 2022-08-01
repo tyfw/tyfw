@@ -70,7 +70,8 @@ app.post("/user/authenticate", async (req, res) => {
   try {
     console.debug("/user/authenticate \n    Time: ", Date.now(), "\n    req.body: ", req.body)
     
-    existingUser = getUserByEmail(req.body.email)
+    existingUser = await getUserByEmail(req.body.email)
+    console.debug("existingUser: ", existingUser)
     
     if (existingUser == null) {
       console.log("User not found")
