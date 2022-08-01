@@ -112,7 +112,6 @@ public class HomeFragment extends Fragment {
     // INTERNAL HELPER FUNCTIONS
 
     private void setUserData(){
-
         App config = (App) getActivity().getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();
@@ -367,7 +366,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class GetUser implements Runnable {
+    public class GetUser implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
         private final JSONObject jsonObject;
