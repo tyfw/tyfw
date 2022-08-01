@@ -28,7 +28,6 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
 
-const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const ml = require('./ml.js');
 
 
