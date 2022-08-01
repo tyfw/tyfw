@@ -1,6 +1,6 @@
 // Web3 for Eth and ERC 20 chain data
 const Web3 = require("web3");
-const erc20abi = require("../erc20abi.json");
+//const erc20abi = require("../erc20abi.json");
 
 // eth node hosted on infura
 const provider =
@@ -15,7 +15,7 @@ const client = new Spot(
 );
 
 // load api keys from .env file
-require("dotenv").config({path: '../.env'});
+require("dotenv").config();
 
 // axios for fetching from etherscan
 const axios = require("axios");
@@ -23,15 +23,41 @@ const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
 
 // get balance of ether by querying wallet address on blockchain
 const getEthBalance = async (wallet_address) => {
-  const balance = await web3.eth.getBalance(wallet_address);
-  return web3.utils.fromWei(balance, "ether");
+  if (web3.utils.isAddress(wallet_address)) {
+    const balance = await web3.eth.getBalance(wallet_address);
+    return web3.utils.fromWei(balance, "ether");
+  } else {
+    throw new Error("Invalid address");
+  }
 };
 
+const priceIntervals = [
+  "1m",
+  "3m",
+  "5m",
+  "15m",
+  "30m",
+  "1h",
+  "2h",
+  "4h",
+  "6h",
+  "8h",
+  "12h",
+  "1d",
+  "3d",
+  "1w",
+  "1M",
+];
+
 // return current value of eth at wallet address
-const getBalance = async (address) => {
-  const etheriumBalance = await getEthBalance(address);
-  const conversion = await getEthPrice();
-  return etheriumBalance * conversion;
+const getBalanceUSD = async (address) => {
+  try {
+    const ethBalance = await getEthBalance(address);
+    const ethPrice = await getEthPrice();
+    return ethBalance * ethPrice;
+  } catch (err) {
+    throw err;
+  }
 };
 
 // get transaction history of wallet address
@@ -50,6 +76,12 @@ const getTransactionHistory = async (wallet_address) => {
     "&apikey=" +
     etherscanApiKey;
   let res = await axios.get(url);
+  // check if address is valid
+  if (!web3.utils.isAddress(wallet_address)) {
+    throw new Error("Invalid address");
+  }
+
+  // check if result is valid
   return res.data["result"].map((item) => {
     const sign = item.to == wallet_address.toLowerCase() ? 1 : -1;
     return {
@@ -63,16 +95,31 @@ const getTransactionHistory = async (wallet_address) => {
 // uses candlestick data, price taken as avg of open, close, high, and low
 // Max 1000 points, default 500
 const getPriceHistory = async (price_abv, interval, options) => {
-  const res = await client.klines(price_abv, interval, options);
-  return res["data"].map((item) => {
-    return {
-      time: item[0] / 1000,
-      avgPrice:
-        item
-          .slice(1, 5)
-          .map(parseFloat)
-          .reduce((a, b) => a + b) / 4,
-    };
+  if(!options) options = {};
+  // convert unix time interval to binance format precision
+  if(options.startTime != undefined){
+    options.startTime = options.startTime * 1000;
+  }
+  if(options.endTime != undefined) {
+    options.endTime = options.endTime * 1000;
+  }
+  if(!priceIntervals.includes(interval)) {
+    throw new Error("Invalid interval");
+  }
+  return client.klines(price_abv, interval, options)
+  .then((res)=>{
+    return res["data"].map((item) => {
+      return {
+        time: item[0] / 1000,
+        avgPrice:
+          item
+            .slice(1, 5)
+            .map(parseFloat)
+            .reduce((a, b) => a + b) / 4,
+      };
+    });
+  }).catch((err)=>{
+    throw Error("Invalid Price ABV");
   });
 };
 
@@ -82,11 +129,18 @@ const getEthPrice = async () => {
   return point[0]["avgPrice"];
 };
 
-
 // Get account ballance history
-const getAccountHistory = async (address, interval, numPoints, startTime, endTime) => {
-  if (!interval) interval = "1d";
+const getAccountHistory = async (
+  address,
+  interval,
+  numPoints,
+  startTime,
+  endTime
+) => {
   let ethBalance = await getEthBalance(address);
+  if (typeof numPoints !== "number" || numPoints < 1) {
+    throw new Error("Invalid numPoints");
+  }
   let priceHistory = await getPriceHistory("ETHUSDC", interval, {
     startTime,
     endTime,
@@ -121,12 +175,17 @@ const getAccountHistory = async (address, interval, numPoints, startTime, endTim
 // Returns the current preformance of a given address
 const getYearPercentReturn = async (address) => {
   const accountHistory = await getAccountHistory(address, "1w", 52);
-  return (accountHistory[accountHistory.length -1] - accountHistory[0])/accountHistory[0];
+  return (
+    (accountHistory[accountHistory.length - 1] - accountHistory[0]) /
+    accountHistory[0]
+  );
 };
 
 module.exports = {
   getEthBalance,
-  getBalance,
+  getEthPrice,
+  getBalance: getBalanceUSD,
+  getPriceHistory,
   getTransactionHistory,
   getAccountHistory,
   getYearPercentReturn,
