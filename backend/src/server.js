@@ -73,7 +73,9 @@ app.post("/user/authenticate", async (req, res) => {
     existingUser = getUserByEmail(req.body.email)
     
     if (existingUser == null) {
-      throw new Error('User not found')
+      console.log("User not found")
+      res.sendStatus(201)
+      return;
     }
     
     const verifyied = await googleAuthVerify(req.body.googleIdToken)
