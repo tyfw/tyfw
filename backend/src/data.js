@@ -189,4 +189,5 @@ module.exports = {
   getTransactionHistory,
   getAccountHistory,
   getYearPercentReturn,
+  getPriceHistory,
 };
