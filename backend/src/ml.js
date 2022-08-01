@@ -30,8 +30,8 @@ const predict = async (riskTolerance) => {
 
   return {
     "prediction": -((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100),
-    "todayPrice": todayPrice,
-    "tomorrowPrice": tomorrowPrice,
+    todayPrice,
+    tomorrowPrice,
   };
 };
 

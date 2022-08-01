@@ -64,7 +64,7 @@ const changeName = async (email, name, newName) => {
 }
 
 const changeRiskTolerance = async(email, riskTolerance) => {
-  await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$set: {risktolerance: riskTolerance}})
+  await mongo_client.db("tyfw").collection("users").updateOne({email}, {$set: {risktolerance: riskTolerance}})
 }
 
 const search = async(email, queryString) => {
