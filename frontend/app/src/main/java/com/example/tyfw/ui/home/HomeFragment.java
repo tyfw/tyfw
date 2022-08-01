@@ -3,7 +3,6 @@ package com.example.tyfw.ui.home;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,19 +16,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
+import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -63,8 +61,6 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
 
         OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
                 .connectTimeout(15, TimeUnit.SECONDS)
@@ -75,9 +71,8 @@ public class HomeFragment extends Fragment {
         AndroidNetworking.initialize(getContext(), okHttpClient);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-       return root;
+        return binding.getRoot();
     }
 
 
@@ -117,7 +112,6 @@ public class HomeFragment extends Fragment {
     // INTERNAL HELPER FUNCTIONS
 
     private void setUserData(){
-
         App config = (App) getActivity().getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();
@@ -210,30 +204,8 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            parent.setSelection(0);   // Enforce a default selection when nothing is selected
         }
-    }
-
-    private void setChartGraphics(){
-        // background color
-        lineChart.setBackgroundColor(Color.WHITE);
-
-        // disable description text
-        lineChart.getDescription().setEnabled(false);
-
-        // enable touch gestures
-        lineChart.setTouchEnabled(true);
-
-        LimitLine ll1 = new LimitLine(30f,"Title");
-        ll1.setLineColor(getResources().getColor(R.color.rosy_brown));
-        ll1.setLineWidth(4f);
-        ll1.enableDashedLine(10f, 10f, 0f);
-        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        ll1.setTextSize(10f);
-
-        LimitLine ll2 = new LimitLine(35f, "");
-        ll2.setLineWidth(4f);
-        ll2.enableDashedLine(10f, 10f, 0f);
     }
 
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
@@ -291,7 +263,7 @@ public class HomeFragment extends Fragment {
             case "Last Year":
                 timeScale = "year";
                 break;
-            case "":
+            default:
                 timeScale = "";
                 break;
         }
@@ -302,7 +274,7 @@ public class HomeFragment extends Fragment {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+            jsonObject.put("googleIdToken", config.getGoogleIdToken());
             jsonObject.put("time", timeScale);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -345,19 +317,11 @@ public class HomeFragment extends Fragment {
         }
         return false;
     }
-
-    private void setCustom(boolean val){
-        lineChart.setTouchEnabled(val);
-        lineChart.setDragEnabled(val);
-        lineChart.setPinchZoom(val);
-        lineChart.setScaleEnabled(val);
-    }
-
+    
     class GetHome implements Runnable {
         final static String TAG = "GetHomeRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/displaycurruser/";
+        private final JSONObject jsonObject;
 
         public GetHome(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -365,6 +329,7 @@ public class HomeFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/displaycurruser/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("time", jsonObject.getString("time"))
@@ -401,11 +366,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class GetUser implements Runnable {
+    public class GetUser implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/getuser/";
+        private final JSONObject jsonObject;
 
         public GetUser(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -413,6 +377,7 @@ public class HomeFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/getuser/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .build();
@@ -450,11 +415,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class GetBalance implements Runnable {
+    static class GetBalance implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/getbalance/";
+        private final JSONObject jsonObject;
 
         public GetBalance(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -462,6 +426,7 @@ public class HomeFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/getbalance/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .build();

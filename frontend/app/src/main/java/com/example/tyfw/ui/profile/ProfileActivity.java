@@ -21,10 +21,9 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.home.HomeFragment;
+import com.example.tyfw.ui.home.HomeFragment.GetUser;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -37,24 +36,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView usernameTextView;
-    private TextView walletAddr;
 
-    private ImageView profilePic;
     private LineChart lineChart;
     private Spinner dropdown;
     private String username;
-    private String walletName;
     private static String timeOption = "";
 
-    private String TAG = "Profile";
-    private MaterialButton friend;
+    private final String TAG = "Profile";
+    MaterialButton friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TextView usernameTextView;
+        String walletName;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -64,17 +62,15 @@ public class ProfileActivity extends AppCompatActivity {
         usernameTextView = findViewById(R.id.profile_username);
         usernameTextView.setText(username);
 
-        walletAddr = findViewById(R.id.wallet_address);
+        TextView walletAddr = findViewById(R.id.wallet_address);
         walletAddr.setText(walletName);
 
-        profilePic = (ImageView) findViewById(R.id.profile_default_pic);
+        ImageView profilePic = (ImageView) findViewById(R.id.profile_default_pic);
         profilePic.setImageResource(R.drawable.ic_baseline_people_24);
         profilePic.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
 
         dropdown = findViewById(R.id.profile_graph_options);
         friend = findViewById(R.id.friend_button);
-
-        // THIS WAS CAUSING THE CRASHES
         lineChart = findViewById(R.id.wallet_chart);
 
         try {
@@ -121,6 +117,49 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (isFriend()) {
+            friend.setChecked(true);
+        } else {
+            friend.setChecked(false);
+        }
+    }
+
+    private boolean isFriend(){
+        App config = (App) getApplicationContext();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", config.getEmail());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        GetFriends getFriend = new GetFriends(jsonObject);
+        Thread getFriendThread = new Thread(getFriend);
+        getFriendThread.start();
+        try {
+            getFriendThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject serverResponse = getFriend.getValue();
+        JSONArray friendsList = new JSONArray();
+        try {
+            friendsList = serverResponse.getJSONArray("friends");
+            for (int i=0; !friendsList.isNull(i); i++) {
+                String friendName = friendsList.getString(i);
+                if (friendName.equals(username)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Unable to check if user's friends.", Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 
     // Followed this API guide: https://developer.android.com/guide/topics/ui/controls/spinner.html#Populate
@@ -142,17 +181,15 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            // nothing
         }
     }
 
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
-    // TODO: add custom x-y-margins for graph for each option
     private void setChart(){
         ArrayList<String> xData = new ArrayList<>(); // each index contains String of what that is
         ArrayList<Entry> yAxis = new ArrayList<>(); // each index contains data point
         // Assuming xAxis and yAxis are set:
-        //TODO: make a better way of reloading
         if (!updateData(xData,yAxis)){
             // Toast.makeText(getBaseContext(),"Unable load data for this option. Please try again.", Toast.LENGTH_LONG).show();
             return;
@@ -189,23 +226,9 @@ public class ProfileActivity extends AppCompatActivity {
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
         String timeScale = "";
-        switch (timeOption) {
-            case "Today":
-                timeScale = "day";
-                break;
-            case "Last Week":
-                timeScale = "week";
-                break;
-            case "Last Month":
-                timeScale = "month";
-                break;
-            case "Last Year":
-                timeScale = "year";
-                break;
-            case "":
-                timeScale = "";
-                break;
-        }
+
+        timeScale = getTimeScale();
+
         Log.d("DATA", timeScale);
 
         App config = (App) this.getApplicationContext();
@@ -258,6 +281,21 @@ public class ProfileActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private String getTimeScale(){
+        switch (timeOption) {
+            case "Today":
+                return "day";
+            case "Last Week":
+                return "week";
+            case "Last Month":
+                return "month";
+            case "Last Year":
+                return "year";
+            default:
+                return null;
+        }
     }
 
     class GetProfile implements Runnable {
@@ -336,6 +374,41 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         public boolean success() {
+            return value;
+        }
+    }
+
+    public class GetFriends implements Runnable {
+        final static String TAG = "GetFriendsRunnable";
+        private JSONObject value;
+        private final JSONObject jsonObject;
+
+        public GetFriends(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public void run() {
+            try {
+                String url = "http://34.105.106.85:8081/user/getfriends/";
+                ANRequest request = AndroidNetworking.get(url)
+                        .addHeaders("email", jsonObject.getString("email"))
+                        .build();
+
+                ANResponse response = request.executeForJSONObject();
+
+                if (response.isSuccess()) {
+                    value = (JSONObject) response.getResult();
+                } else {
+                    // handle error
+                    ANError error = response.getError();
+                    error.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public JSONObject getValue() {
             return value;
         }
     }

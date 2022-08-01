@@ -36,26 +36,43 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
-    private ActivityLoginBinding binding;
+
+    private EditText firstNameEditText;
+    private EditText lastNameEditText;
+    private EditText emailEditText;
+    private EditText walletAddressEditText;
+
+    private String email;
+    private String googleIdToken;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        EditText usernameEditText;
+
+        email = getIntent().getStringExtra("email");
+        googleIdToken = getIntent().getStringExtra("googleIdToken");
 
         App config = (App) getApplicationContext();
-        String email = config.getEmail();
+        config.setEmail(email);
+        config.setGoogleIdToken(googleIdToken);
 
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        super.onCreate(savedInstanceState);
+
+        email = getIntent().getStringExtra("email");
+        googleIdToken = getIntent().getStringExtra("googleIdToken");
+
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        final EditText firstNameEditText = binding.firstName;
-        final EditText lastNameEditText = binding.lastName;
-        final EditText emailEditText = binding.email;
-        final EditText walletAddressEditText = binding.walletProfile;
-        final EditText usernameEditText = binding.username;
+        firstNameEditText = binding.firstName;
+        lastNameEditText = binding.lastName;
+        emailEditText = binding.email;
+        walletAddressEditText = binding.walletProfile;
+        usernameEditText = binding.username;
+
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
@@ -66,47 +83,10 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
-        loginViewModel.getLoginFormState().observe(this, loginFormState -> {
-            if (loginFormState == null) {
-                return;
-            }
-            loginButton.setEnabled(loginFormState.isDataValid());
-            if (loginFormState.getFirstNameError() != null) {
-                firstNameEditText.setError(getString(loginFormState.getFirstNameError()));
-            }
-            if (loginFormState.getLastNameError() != null) {
-                lastNameEditText.setError(getString(loginFormState.getLastNameError()));
-            }
-            if (loginFormState.getEmailError() != null) {
-                emailEditText.setError(getString(loginFormState.getEmailError()));
-            }
-            if (loginFormState.getWalletAddressError() != null) {
-                walletAddressEditText.setError(getString(loginFormState.getWalletAddressError()));
-            }
-        });
+        getLoginFormState(loginViewModel, firstNameEditText, lastNameEditText,
+                emailEditText , walletAddressEditText, loginButton); // reduce complexity
 
-        loginViewModel.getLoginResult().observe(this, loginResult -> {
-            if (loginResult == null) {
-                return;
-            }
-            loadingProgressBar.setVisibility(View.GONE);
-            if (loginResult.getError() != null) {
-                showLoginFailed(loginResult.getError());
-            }
-            if (loginResult.getSuccess() != null) {
-                updateUiWithUser(
-                        loginResult.getSuccess(),
-                        firstNameEditText.getText().toString(),
-                        lastNameEditText.getText().toString(),
-                        emailEditText.getText().toString(),
-                        walletAddressEditText.getText().toString(),
-                        usernameEditText.getText().toString());
-            }
-            setResult(Activity.RESULT_OK);
-
-            //Complete and destroy login activity once successful
-            finish();
-        });
+        getLoginResult( loginViewModel,  firstNameEditText,  lastNameEditText, walletAddressEditText, usernameEditText,  loadingProgressBar );
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
@@ -155,22 +135,74 @@ public class LoginActivity extends AppCompatActivity {
             );
         });
     }
+    
+    private void getLoginFormState(LoginViewModel loginViewModel, EditText firstNameEditText, EditText lastNameEditText,
+                                   EditText emailEditText , EditText walletAddressEditText, Button loginButton){
+        
+        loginViewModel.getLoginFormState().observe(this, loginFormState -> {
+            if (loginFormState == null) {
+                return;
+            }
+            // loginButton.setEnabled(loginFormState.isDataValid());
+            if (loginFormState.getFirstNameError() != null) {
+                firstNameEditText.setError(getString(loginFormState.getFirstNameError()));
+            }
+            if (loginFormState.getLastNameError() != null) {
+                lastNameEditText.setError(getString(loginFormState.getLastNameError()));
+            }
+            if (loginFormState.getEmailError() != null) {
+                emailEditText.setError(getString(loginFormState.getEmailError()));
+            }
+            if (loginFormState.getWalletAddressError() != null) {
+                walletAddressEditText.setError(getString(loginFormState.getWalletAddressError()));
+            }
+            if (loginFormState.getFirstNameError() == null && loginFormState.getLastNameError() == null &&
+                    loginFormState.getEmailError() == null && loginFormState.getWalletAddressError() == null){
+                loginButton.setEnabled(true);
+            }
+        });
+    }
+    
+    private void getLoginResult(LoginViewModel loginViewModel, EditText firstNameEditText, EditText lastNameEditText,
+                                EditText walletAddressEditText,EditText usernameEditText, ProgressBar loadingProgressBar ){
+        loginViewModel.getLoginResult().observe(this, loginResult -> {
+            if (loginResult == null) {
+                return;
+            }
+            loadingProgressBar.setVisibility(View.GONE);
+            if (loginResult.getError() != null) {
+                showLoginFailed(loginResult.getError());
+            }
 
-    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String email, String walletAddress, String username) {
-        // TODO : initiate successful logged in experience
-        App config = (App) getApplicationContext();
+            if (loginResult.getSuccess() != null) {
+                updateUiWithUser(
+                        loginResult.getSuccess(),
+                        firstNameEditText.getText().toString(),
+                        lastNameEditText.getText().toString(),
+                        walletAddressEditText.getText().toString(),
+                        usernameEditText.getText().toString());
+            }
+            setResult(Activity.RESULT_OK);
+
+            //Complete and destroy login activity once successful
+            finish();
+        });
+    }
+    
+    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
+        // model.notify();
 
         JSONObject jsonObject = new JSONObject();
         try {
             JSONArray jsonArray = new JSONArray();
             jsonArray.put(walletAddress);
 
-            jsonObject.put("email", config.getEmail());
+            jsonObject.put("email", this.email);
             jsonObject.put("username", username);
             jsonObject.put("firstName", firstName);
             jsonObject.put("lastName", lastName);
             jsonObject.put("walletAddress", jsonArray);
-            jsonObject.put("googleIdToken", config.getGoogleIdToken());
+            jsonObject.put("googleIdToken", this.googleIdToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -187,6 +219,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (serverResponse == 200) {
             Intent mainActivity = new Intent(this, MainActivity.class);
+            mainActivity.putExtra("email", this.email);
+            mainActivity.putExtra("googleIdToken", this.googleIdToken);
             startActivity(mainActivity);
         } else {
             Log.e("as", serverResponse.toString());
@@ -201,14 +235,14 @@ public class LoginActivity extends AppCompatActivity {
     class RegisterUser implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private Integer value;
-        private String url = "http://34.105.106.85:8081/user/register/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public RegisterUser(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/register/";
             ANRequest request= AndroidNetworking.post(url)
                     .addJSONObjectBody(this.jsonObject)
                     .setPriority(Priority.MEDIUM)

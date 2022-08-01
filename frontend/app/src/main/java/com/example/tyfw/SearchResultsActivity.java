@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tyfw.ui.profile.ProfileActivity;
-import com.example.tyfw.ui.profile.WalletProfileActivity;
 import com.example.tyfw.utils.SearchResultsListAdapter;
 import com.example.tyfw.utils.SearchResultsRow;
 
@@ -22,9 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultsActivity extends AppCompatActivity {
-    private List<SearchResultsRow> itemsList = new ArrayList<SearchResultsRow>();
-    private ListView listView;
-    private SearchResultsListAdapter adapter;
+    private final List<SearchResultsRow> itemsList = new ArrayList<SearchResultsRow>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +32,8 @@ public class SearchResultsActivity extends AppCompatActivity {
         // TODO: call the api with the search string
         // Should be passed as extra args to this
 
-        listView = (ListView) findViewById(R.id.search_results_list);
-        adapter = new SearchResultsListAdapter(this, itemsList);
+        ListView listView = (ListView) findViewById(R.id.search_results_list);
+        SearchResultsListAdapter adapter = new SearchResultsListAdapter(this, itemsList);
         listView.setAdapter(adapter);
 
         Intent intent = getIntent();

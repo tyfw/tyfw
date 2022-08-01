@@ -1,14 +1,11 @@
 package com.example.tyfw.utils;
 
 import android.content.Context;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tyfw.R;
 
@@ -19,9 +16,9 @@ public class LeaderboardListAdapter extends BaseAdapter {
     // https://stackoverflow.com/questions/34518421/adding-a-scoreboard-to-an-android-studio-application
     // https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
-    private Context context;
+    private final Context context;
     private LayoutInflater inflater;
-    private List<LeaderboardRow> leaderboardValues;
+    private final List<LeaderboardRow> leaderboardValues;
 
     public LeaderboardListAdapter(Context context, List<LeaderboardRow> leaderboardValues) {
         this.leaderboardValues = leaderboardValues;
@@ -39,26 +36,27 @@ public class LeaderboardListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View tempView = convertView;
         LeaderboardRowHolder userPair;
         if (inflater == null) {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.leaderboard_row, parent, false);
+        if (tempView == null) {
+            tempView = inflater.inflate(R.layout.leaderboard_row, parent, false);
             userPair = new LeaderboardRowHolder();
-            userPair.name =(TextView) convertView.findViewById(R.id.leaderboard_friend_name);
-            userPair.value =(TextView) convertView.findViewById(R.id.leaderboard_friend_value);
-            convertView.setTag(convertView);
+            userPair.name =(TextView) tempView.findViewById(R.id.leaderboard_friend_name);
+            userPair.value =(TextView) tempView.findViewById(R.id.leaderboard_friend_value);
+            tempView.setTag(tempView);
         } else {
-            userPair = (LeaderboardRowHolder) convertView.getTag();
+            userPair = (LeaderboardRowHolder) tempView.getTag();
         }
 
         final LeaderboardRow val = leaderboardValues.get(position);
         userPair.name.setText(val.getName());
         userPair.value.setText(val.getValue());
 
-        return convertView;
+        return tempView;
     }
 
     static class LeaderboardRowHolder {

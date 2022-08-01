@@ -13,9 +13,9 @@ import com.example.tyfw.R;
 
 public class LoginViewModel extends ViewModel {
 
-    private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
+    private final MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
+    private final MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
+    private final LoginRepository loginRepository;
 
     LoginViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
@@ -31,7 +31,7 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String firstName, String lastName, String email, String walletAddress) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(firstName, lastName, email, walletAddress);
+        Result<LoggedInUser> result = loginRepository.login(firstName, lastName, email);
 
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
@@ -51,7 +51,7 @@ public class LoginViewModel extends ViewModel {
         } else if (!isWalletAddressValid(walletAddress)) {
             loginFormState.setValue(new LoginFormState(null, null, null, R.string.invalid_wallet_address));
         } else {
-            loginFormState.setValue(new LoginFormState(true));
+            loginFormState.setValue(new LoginFormState());
         }
     }
 

@@ -23,11 +23,6 @@ import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,10 +31,9 @@ import org.json.JSONArray;
 
 public class SearchFragment extends Fragment {
 
-    private String TAG = "SEARCH";
+    private final String TAG = "SEARCH";
 
     private FragmentSearchBinding binding;
-    private Button search_button;
     private EditText search_input;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,7 +41,7 @@ public class SearchFragment extends Fragment {
 
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        search_button = (Button) root.findViewById(R.id.search_button);
+        Button search_button = (Button) root.findViewById(R.id.search_button);
         search_input = (EditText) root.findViewById(R.id.search_input);
 
         search_button.setOnClickListener(v -> {
@@ -102,10 +96,9 @@ public class SearchFragment extends Fragment {
         binding = null;
     }
 
-    class GetSearch implements Runnable {
+    static class GetSearch implements Runnable {
         private JSONObject value;
-        private String url = "http://34.105.106.85:8081/user/search/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public GetSearch(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
@@ -113,6 +106,7 @@ public class SearchFragment extends Fragment {
 
         public void run() {
             try {
+                String url = "http://34.105.106.85:8081/user/search/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("queryString", jsonObject.getString("queryString"))
                         .addHeaders("email", jsonObject.getString("email"))

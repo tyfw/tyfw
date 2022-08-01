@@ -1,18 +1,11 @@
 package com.example.tyfw;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.StrictMode;
 import android.util.Log;
-import android.util.Pair;
 
 import com.androidnetworking.common.Priority;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.androidnetworking.interfaces.OkHttpResponseListener;
+
 import com.example.tyfw.ui.login.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -21,8 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
@@ -33,32 +24,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.tyfw.databinding.ActivityAuthBinding;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URL;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import okhttp3.Response;
 
 public class AuthActivity extends AppCompatActivity {
 
     // private ActivityMainBinding binding;
 
     private GoogleSignInClient googleSignInClient;
-    private Integer RC_SIGN_IN = 1;
-    private Class nextActivity = MainActivity.class;
+    private final Integer RC_SIGN_IN = 1;
 
     final static String TAG = "MainActivity";
 
@@ -148,9 +120,13 @@ public class AuthActivity extends AppCompatActivity {
 
             if (serverResponse == 200) {
                 Intent mainActivity = new Intent(this, MainActivity.class);
+                mainActivity.putExtra("email", account.getEmail());
+                mainActivity.putExtra("googleIdToken", account.getIdToken());
                 startActivity(mainActivity);
             } else if (serverResponse == 201) {
                 Intent loginActivity = new Intent(this, LoginActivity.class);
+                loginActivity.putExtra("email", account.getEmail());
+                loginActivity.putExtra("googleIdToken", account.getIdToken());
                 startActivity(loginActivity);
             } else {
                 Log.e("TAG", serverResponse.toString());
@@ -162,14 +138,14 @@ public class AuthActivity extends AppCompatActivity {
     class GetAuth implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private Integer value;
-        private String url = "http://34.105.106.85:8081/user/authenticate/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public GetAuth(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/authenticate/";
             ANRequest request= AndroidNetworking.post(url)
                     .addJSONObjectBody(this.jsonObject)
                     .setPriority(Priority.MEDIUM)

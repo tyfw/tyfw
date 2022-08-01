@@ -2,7 +2,6 @@ package com.example.tyfw.ui.settings;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,8 +24,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +33,6 @@ enum FirstOrLast {
 }
 
 public class SettingsFragment extends PreferenceFragmentCompat {
-    private GoogleApiClient googleApiClient;
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
@@ -45,12 +41,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .requestEmail()
                 .build();
 
-        googleApiClient = new GoogleApiClient.Builder(getContext())
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(requireContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        Log.d("Settings", "Google Client connection status: " + googleApiClient.isConnected());
+
         Context context = getPreferenceManager().getContext();
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+
+        Log.d("Settings", "Existing settings: " + screen.toString());
 
         String firstName = "John";
         String lastName = "Doe";
@@ -158,10 +158,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     class GetName implements Runnable {
         final static String TAG = "GetAuthRunnable";
-        private FirstOrLast firstOrLast;
+        private final FirstOrLast firstOrLast;
         private String value;
-        private String url = "http://34.105.106.85:8081/user/";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public GetName(JSONObject jsonObject, FirstOrLast firstOrLast) {
             this.jsonObject = jsonObject;
@@ -170,10 +169,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         public void run() {
             String req_url;
+            String url = "http://34.105.106.85:8081/user/";
             if (this.firstOrLast == FirstOrLast.FIRST) {
-                req_url = this.url + "getfirstname/";
+                req_url = url + "getfirstname/";
             } else {
-                req_url = this.url + "getlastname/";
+                req_url = url + "getlastname/";
             }
             try {
                 ANRequest request = AndroidNetworking.get(req_url)
@@ -204,14 +204,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         final static String TAG = "GetAuthRunnable";
         private FirstOrLast firstOrLast;
         private Integer value;
-        private String url = "http://34.105.106.85:8081/user/changename";
-        private JSONObject jsonObject;
+        private final JSONObject jsonObject;
 
         public ChangeName(JSONObject jsonObject) {
             this.jsonObject = jsonObject;
         }
 
         public void run() {
+            String url = "http://34.105.106.85:8081/user/changename";
             ANRequest request = AndroidNetworking.post(url)
                     .addJSONObjectBody(jsonObject)
                     .setPriority(Priority.MEDIUM)
