@@ -20,27 +20,11 @@ logger.log('Hello from tyfw server');
 //debug printout
 console.isDebugMode = true;
 
-class Chat {
-    constructor(user1, user2) {
-      this.user1 = user1
-      this.user2 = user2
-      this.messages = [];
-    }
-}
-
-class Message {
-    constructor(message, fromUser, toUser) {
-      this.message = message;
-      this.fromUser = fromUser;
-      this.toUser = toUser;
-    }
-}
-
 // Google User Auth
 const {OAuth2Client} = require('google-auth-library');
 const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const {runMongo, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend} = require('./user.js')
-const { getChatHistory } = require('./chat.js')
+const { Message, initConversation, getChat, addMessageToChat, getConversationID} = require('./chat.js')
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -58,26 +42,29 @@ wsServer = new SocketServer({httpServer:socket_server})
 const connections = []
 
 wsServer.on('request', (req) => {
+  var conversationID = req.resourceURL.query.ConversationID
   const connection = req.accept()
-  console.log('new connection')
+  connection.conversationID = conversationID
+  console.log('new connection with conversation ID: ' + conversationID)
   connections.push(connection)
 
   connection.on('message', mes => {
     connections.forEach(async (element) => {
-      if (element != connection)
+      if (element != connection && element.conversationID ==  connection.conversationID)
         element.sendUTF(mes.utf8Data)
         var receivedJSON = JSON.parse(mes.utf8Data)
         var message = new Message(receivedJSON.message, receivedJSON.fromUser, receivedJSON.toUser)
-        var existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": receivedJSON.fromUser, "user2": receivedJSON.toUser}, {"user1": receivedJSON.toUser, "user2": receivedJSON.fromUser}]})
-        if (existingChat == null) {
-          var chat = new Chat(receivedJSON.fromUser, receivedJSON.toUser)
-          chat.messages.push(message)
-          await mongo_client.db("tyfw").collection("chat").insertOne(chat)
-          console.log("added new chat to db")
-        }
-        else {
-          await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{"user1": existingChat.user1}, {"user2": existingChat.user2}]}, {$addToSet: {"messages": message}})
-        }
+        var existingChat = await getChat(receivedJSON.fromUser, receivedJSON.toUser) 
+        // if (existingChat == null) {
+        //   var chat = new Chat(receivedJSON.fromUser, receivedJSON.toUser)
+        //   chat.messages.push(message)
+        //   await mongo_client.db("tyfw").collection("chat").insertOne(chat)
+        //   console.log("added new chat to db")
+        // }
+        // else {
+        addMessageToChat(existingChat.user1, existingChat.user2, message)
+          // await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{"user1": existingChat.user1}, {"user2": existingChat.user2}]}, {$addToSet: {"messages": message}})
+        // }
         
     })
 
@@ -466,13 +453,31 @@ app.get("/user/getuser", async (req, res) => {
   }
 });
 
+app.get("/user/getfriends", async (req, res) => {
+  console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
+    const user = await getUserByEmail(req.header("email"))
+  try {
+    var usernames = [];
+    for (let i = 0; i < user.friends.length; i++) {
+      var foundUser = await getUserByEmail(user.friends[i])
+      usernames.push(foundUser.username)
+    }
+    res.status(200).json({"friends": usernames})
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+});
+
+
 app.get("/user/chathistory", async (req, res) => {
   console.debug("/user/chathistory\n\
   Time: ", Date.now(), "\n\
   req.headers: ", req.headers)
 
   try {
-    const existingChat = getChatHistory(req.header("fromUser"), req.header("toUser"))
+    const existingChat = await getChat(req.header("fromUser"), req.header("toUser"))
     if (existingChat == null) {
       res.status(404)
     }
@@ -484,16 +489,33 @@ app.get("/user/chathistory", async (req, res) => {
   }
 });
 
-app.get("/user/getfriends", async (req, res) => {
-  console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-    const user = await getUserByEmail(req.header("email"))
+app.get("/user/conversation_id", async (req, res) => {
+  console.debug("/user/conversation_id\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
+
   try {
-    var usernames = [];
-    for (let i = 0; i < user.friends.length; i++) {
-      var foundUser = await getUserByEmail(user.friends[i])
-      usernames.push(foundUser.username)
+    const conversation_id = await getConversationID(req.header("fromUser"), req.header("toUser")) 
+    console.log(conversation_id)
+    if (conversation_id == null) {
+      res.status(404)
     }
-    res.status(200).json({"friends": usernames})
+    res.status(200).json(conversation_id)
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+});
+
+app.post("/user/init_conversation", async (req, res) => {
+  console.debug("/user/init_conversation\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
+
+  try {
+    await initConversation(req.body.fromUser, req.body.toUser)
+    res.sendStatus(200)
   } catch (err) {
     console.log(err)
     logger.log(String(err))
