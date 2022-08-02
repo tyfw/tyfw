@@ -27,6 +27,8 @@
     <string name="action_search">Search</string>
     <string name="time_default">Please select a timescale to view your wallet</string>
 
+    <string name="IP_addy">34.105.106.85</string>
+
     <!-- For profile page -->
     <string name="add_friend_button">Add Friend</string>
     <string name="profile_name">Loading profile name…</string>

@@ -69,7 +69,7 @@ public class SocialFragment extends Fragment {
             e.printStackTrace();
         }
 
-        SocialFragment.GetFriendsList getAuth = new SocialFragment.GetFriendsList(jsonObject);
+        GetFriendsList getAuth = new SocialFragment.GetFriendsList(jsonObject);
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {
@@ -90,12 +90,14 @@ public class SocialFragment extends Fragment {
 
             for (int i = 0; i < serverResponse.length(); i++) {
                 try {
-                    JSONObject currFriend = serverResponse.getJSONObject(i);
+                    String currFriend = serverResponse.getString(i);
                     SocialRow items = new SocialRow();
 
-                    items.setName(currFriend.getString("user"));
+                    items.setName(currFriend);
                     itemsList.add(items);
                     adapter.notifyDataSetChanged();
+
+                    // TODO: add onclick listener for itemlists
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Unable to access social element", Toast.LENGTH_SHORT).show();
@@ -113,6 +115,7 @@ public class SocialFragment extends Fragment {
 
         // Followed this SOF post: https://stackoverflow.com/questions/32827787/intent-in-listview
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            // TODO: set up onclick for the whole row
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i != 0){
@@ -125,7 +128,7 @@ public class SocialFragment extends Fragment {
                     Log.e("Here", config.getUsername());
                     Log.e("Here", item.getName());
                     Intent chatActivity = new Intent(getActivity(), ChatActivity.class);
-                    chatActivity.putExtra("fromUser", item.getName());
+                    chatActivity.putExtra("fromUser", config.getUsername());
                     chatActivity.putExtra("toUser", item.getName());
                     startActivity(chatActivity);
                 }
@@ -141,7 +144,7 @@ public class SocialFragment extends Fragment {
 
     class GetFriendsList implements Runnable {
         final static String TAG = "GetAuthRunnable";
-        private JSONArray value;
+        private JSONObject value;
         private final JSONObject jsonObject;
 
         public GetFriendsList(JSONObject jsonObject) {
@@ -158,7 +161,7 @@ public class SocialFragment extends Fragment {
                         .setPriority(Priority.MEDIUM)
                         .build();
 
-                ANResponse<JSONArray> response = request.executeForJSONArray();
+                ANResponse<JSONObject> response = request.executeForJSONObject();
 
                 if (response.isSuccess()) {
                     value = response.getResult();
@@ -174,7 +177,12 @@ public class SocialFragment extends Fragment {
         }
 
         public JSONArray getValue() {
-            return value;
+            try {
+                return value.getJSONArray("friends");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JSONArray();
+            }
         }
     }
 }
