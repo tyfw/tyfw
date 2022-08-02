@@ -30,7 +30,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
     private String name;
     private WebSocket webSocket;
-    private String SERVER_PATH = "ws://echo.websocket.org";
+    private String SERVER_PATH = "ws://localhost:3000";
     private EditText messageEdit;
     private View sendBtn, pickImgBtn;
     private RecyclerView recyclerView;
@@ -50,7 +50,9 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
     private void initiateSocketConnection() {
         OkHttpClient client = new OkHttpClient();
+//        conversationID = null //TODO: make this get a conversation ID from the API based on fromUser and toUser
         Request request = new Request.Builder().url(SERVER_PATH).build();
+//        Request request = new Request.Builder().url(SERVER_PATH + "?ConversationID="+ conversationID).build();
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
@@ -84,7 +86,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         messageEdit = findViewById(R.id.messageEdit);
         sendBtn = findViewById(R.id.sendBtn);
         messageAdapter = new MessageAdapter(getLayoutInflater());
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.RecyclerView);
         recyclerView.setAdapter(messageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

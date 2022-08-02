@@ -28,7 +28,11 @@ const initConversation  = async (fromUser, toUser) => {
 }
 
 const getConversationID = async (fromUser, toUser) => {
-    const existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": fromUser, "user2": toUser}, {"user1": toUser, "user2": fromUser}]})
+    var existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": fromUser, "user2": toUser}, {"user1": toUser, "user2": fromUser}]})
+    if (existingChat == null) {
+        await initConversation(fromuser, toUser)
+        existingChat = getChat(fromUser, toUser)
+    }
     console.log(existingChat._id.toString())
     return existingChat._id.toString()
 }
