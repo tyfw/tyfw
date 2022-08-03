@@ -50,29 +50,21 @@ public class LeaderboardFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        LeaderboardViewModel leaderboardViewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
-
+        // This causes the app to crash, keeping it here in case we need it in the future
+        // LeaderboardViewModel leaderboardViewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
         // leaderboardViewModel.notifyAll();
 
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        listView = (ListView) binding.list;
+        listView = binding.list;
         LeaderboardListAdapter adapter = new LeaderboardListAdapter(root.getContext(), itemsList);
         listView.setAdapter(adapter);
 
         // Call the leaderboard API
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        GetLeaderboard getAuth = new GetLeaderboard(jsonObject);
+        LeaderboardCalls.GetLeaderboard getAuth = new LeaderboardCalls.GetLeaderboard(config.getEmail(), config.getGoogleIdToken());
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {
@@ -163,43 +155,5 @@ public class LeaderboardFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    class GetLeaderboard implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private JSONArray value;
-        private final JSONObject jsonObject;
-
-        public GetLeaderboard(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/leaderboard/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-
-                ANResponse<JSONArray> response = request.executeForJSONArray();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    Log.e("Leaderboard", String.valueOf(error.getErrorCode()));
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public JSONArray getValue() {
-            return value;
-        }
     }
 }

@@ -24,22 +24,18 @@ import androidx.test.core.app.ApplicationProvider;
 import static org.hamcrest.core.StringContains.containsString;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.SystemClock;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public class LoginUserTests {
     static String invalid_wallet_address = "Address must be =42 characters and begin with 0x";
     static String invalid_first_name = "Not a valid first name";
     static String invalid_last_name = "Not a valid last name";
-    static String invalid_email = "Not a valid email";
 
     static Intent intent;
     static {

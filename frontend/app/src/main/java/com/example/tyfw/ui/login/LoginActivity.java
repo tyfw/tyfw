@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(
-                        loginResult.getSuccess(),
+                        // loginResult.getSuccess(),
                         firstNameEditText.getText().toString(),
                         lastNameEditText.getText().toString(),
                         walletAddressEditText.getText().toString(),
@@ -189,25 +189,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     
-    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
+    // private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
+    private void updateUiWithUser(String firstName, String lastName, String walletAddress, String username) {
         // model.notify();
 
         JSONObject jsonObject = new JSONObject();
         try {
             JSONArray jsonArray = new JSONArray();
             jsonArray.put(walletAddress);
-
-            jsonObject.put("email", this.email);
-            jsonObject.put("username", username);
-            jsonObject.put("firstName", firstName);
-            jsonObject.put("lastName", lastName);
             jsonObject.put("walletAddress", jsonArray);
-            jsonObject.put("googleIdToken", this.googleIdToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        RegisterUser getAuth = new RegisterUser(jsonObject);
+        LoggedInUserCalls.RegisterUser getAuth = new LoggedInUserCalls.RegisterUser(this.email, username, firstName, lastName, jsonObject, this.googleIdToken);
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {
@@ -230,37 +225,5 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
-
-    class RegisterUser implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private Integer value;
-        private final JSONObject jsonObject;
-
-        public RegisterUser(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            String url = "http://34.105.106.85:8081/user/register/";
-            ANRequest request= AndroidNetworking.post(url)
-                    .addJSONObjectBody(this.jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
-
-            ANResponse response = request.executeForOkHttpResponse();
-
-            if (response.isSuccess()) {
-                value = response.getOkHttpResponse().code();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
-            }
-        }
-
-        public Integer getValue() {
-            return value;
-        }
     }
 }

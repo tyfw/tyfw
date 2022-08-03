@@ -50,16 +50,7 @@ public class SearchFragment extends Fragment {
             Log.d(TAG,queryString);
             App config = (App) getContext().getApplicationContext();
 
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("queryString", queryString);
-                jsonObject.put("email", config.getEmail());
-                jsonObject.put("googleIdToken", config.getGoogleIdToken());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            GetSearch getSearch = new GetSearch(jsonObject);
+            SearchCalls.GetSearch getSearch = new SearchCalls.GetSearch(queryString, config.getEmail(), config.getGoogleIdToken());
             Thread getAuthThread = new Thread(getSearch);
             getAuthThread.start();
             try {
@@ -94,41 +85,5 @@ public class SearchFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    static class GetSearch implements Runnable {
-        private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetSearch(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/search/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("queryString", jsonObject.getString("queryString"))
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-                ANResponse<JSONObject> response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
     }
 }

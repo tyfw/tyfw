@@ -26,9 +26,6 @@ import org.json.JSONObject;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AuthActivity extends AppCompatActivity {
-
-    // private ActivityMainBinding binding;
-
     private GoogleSignInClient googleSignInClient;
     private final Integer RC_SIGN_IN = 1;
 
@@ -100,15 +97,7 @@ public class AuthActivity extends AppCompatActivity {
             config.setGoogleIdToken(account.getIdToken());
             config.setEmail(account.getEmail());
 
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("email", account.getEmail());
-                jsonObject.put("googleIdToken", account.getIdToken());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            GetAuth getAuth = new GetAuth(jsonObject);
+            AuthCalls.GetAuth getAuth = new AuthCalls.GetAuth(account.getEmail(), account.getIdToken());
             Thread getAuthThread = new Thread(getAuth);
             getAuthThread.start();
             try {
@@ -132,38 +121,6 @@ public class AuthActivity extends AppCompatActivity {
                 Log.e("TAG", serverResponse.toString());
                 System.out.print(serverResponse);
             }
-        }
-    }
-
-    class GetAuth implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private Integer value;
-        private final JSONObject jsonObject;
-
-        public GetAuth(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            String url = "http://34.105.106.85:8081/user/authenticate/";
-            ANRequest request= AndroidNetworking.post(url)
-                    .addJSONObjectBody(this.jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
-
-            ANResponse response = request.executeForOkHttpResponse();
-
-            if (response.isSuccess()) {
-                value = response.getOkHttpResponse().code();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
-            }
-        }
-
-        public Integer getValue() {
-            return value;
         }
     }
 }

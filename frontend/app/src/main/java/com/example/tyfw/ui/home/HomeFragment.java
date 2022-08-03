@@ -114,14 +114,7 @@ public class HomeFragment extends Fragment {
     private void setUserData(){
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        GetUser getUser = new GetUser(jsonObject);
+        HomeCalls.GetUser getUser = new HomeCalls.GetUser(config.getEmail());
         Thread getUserThread = new Thread(getUser);
         getUserThread.start();
         try {
@@ -153,14 +146,7 @@ public class HomeFragment extends Fragment {
     private void setBalance(){
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        GetBalance getBalance = new GetBalance(jsonObject);
+        HomeCalls.GetBalance getBalance = new HomeCalls.GetBalance(config.getEmail());
         Thread getBalanceThread = new Thread(getBalance);
         getBalanceThread.start();
         try {
@@ -227,7 +213,6 @@ public class HomeFragment extends Fragment {
 
         lineChart.setData(res);
         lineChart.setVisibleXRange(res.getXMin(), res.getXMax());
-        // Im goated for this
         lineChart.setAutoScaleMinMaxEnabled(true);
         lineChart.setDrawBorders(true);
         lineChart.notifyDataSetChanged();
@@ -280,7 +265,7 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
 
-        GetHome getHome = new GetHome(jsonObject);
+        HomeCalls.GetHome getHome = new HomeCalls.GetHome(config.getEmail(), timeScale);
         Thread getHomeThread = new Thread(getHome);
         getHomeThread.start();
         try {
@@ -317,148 +302,4 @@ public class HomeFragment extends Fragment {
         }
         return false;
     }
-    
-    class GetHome implements Runnable {
-        final static String TAG = "GetHomeRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetHome(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/displaycurruser/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("time", jsonObject.getString("time"))
-                        .build();
-
-                ANResponse response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    errorResponse(error);
-                }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
-        }
-
-        private void errorResponse(Exception e){
-            //TODO: @Dryden this is where I put in the empty array FE handling
-            value = new JSONObject();
-            try {
-                value.putOpt("data", new JSONArray());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            //Toast.makeText(getContext(), "Unable to load data for this time option. Please try again.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
-    }
-
-    public class GetUser implements Runnable {
-        final static String TAG = "GetUserRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetUser(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/getuser/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .build();
-
-                ANResponse response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    int errorCode = error.getErrorCode();
-                    if (errorCode == 400) {
-                        Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT).show();
-                    }
-                    errorResponse(error);
-                }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
-        }
-
-        private void errorResponse(Exception e){
-            value = new JSONObject();
-            try {
-                value.putOpt("data", new JSONArray());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
-    }
-
-    static class GetBalance implements Runnable {
-        final static String TAG = "GetUserRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetBalance(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/getbalance/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .build();
-
-                ANResponse response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    errorResponse(error);
-                }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
-        }
-
-        private void errorResponse(Exception e){
-            value = new JSONObject();
-            try {
-                value.putOpt("data", new JSONArray());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
-    }
-
-
 }

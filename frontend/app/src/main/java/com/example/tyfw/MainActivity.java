@@ -7,7 +7,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import android.content.Intent;
 
 import com.example.tyfw.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -15,15 +14,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private String email;
-    private String googleIdToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        email = getIntent().getStringExtra("email");
-        googleIdToken = getIntent().getStringExtra("googleIdToken");
+        String email = getIntent().getStringExtra("email");
+        String googleIdToken = getIntent().getStringExtra("googleIdToken");
 
         App config = (App) getApplicationContext();
         config.setEmail(email);

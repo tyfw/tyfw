@@ -14,7 +14,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.IsNot.not;
 
 import android.content.Intent;
@@ -42,7 +41,7 @@ public class LeaderboardTests {
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(intent);
-    private View decorView;
+    public View decorView;
 
     @Before
     public void loadDecorView(){
