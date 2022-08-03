@@ -117,6 +117,7 @@ public class AuthActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Integer serverResponse = getAuth.getValue();
+            Log.e("AUTH", String.valueOf(serverResponse));
 
             if (serverResponse == 200) {
                 Intent mainActivity = new Intent(this, MainActivity.class);
