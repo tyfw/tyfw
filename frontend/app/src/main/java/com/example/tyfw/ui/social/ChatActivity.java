@@ -19,12 +19,16 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
+import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.utils.MessageAdapter;
+import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,6 +39,12 @@ import okhttp3.WebSocketListener;
 public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
     private String name;
+    private String me;
+    private String them;
+
+    private String email;
+    private String googleIdToken;
+
     private WebSocket webSocket;
     private String SERVER_PATH = "ws://34.105.106.85:3000";
     private EditText messageEdit;
@@ -49,6 +59,15 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         setContentView(R.layout.activity_chat);
 
         name = getIntent().getStringExtra("name");
+        me = getIntent().getStringExtra("fromUser");
+        them = getIntent().getStringExtra("toUser");
+
+        email = getIntent().getStringExtra("email");
+        googleIdToken = getIntent().getStringExtra("googleIdToken");
+
+        App config = (App) getApplicationContext();
+        config.setEmail(email);
+        config.setGoogleIdToken(googleIdToken);
 
 //        sendBtn = findViewById(R.id.sendBtn);
         initializeView();
@@ -58,8 +77,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     private String getConvoID(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("fromUser", getIntent().getStringExtra("fromUser"));
-            jsonObject.put("toUser", getIntent().getStringExtra("toUser"));
+            jsonObject.put("fromUser", me);
+            jsonObject.put("toUser", them);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -77,9 +96,12 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
     private void initiateSocketConnection() {
         OkHttpClient client = new OkHttpClient();
+
         String conversationID = getConvoID(); //TODO: make this get a conversation ID from the API based on fromUser and toUser; make the call for conversation id
         // Request request = new Request.Builder().url(SERVER_PATH).build();
+        Log.d("WEBSOCKET CONNECTION URL", SERVER_PATH + "?ConversationID="+ conversationID);
         Request request = new Request.Builder().url(SERVER_PATH + "?ConversationID="+ conversationID).build();
+
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
@@ -96,9 +118,12 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
                 runOnUiThread(() -> {
                     try {
+
                         JSONObject jsonObject = new JSONObject(text);
                         jsonObject.put("isSent", false);
+                        jsonObject.put("name", them);
 
+                        Log.d("MESSAGE", jsonObject.toString());
                         messageAdapter.addItem(jsonObject);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -127,17 +152,15 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
                     Toast.makeText(ChatActivity.this, "Button pressed", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "send button pressed");
 
-
-                    jsonObject.put("name", name);
+                    jsonObject.put("fromUser", me);
+                    jsonObject.put("toUser", them);
                     jsonObject.put("message", messageEdit.getText().toString());
 
-//                    webSocket.send(jsonObject.toString());
+                    webSocket.send(jsonObject.toString());
 
                     jsonObject.put("isSent", true);
-                    messageAdapter.addItem(jsonObject);
 
                     resetMessageEdit();
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

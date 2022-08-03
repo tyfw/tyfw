@@ -96,7 +96,6 @@ public class MessageAdapter extends RecyclerView.Adapter {
                 view = inflater.inflate(R.layout.item_sent_message, parent, false);
                 return new SentMessageHolder(view);
             case TYPE_MESSAGE_RECEIVED:
-
                 view = inflater.inflate(R.layout.item_received_message, parent, false);
                 return new ReceivedMessageHolder(view);
 
