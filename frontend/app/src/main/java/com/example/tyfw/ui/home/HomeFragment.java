@@ -22,6 +22,7 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
+import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
 import com.example.tyfw.databinding.FragmentHomeBinding;
 import com.github.mikephil.charting.charts.Chart;
@@ -111,7 +112,6 @@ public class HomeFragment extends Fragment {
     // INTERNAL HELPER FUNCTIONS
 
     private void setUserData(){
-
         App config = (App) getActivity().getApplicationContext();
 
         JSONObject jsonObject = new JSONObject();
@@ -274,7 +274,7 @@ public class HomeFragment extends Fragment {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+            jsonObject.put("googleIdToken", config.getGoogleIdToken());
             jsonObject.put("time", timeScale);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -366,7 +366,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class GetUser implements Runnable {
+    public class GetUser implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
         private final JSONObject jsonObject;
