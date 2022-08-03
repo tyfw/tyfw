@@ -57,6 +57,12 @@ public class MessageAdapter extends RecyclerView.Adapter {
         }
     }
 
+    private class NullMessageHolder extends RecyclerView.ViewHolder {
+        public NullMessageHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
 
@@ -85,11 +91,9 @@ public class MessageAdapter extends RecyclerView.Adapter {
         return -1;
     }
 
-    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
 
         switch (viewType) {
             case TYPE_MESSAGE_SENT:
@@ -98,38 +102,31 @@ public class MessageAdapter extends RecyclerView.Adapter {
             case TYPE_MESSAGE_RECEIVED:
                 view = inflater.inflate(R.layout.item_received_message, parent, false);
                 return new ReceivedMessageHolder(view);
-
+            default:
+                assert false;
+                return new NullMessageHolder(view);
         }
-
-        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         JSONObject message = messages.get(position);
-
         try {
             if (message.getBoolean("isSent")) {
-
                 if (message.has("message")) {
 
                     SentMessageHolder messageHolder = (SentMessageHolder) holder;
                     messageHolder.messageTxt.setText(message.getString("message"));
 
                 }
-
             } else {
-
                 if (message.has("message")) {
-
                     ReceivedMessageHolder messageHolder = (ReceivedMessageHolder) holder;
                     messageHolder.nameTxt.setText(message.getString("name"));
                     messageHolder.messageTxt.setText(message.getString("message"));
-
                 }
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -137,7 +134,11 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        if (messages != null) {
+            return messages.size();
+        } else {
+            return 0;
+        }
     }
 
     public void addItem (JSONObject jsonObject) {

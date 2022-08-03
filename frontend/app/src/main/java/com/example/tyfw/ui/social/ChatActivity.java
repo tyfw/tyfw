@@ -21,6 +21,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.utils.MessageAdapter;
 import com.google.gson.JsonParser;
 
@@ -72,6 +73,29 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 //        sendBtn = findViewById(R.id.sendBtn);
         initializeView();
         initiateSocketConnection();
+
+        APICallers.GetConvoHistory getConvoHistory = new APICallers.GetConvoHistory(me, them);
+        Thread getHistThread = new Thread(getConvoHistory);
+        getHistThread.start();
+        try {
+            getHistThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray messages = getConvoHistory.getValue();
+
+        for (int i = 0; i < messages.length(); i++){
+            try {
+                JSONObject msg = messages.getJSONObject(i);
+                Log.e(i + "th Message:", msg.toString());
+                if (!(msg.isNull("message") && msg.isNull("fromUser") && msg.isNull("toUser"))) {
+                    messageAdapter.addItem(msg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private String getConvoID(){
@@ -168,6 +192,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
             }
         });
+
+
     }
 
     @Override
