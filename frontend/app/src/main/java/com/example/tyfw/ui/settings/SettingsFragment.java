@@ -21,6 +21,7 @@ import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.AuthActivity;
 import com.example.tyfw.R;
+import com.example.tyfw.api.APICallers;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,11 +31,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-enum FirstOrLast {
-    FIRST, LAST
-}
-
 public class SettingsFragment extends PreferenceFragmentCompat {
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
@@ -63,7 +61,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             e.printStackTrace();
         }
 
-        GetName getFirstname = new GetName(jsonObject, FirstOrLast.FIRST);
+        APICallers.GetName getFirstname = new APICallers.GetName(jsonObject, FirstOrLast.FIRST);
         Thread getFirstNameThread = new Thread(getFirstname);
         getFirstNameThread.start();
         try {
@@ -73,7 +71,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             e.printStackTrace();
         }
 
-        GetName getLastName = new GetName(jsonObject, FirstOrLast.LAST);
+        APICallers.GetName getLastName = new APICallers.GetName(jsonObject, FirstOrLast.LAST);
         Thread getLastNameThread = new Thread(getLastName);
         getLastNameThread.start();
         try {
@@ -97,7 +95,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                ChangeName changeName = new ChangeName(jsonObject);
+                APICallers.ChangeName changeName = new APICallers.ChangeName(jsonObject);
                 Thread changeNameThread = new Thread(changeName);
                 changeNameThread.start();
                 try {
@@ -121,7 +119,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            ChangeName changeName = new ChangeName(jsonObject1);
+            APICallers.ChangeName changeName = new APICallers.ChangeName(jsonObject1);
             Thread changeNameThread = new Thread(changeName);
             changeNameThread.start();
             try {
@@ -147,82 +145,5 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             startActivity(intent);
             return true;
         });
-    }
-
-    class GetName implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private final FirstOrLast firstOrLast;
-        private String value;
-        private final JSONObject jsonObject;
-
-        public GetName(JSONObject jsonObject, FirstOrLast firstOrLast) {
-            this.jsonObject = jsonObject;
-            this.firstOrLast = firstOrLast;
-        }
-
-        public void run() {
-            String req_url;
-            String url = "http://34.105.106.85:8081/user/";
-            if (this.firstOrLast == FirstOrLast.FIRST) {
-                req_url = url + "getfirstname/";
-            } else {
-                req_url = url + "getlastname/";
-            }
-            try {
-                ANRequest request = AndroidNetworking.get(req_url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-
-                ANResponse<String> response = request.executeForString();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    Log.d(TAG, error.toString());
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-    class ChangeName implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private FirstOrLast firstOrLast;
-        private Integer value;
-        private final JSONObject jsonObject;
-
-        public ChangeName(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            String url = "http://34.105.106.85:8081/user/changename";
-            ANRequest request = AndroidNetworking.post(url)
-                    .addJSONObjectBody(jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
-
-            ANResponse response = request.executeForOkHttpResponse();
-
-            if (response.isSuccess()) {
-                value = response.getOkHttpResponse().code();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
-            }
-        }
-
-        public Integer getValue() {
-            return value;
-        }
     }
 }

@@ -14,6 +14,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.ui.home.HomeFragment;
 
 import org.json.JSONArray;
@@ -92,7 +93,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        GetPrediction getPrediction = new GetPrediction(jsonObject);
+        APICallers.GetPrediction getPrediction = new APICallers.GetPrediction(jsonObject);
         Thread getPredictionThread = new Thread(getPrediction);
         getPredictionThread.start();
         try {
@@ -117,49 +118,6 @@ public class AiPredictionActivity extends AppCompatActivity {
         }
     }
 
-    static class GetPrediction implements Runnable {
-        final static String TAG = "GetUserRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
 
-        public GetPrediction(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/getprediction/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("risktolerance", jsonObject.getString("risktolerance"))
-                        .build();
-
-                ANResponse response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    errorResponse(error);
-                }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
-        }
-
-        private void errorResponse(Exception e){
-            value = new JSONObject();
-            try {
-                value.putOpt("data", new JSONArray());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-        public JSONObject getValue() {
-            return value;
-        }
-    }
 }
 

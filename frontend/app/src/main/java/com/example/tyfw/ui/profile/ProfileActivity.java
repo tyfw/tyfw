@@ -21,6 +21,8 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
+import com.example.tyfw.api.APICallers;
+import com.example.tyfw.api.APICallers.GetUser;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -35,6 +37,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static com.example.tyfw.api.APICallers.*;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -145,7 +149,7 @@ public class ProfileActivity extends AppCompatActivity {
         JSONObject serverResponse = getFriend.getValue();
         JSONArray friendsList = new JSONArray();
         try {
-0x            friendsList = serverResponse.getJSONArray("friends");
+            friendsList = serverResponse.getJSONArray("friends");
             for (int i=0; !friendsList.isNull(i); i++) {
                 String friendName = friendsList.getString(i);
                 if (friendName.equals(username)) {
@@ -296,118 +300,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    class GetProfile implements Runnable {
-        final static String TAG = "GetProfileRunnable";
-        private JSONObject value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/displayotheruserbyusername/";
 
-        public GetProfile(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
 
-        public void run() {
-            try {
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("otherUsername", jsonObject.getString("friendUsername"))
-                        .addHeaders("time", jsonObject.getString("time"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
 
-                ANResponse response = request.executeForJSONObject();
 
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    error.printStackTrace();
-                    errorResponse(error);
-                }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
-        }
 
-        private void errorResponse(Exception e){
-            value = new JSONObject();
-            try {
-                value.putOpt("data", new JSONArray());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
-    }
-
-    class AddFriend implements Runnable {
-        final static String TAG = "GetProfileRunnable";
-        private boolean value;
-        private JSONObject jsonObject;
-        private String url = "http://34.105.106.85:8081/user/addbyusername/";
-
-        public AddFriend(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            ANRequest request = AndroidNetworking.post(url)
-                    .addJSONObjectBody(jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
-
-            ANResponse response = request.executeForOkHttpResponse();
-
-            if (response.isSuccess()) {
-                value = response.getOkHttpResponse().isSuccessful();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                error.printStackTrace();
-            }
-        }
-
-        public boolean success() {
-            return value;
-        }
-    }
-
-    public class GetFriends implements Runnable {
-        final static String TAG = "GetFriendsRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetFriends(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/getfriends/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .build();
-
-                ANResponse response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
-    }
 }

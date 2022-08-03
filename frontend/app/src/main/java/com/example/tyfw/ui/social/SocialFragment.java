@@ -21,6 +21,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentSocialBinding;
 import com.example.tyfw.ui.leaderboard.LeaderboardFragment;
 import com.example.tyfw.ui.profile.ProfileActivity;
@@ -69,42 +70,51 @@ public class SocialFragment extends Fragment {
             e.printStackTrace();
         }
 
-        GetFriendsList getAuth = new SocialFragment.GetFriendsList(jsonObject);
-        Thread getAuthThread = new Thread(getAuth);
+        APICallers.GetFriends getFriends = new APICallers.GetFriends(jsonObject);
+        Thread getAuthThread = new Thread(getFriends);
         getAuthThread.start();
         try {
             getAuthThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        JSONArray serverResponse = getAuth.getValue();
-        if (serverResponse == null) {
-            Toast.makeText(getContext(), "Unable to access leaderboard, please retry.", Toast.LENGTH_SHORT).show();
-        } else {
-            Log.e(TAG, serverResponse.toString());
+        JSONObject serverResponse = getFriends.getValue();
+        JSONArray friendsList = new JSONArray();
+        try {
+            friendsList = serverResponse.getJSONArray("friends");
 
-            SocialRow firstItem = new SocialRow();
-            firstItem.setName("Friends");
-            itemsList.add(firstItem);
-            adapter.notifyDataSetChanged();
+            if (friendsList == null) {
+                Toast.makeText(getContext(), "Unable to access your friends, please retry.", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e(TAG, serverResponse.toString());
 
-            for (int i = 0; i < serverResponse.length(); i++) {
-                try {
-                    String currFriend = serverResponse.getString(i);
-                    SocialRow items = new SocialRow();
+                SocialRow firstItem = new SocialRow();
+                firstItem.setName("Friends");
+                itemsList.add(firstItem);
+                adapter.notifyDataSetChanged();
 
-                    items.setName(currFriend);
-                    itemsList.add(items);
-                    adapter.notifyDataSetChanged();
+                for (int i = 0; i < friendsList.length(); i++) {
+                    try {
+                        String currFriend = friendsList.getString(i);
+                        SocialRow items = new SocialRow();
 
-                    // TODO: add onclick listener for itemlists
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Unable to access social element", Toast.LENGTH_SHORT).show();
+                        items.setName(currFriend);
+                        itemsList.add(items);
+                        adapter.notifyDataSetChanged();
+
+                        // TODO: add onclick listener for itemlists
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Unable to access social element", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                adapter.notifyDataSetChanged();
             }
-            adapter.notifyDataSetChanged();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Unable to access your friends, please retry.", Toast.LENGTH_SHORT).show();
         }
+
         return root;
     }
 
@@ -144,48 +154,6 @@ public class SocialFragment extends Fragment {
         binding = null;
     }
 
-    class GetFriendsList implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetFriendsList(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/getfriends/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-
-                ANResponse<JSONObject> response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    Log.e("Social", String.valueOf(error.getErrorCode()));
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public JSONArray getValue() {
-            try {
-                return value.getJSONArray("friends");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return new JSONArray();
-            }
-        }
-    }
 }
 
 //    public View onCreateView(@NonNull LayoutInflater inflater,

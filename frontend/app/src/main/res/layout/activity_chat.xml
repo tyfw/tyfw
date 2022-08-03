@@ -19,8 +19,8 @@ tools:context=".ui.social.ChatActivity">
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="17dp"
         android:layout_toStartOf="@id/sendBtn"
         android:background="@drawable/edittext_design"
         android:hint="Message..."
@@ -33,13 +33,14 @@ tools:context=".ui.social.ChatActivity">
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginBottom="10dp"
         android:padding="10dp"
         android:text="Send"
         android:textColor="@color/colorPrimary" />
 
 
-<!--    <ImageView-->
+    <!--    <ImageView-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
 <!--        android:src="@drawable/ic_image_black_24dp"-->

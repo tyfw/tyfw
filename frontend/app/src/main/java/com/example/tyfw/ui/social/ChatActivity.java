@@ -2,6 +2,7 @@ package com.example.tyfw.ui.social;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +11,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -57,7 +61,10 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_chat);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         name = getIntent().getStringExtra("name");
         me = getIntent().getStringExtra("fromUser");
@@ -70,9 +77,53 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         config.setEmail(email);
         config.setGoogleIdToken(googleIdToken);
 
+        setTitle(them);
+
 //        sendBtn = findViewById(R.id.sendBtn);
         initializeView();
         initiateSocketConnection();
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.chat_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.view_profile_chat:
+                moveToProfile();
+                return true;
+            case R.id.share_option:
+                shareProfileDetails();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private void moveToProfile(){
+
+    }
+
+    private void shareProfileDetails(){
+        sendMessage("THIS MY PROFILE FR");
     }
 
     private String getConvoID(){
@@ -84,7 +135,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
             e.printStackTrace();
         }
 
-        GetConversationID getConvoId = new GetConversationID(jsonObject);
+        APICallers.GetConversationID getConvoId = new APICallers.GetConversationID(jsonObject);
         Thread getConvoThread = new Thread(getConvoId);
         getConvoThread.start();
         try {
@@ -116,6 +167,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
             @Override
             public void onMessage(WebSocket webSocket, String text) {
                 super.onMessage(webSocket, text);
+
+                Log.e("TEXT", text);
 
                 runOnUiThread(() -> {
                     try {
@@ -171,29 +224,24 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    Toast.makeText(ChatActivity.this, "Button pressed", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "send button pressed");
-
-                    jsonObject.put("fromUser", me);
-                    jsonObject.put("toUser", them);
-                    jsonObject.put("message", messageEdit.getText().toString());
-
-                    webSocket.send(jsonObject.toString());
-                    messageAdapter.addItem(jsonObject);
-
-                    jsonObject.put("isSent", true);
-
-                    resetMessageEdit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+                sendMessage(messageEdit.getText().toString());
             }
         });
+    }
 
-        recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
+    private void sendMessage(String text) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("fromUser", me);
+            jsonObject.put("toUser", them);
+            jsonObject.put("message", text);
+            webSocket.send(jsonObject.toString());
+            messageAdapter.addItem(jsonObject);
+            jsonObject.put("isSent", true);
+            resetMessageEdit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -223,44 +271,6 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         messageEdit.setText("");
         sendBtn.setVisibility(View.INVISIBLE);
         messageEdit.addTextChangedListener(this);
-    }
-
-    class GetConversationID implements Runnable {
-        final static String TAG = "GetConversationID";
-        private String value;
-        private final JSONObject jsonObject;
-
-        public GetConversationID(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-//                String url = "http://localhost:8081/user/getfriends/";
-                String url = "http://34.105.106.85:8081/user/conversation_id/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("fromUser", jsonObject.getString("fromUser"))
-                        .addHeaders("toUser", jsonObject.getString("toUser"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-
-                ANResponse<String> response = request.executeForString();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    Log.e("Social", String.valueOf(error.getErrorCode()));
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public String getValue() {
-            return value;
-        }
+        recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 }
