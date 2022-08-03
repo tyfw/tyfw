@@ -1,7 +1,5 @@
 package com.example.tyfw;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -14,24 +12,17 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
-import com.example.tyfw.ui.home.HomeFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class AiPredictionActivity extends AppCompatActivity {
-    private TextView description;
     private TextView seekBarTitle;
     private TextView aiResults;
-    private SeekBar riskBar;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -39,10 +30,10 @@ public class AiPredictionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_prediction);
 
-        description = findViewById(R.id.ai_description);
+        TextView description = findViewById(R.id.ai_description);
         seekBarTitle = findViewById(R.id.seekBarTitle);
         aiResults = findViewById(R.id.ai_results);
-        riskBar = findViewById(R.id.seekBar);
+        SeekBar riskBar = findViewById(R.id.seekBar);
 
         App config = (App) getApplicationContext();
         int riskTol = config.getRiskTolerance();
@@ -50,7 +41,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         riskBar.setProgress(riskTol);
 
         List<String> responseList = getPrediction();
-        String recommendation = (responseList.get(0) == "false") ? "hold" : "sell";
+        String recommendation = (responseList.get(0).equals("false")) ? "hold" : "sell";
         aiResults.setText("Today's ETH value: " + responseList.get(1) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(2) +  " USD\n" + "Our recommendation: " + recommendation + "\n");
 
         // Helpful/taken from: https://stackoverflow.com/questions/8629535/implementing-a-slider-seekbar-in-android
@@ -62,7 +53,7 @@ public class AiPredictionActivity extends AppCompatActivity {
                 config.setRiskTolerance(progress);
 
                 List<String> responseList = getPrediction();
-                String recommendation = (responseList.get(0) == "false") ? "hold" : "sell";
+                String recommendation = (responseList.get(0).equals("false")) ? "hold" : "sell";
                 aiResults.setText("Today's ETH value: " + responseList.get(1) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(2) +  " USD\n" + "Our recommendation: " + recommendation + "\n");
             }
 

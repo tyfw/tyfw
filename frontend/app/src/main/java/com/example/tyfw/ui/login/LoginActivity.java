@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = binding.email;
         walletAddressEditText = binding.walletProfile;
         usernameEditText = binding.username;
-
+        seekBarLogin = findViewById(R.id.seekBarLogin);
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
@@ -134,7 +134,6 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText.addTextChangedListener(afterTextChangedListener);
         walletAddressEditText.addTextChangedListener(afterTextChangedListener);
 
-        seekBarLogin = findViewById(R.id.seekBarLogin);
         seekBarLogin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

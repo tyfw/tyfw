@@ -58,8 +58,6 @@ public class HomeFragment extends Fragment {
     private TextView currVal;
     private TextView currWallet;
     private TextView currUser;
-    private Button aiButton;
-    private int riskTolerance;
 
     private final String TAG = "HOME";
 
@@ -88,7 +86,7 @@ public class HomeFragment extends Fragment {
         currUser = view.findViewById(R.id.user);
         currWallet = view.findViewById(R.id.wallet);
 
-        aiButton = view.findViewById(R.id.ai_button);
+        Button aiButton = view.findViewById(R.id.ai_button);
         aiButton.setOnClickListener(v ->{
             Intent mainActivity = new Intent(getContext(), AiPredictionActivity.class);
             startActivity(mainActivity);
@@ -145,7 +143,7 @@ public class HomeFragment extends Fragment {
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
-            riskTolerance = user.getInt("risktolerance");
+            int riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
 
             config.setUsername(user.getString("username"));

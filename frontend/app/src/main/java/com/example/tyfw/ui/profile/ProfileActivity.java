@@ -21,7 +21,6 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.home.HomeFragment.GetUser;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -36,7 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -147,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity {
         JSONObject serverResponse = getFriend.getValue();
         JSONArray friendsList = new JSONArray();
         try {
-            friendsList = serverResponse.getJSONArray("friends");
+0x            friendsList = serverResponse.getJSONArray("friends");
             for (int i=0; !friendsList.isNull(i); i++) {
                 String friendName = friendsList.getString(i);
                 if (friendName.equals(username)) {
