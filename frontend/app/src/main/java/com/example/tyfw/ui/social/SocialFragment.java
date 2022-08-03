@@ -130,6 +130,8 @@ public class SocialFragment extends Fragment {
                     Intent chatActivity = new Intent(getActivity(), ChatActivity.class);
                     chatActivity.putExtra("fromUser", config.getUsername());
                     chatActivity.putExtra("toUser", item.getName());
+                    chatActivity.putExtra("email", config.getEmail());
+                    chatActivity.putExtra("googleIdToken", config.getGoogleIdToken());
                     startActivity(chatActivity);
                 }
             }
@@ -153,7 +155,6 @@ public class SocialFragment extends Fragment {
 
         public void run() {
             try {
-//                String url = "http://localhost:8081/user/getfriends/";
                 String url = "http://34.105.106.85:8081/user/getfriends/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))

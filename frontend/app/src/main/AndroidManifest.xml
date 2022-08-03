@@ -52,6 +52,9 @@
             android:name=".SearchResultsActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.social.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
     </application>
