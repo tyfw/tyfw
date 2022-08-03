@@ -116,11 +116,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-//        if (isFriend()) {
-//            friend.setChecked(true);
-//        } else {
-//            friend.setChecked(false);
-//        }
+       if (isFriend()) {
+            friend.setChecked(true);
+        } else {
+            friend.setChecked(false);
+        }
     }
 
     private boolean isFriend(){
