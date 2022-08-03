@@ -114,15 +114,13 @@ public class MessageAdapter extends RecyclerView.Adapter {
         try {
             if (message.getBoolean("isSent")) {
                 if (message.has("message")) {
-
                     SentMessageHolder messageHolder = (SentMessageHolder) holder;
                     messageHolder.messageTxt.setText(message.getString("message"));
-
                 }
             } else {
                 if (message.has("message")) {
                     ReceivedMessageHolder messageHolder = (ReceivedMessageHolder) holder;
-                    messageHolder.nameTxt.setText(message.getString("name"));
+                    messageHolder.nameTxt.setText(message.getString("fromUser"));
                     messageHolder.messageTxt.setText(message.getString("message"));
                 }
             }

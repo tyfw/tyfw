@@ -51,7 +51,15 @@ public class APICallers {
 
         }
 
-        public JSONArray getValue() {
+        public JSONArray getValue() throws JSONException {
+            for (int i = 0; i < value.length(); i++){
+                JSONObject index = value.getJSONObject(i);
+                if (index.get("fromUser").equals(fromUser)){
+                    index.put("isSent", true);
+                } else {
+                    index.put("isSent", false);
+                }
+            }
             return value;
         }
     }
