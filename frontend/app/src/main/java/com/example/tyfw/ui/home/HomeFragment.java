@@ -1,6 +1,7 @@
 package com.example.tyfw.ui.home;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +23,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
+import com.example.tyfw.AiPredictionActivity;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
@@ -55,9 +58,10 @@ public class HomeFragment extends Fragment {
     private TextView currVal;
     private TextView currWallet;
     private TextView currUser;
+    private Button aiButton;
+    private int riskTolerance;
 
     private final String TAG = "HOME";
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +79,6 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
@@ -84,6 +87,12 @@ public class HomeFragment extends Fragment {
         currVal = view.findViewById(R.id.currentvalue);
         currUser = view.findViewById(R.id.user);
         currWallet = view.findViewById(R.id.wallet);
+
+        aiButton = view.findViewById(R.id.ai_button);
+        aiButton.setOnClickListener(v ->{
+            Intent mainActivity = new Intent(getContext(), AiPredictionActivity.class);
+            startActivity(mainActivity);
+        });
 
         lineChart.setNoDataText("Loading Wallet Data");
         // https://stackoverflow.com/questions/30892275/mpandroidchart-change-message-no-chart-data-available
@@ -99,9 +108,7 @@ public class HomeFragment extends Fragment {
 
         setUserData();
         setBalance();
-
     }
-
 
     @Override
     public void onDestroyView() {
@@ -137,7 +144,9 @@ public class HomeFragment extends Fragment {
             user = serverResponse.getJSONObject("data");
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
-            currWallet.setText(addr.get(0).toString());
+            currWallet.setText("Your wallet address: " + addr.get(0).toString());
+            riskTolerance = user.getInt("risktolerance");
+            config.setRiskTolerance(riskTolerance);
 
             config.setUsername(user.getString("username"));
         } catch (JSONException e) {
@@ -391,7 +400,7 @@ public class HomeFragment extends Fragment {
                     ANError error = response.getError();
                     int errorCode = error.getErrorCode();
                     if (errorCode == 400) {
-                        Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT).show();
                     }
                     errorResponse(error);
                 }
@@ -454,11 +463,8 @@ public class HomeFragment extends Fragment {
             }
             e.printStackTrace();
         }
-
         public JSONObject getValue() {
             return value;
         }
     }
-
-
 }

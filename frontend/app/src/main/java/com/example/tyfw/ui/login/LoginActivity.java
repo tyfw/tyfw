@@ -18,6 +18,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
@@ -27,11 +29,14 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
+import com.example.tyfw.R;
 import com.example.tyfw.databinding.ActivityLoginBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -41,6 +46,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText lastNameEditText;
     private EditText emailEditText;
     private EditText walletAddressEditText;
+    private TextView seekBarLoginDescription;
+    private SeekBar seekBarLogin;
+    private int riskTolerance = 50;
 
     private String email;
     private String googleIdToken;
@@ -48,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         EditText usernameEditText;
+        seekBarLoginDescription = findViewById(R.id.tolerance_text);
 
         email = getIntent().getStringExtra("email");
         googleIdToken = getIntent().getStringExtra("googleIdToken");
@@ -124,6 +133,26 @@ public class LoginActivity extends AppCompatActivity {
 
         emailEditText.addTextChangedListener(afterTextChangedListener);
         walletAddressEditText.addTextChangedListener(afterTextChangedListener);
+
+        seekBarLogin = findViewById(R.id.seekBarLogin);
+        seekBarLogin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                seekBarLoginDescription = findViewById(R.id.tolerance_text);
+                seekBarLoginDescription.setText("Current risk tolerance (%): " + String.valueOf(progress));
+                riskTolerance = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
@@ -203,6 +232,8 @@ public class LoginActivity extends AppCompatActivity {
             jsonObject.put("lastName", lastName);
             jsonObject.put("walletAddress", jsonArray);
             jsonObject.put("googleIdToken", this.googleIdToken);
+            Log.e("Here", String.valueOf(riskTolerance));
+            jsonObject.put("riskTolerance", String.valueOf(riskTolerance));
         } catch (JSONException e) {
             e.printStackTrace();
         }

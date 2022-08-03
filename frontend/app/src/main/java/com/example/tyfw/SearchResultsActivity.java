@@ -2,6 +2,7 @@ package com.example.tyfw;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -88,7 +89,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                     intent = new Intent(SearchResultsActivity.this, ProfileActivity.class);
                     intent.putExtra("username", item.getUsername());
                     intent.putExtra("walletAddress", item.getWallet());
-
                     startActivity(intent);
                 }
             }

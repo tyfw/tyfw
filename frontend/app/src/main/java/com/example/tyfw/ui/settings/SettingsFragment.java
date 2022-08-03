@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SeekBarPreference;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
@@ -48,9 +50,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Log.d("Settings", "Google Client connection status: " + googleApiClient.isConnected());
 
         Context context = getPreferenceManager().getContext();
-        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
-
-        Log.d("Settings", "Existing settings: " + screen.toString());
 
         String firstName = "John";
         String lastName = "Doe";
@@ -113,46 +112,40 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         final EditTextPreference lastNamePreference = getPreferenceManager().findPreference("preference_last_name");
         lastNamePreference.setText(lastName);
-        lastNamePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("name", "last");
-                    jsonObject.put("email", config.getEmail());
-                    jsonObject.put("newName", newValue.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                ChangeName changeName = new ChangeName(jsonObject);
-                Thread changeNameThread = new Thread(changeName);
-                changeNameThread.start();
-                try {
-                    changeNameThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Unable to change name", Toast.LENGTH_SHORT);
-                }
-                return true;
+        lastNamePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            JSONObject jsonObject1 = new JSONObject();
+            try {
+                jsonObject1.put("name", "last");
+                jsonObject1.put("email", config.getEmail());
+                jsonObject1.put("newName", newValue.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            ChangeName changeName = new ChangeName(jsonObject1);
+            Thread changeNameThread = new Thread(changeName);
+            changeNameThread.start();
+            try {
+                changeNameThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Unable to change name", Toast.LENGTH_SHORT);
+            }
+            return true;
         });
 
         final Preference signOutPreference = getPreferenceManager().findPreference("Logout");
-        signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                GoogleSignInOptions gso = new GoogleSignInOptions.
-                        Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
-                        build();
+        signOutPreference.setOnPreferenceClickListener(preference -> {
+            GoogleSignInOptions gso1 = new GoogleSignInOptions.
+                    Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
+                    build();
 
-                GoogleSignInClient googleSignInClient=GoogleSignIn.getClient(context,gso);
-                googleSignInClient.signOut();
+            GoogleSignInClient googleSignInClient=GoogleSignIn.getClient(context, gso1);
+            googleSignInClient.signOut();
 
-                Toast.makeText(getContext(),"Logging out",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getContext(), AuthActivity.class);
-                startActivity(intent);
-                return true;
-            }
+            Toast.makeText(getContext(),"Logging out",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getContext(), AuthActivity.class);
+            startActivity(intent);
+            return true;
         });
     }
 

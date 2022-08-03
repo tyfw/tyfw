@@ -79,6 +79,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wallet_profile" />
 
+    <TextView
+        android:id="@+id/tolerance_text"
+        android:layout_width="132dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:text="Current risk tolerance (%): 50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <SeekBar
+        android:id="@+id/seekBarLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:max="100"
+        android:min="0"
+        android:progress="50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tolerance_text" />
+
     <Button
         android:id="@+id/login"
         android:layout_width="wrap_content"
@@ -90,7 +112,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wallet_profile" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarLogin" />
 
     <ProgressBar
         android:id="@+id/loading"
@@ -105,5 +127,6 @@
         app:layout_constraintStart_toStartOf="@+id/wallet_profile"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
