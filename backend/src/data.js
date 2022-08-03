@@ -21,6 +21,9 @@ require("dotenv").config();
 const axios = require("axios");
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
 
+// load filesystem for writing to file
+const fs = require("fs");
+
 // get balance of ether by querying wallet address on blockchain
 const getEthBalance = async (wallet_address) => {
   if (web3.utils.isAddress(wallet_address)) {
@@ -181,6 +184,36 @@ const getYearPercentReturn = async (address) => {
   );
 };
 
+// Returns the prior 10 days of etherium price and output to csv
+const generateTrainingData = async () => {
+
+  const priceHistoryA = await getPriceHistory("ETHUSDT", "1d", {
+    limit: 1000,
+  });
+
+  const midTime = priceHistoryA[0]["time"]
+
+  const priceHistoryB = await getPriceHistory("ETHUSDT", "1d", {
+    //startTime: (midTime - 1000 * 24 * 60 * 60)*1000,
+    endTime: (midTime - 24*60*60) * 1000,
+    limit: 1000,
+  });
+  const priceHistory = priceHistoryB.concat(priceHistoryA);
+
+  const csv = priceHistory.map((item) => {
+    return item["time"] + "," + item["avgPrice"];
+  }).join("\n");
+  // check if data directory exists, if not create it
+  if (!fs.existsSync("./data")) {
+    fs.mkdirSync("./data");
+  }
+  // write to csv file
+  fs.writeFile("data/eth_price.csv", csv, (err) => {
+    if (err) throw err;
+    console.log("Saved!");
+  });
+}
+
 module.exports = {
   getEthBalance,
   getEthPrice,
@@ -189,5 +222,6 @@ module.exports = {
   getTransactionHistory,
   getAccountHistory,
   getYearPercentReturn,
+  generateTrainingData,
   getPriceHistory,
 };
