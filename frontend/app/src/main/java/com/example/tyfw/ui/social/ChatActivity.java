@@ -157,6 +157,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
                     jsonObject.put("message", messageEdit.getText().toString());
 
                     webSocket.send(jsonObject.toString());
+                    messageAdapter.addItem(jsonObject);
 
                     jsonObject.put("isSent", true);
 
