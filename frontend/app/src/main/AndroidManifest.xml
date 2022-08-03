@@ -9,6 +9,7 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -25,6 +26,9 @@
             android:name=".ui.social.ChatActivity"
             android:exported="false" />
         <activity
+            android:name=".AiPredictionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.profile.WalletProfileActivity"
             android:exported="false" />
         <activity
@@ -36,7 +40,8 @@
             android:label="@string/title_activity_login" />
         <activity
             android:name=".AuthActivity"
-            android:exported="true">
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
