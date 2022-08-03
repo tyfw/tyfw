@@ -24,7 +24,7 @@ console.isDebugMode = true;
 const {OAuth2Client} = require('google-auth-library');
 const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const { Message, initConversation, getChat, addMessageToChat, getConversationID} = require('./chat.js')
-const {runMongo, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend, changeRiskTolerance} = require('./user.js')
+const {runMongo, deleteFriend, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend, changeRiskTolerance} = require('./user.js')
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -540,6 +540,23 @@ app.post("/user/init_conversation", async (req, res) => {
     res.sendStatus(400)
   }
 });
+
+app.delete("/user/delete_friend", async (req, res) => {
+  console.debug("/user/delete_friend\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
+
+  try {
+    await deleteFriend(req.header("email"), req.header("friend"))
+    res.sendStatus(200)
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+  
+  
+})
 
 module.exports = server
 
