@@ -21,7 +21,7 @@ public class APICallers {
         private final JSONObject jsonObject = new JSONObject();
 
         public RegisterUser(String email, String username, String firstName, String lastName
-                , String walletAddress, String googleIdToken, String riskTolerance) {
+                , String walletAddress, String googleIdToken, String riskTolerance, String riskAgg) {
             JSONArray jsonArray = new JSONArray();
             jsonArray.put(walletAddress);
 
@@ -32,8 +32,8 @@ public class APICallers {
                 jsonObject.put("lastName", lastName);
                 jsonObject.put("walletAddress", jsonArray);
                 jsonObject.put("googleIdToken", googleIdToken);
-                Log.e("Here", String.valueOf(riskTolerance));
                 jsonObject.put("riskTolerance", String.valueOf(riskTolerance));
+                jsonObject.put("riskAgg", String.valueOf(riskAgg));
             }catch (JSONException e ){
                 e.printStackTrace();
             }
