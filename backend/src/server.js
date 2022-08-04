@@ -39,9 +39,6 @@ const http = require('http');
 const { json } = require('express');
 const socket_server = http.createServer((req, res) => {})
 
-socket_server.listen(3000, ()=>{
-  console.log("Listening on port 3000...")
-})
 
 wsServer = new SocketServer({httpServer:socket_server})
 
@@ -116,12 +113,26 @@ app.get("/", (req, res) => {
   res.send("Hello world!")
 })
 
-var server = app.listen(8081, (req, res) => {
-  var host = server.address().address
-  var port = server.address().port
-  console.log("TYFW backend server running at http://%s:%s", host, port)
-  logger.log("TYFW backend server running at http://%s:%s", host, port)
+console.log(process.env.NODE_ENV)
+if (process.env.NODE_ENV != 'test') {
+  var server = app.listen(8081, (req, res) => {
+    var host = server.address().address
+    var port = server.address().port
+    console.log("TYFW backend server running at http://%s:%s", host, port)
+    logger.log("TYFW backend server running at http://%s:%s", host, port)
+
+  socket_server.listen(3000, ()=>{
+    console.log("Listening on port 3000...")
 })
+})
+
+}
+// var server = app.listen(8081, (req, res) => {
+//   var host = server.address().address
+//   var port = server.address().port
+//   console.log("TYFW backend server running at http://%s:%s", host, port)
+//   logger.log("TYFW backend server running at http://%s:%s", host, port)
+// })
 
 app.post("/user/authenticate", async (req, res) => {
   try {
@@ -572,6 +583,6 @@ app.delete("/user/delete_friend", async (req, res) => {
   
 })
 
-module.exports = server
+module.exports = app 
 
 runMongo()

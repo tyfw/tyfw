@@ -1,33 +1,33 @@
 const request = require('supertest')
-const server = require('../../src/server.js')
-const app = request(server)
+const app = require('../../src/server.js')
+
 
 describe ("GET /user/displaycurruser", () => {
     describe("Get current user profile by username", () => {
         test("should respond w 200 status code", async () => {
-            const response = await app.get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "day")
+            const response = await request(app).get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "day")
             expect(response.statusCode).toBe(200)
 
         })
         test("should respond w 200 status code", async () => {
-            const response = await app.get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "week")
+            const response = await request(app).get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "week")
             expect(response.statusCode).toBe(200)
 
         })
         test("should respond w 200 status code", async () => {
-            const response = await app.get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "month")
+            const response = await request(app).get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "month")
             expect(response.statusCode).toBe(200)
 
         })
         test("should respond w 200 status code", async () => {
-            const response = await app.get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "year")
+            const response = await request(app).get("/user/displaycurruser").set("email", "tesla@mail.com").set("time", "year")
             expect(response.statusCode).toBe(200)
 
         })
     })
     describe("Get current user profile for a user not in DB", () => {
         test("should respond w 400 status code", async () => {
-            const response = await app.get("/user/displaycurruser").set(
+            const response = await request(app).get("/user/displaycurruser").set(
                 "username", "notauser"
             )
             expect(response.statusCode).toBe(400)
@@ -38,13 +38,13 @@ describe ("GET /user/displaycurruser", () => {
 describe ("GET /user/getbalance", () => {
     describe("get balance for user", () => {
         test("should respond w 200 status code", async () => {
-            const response = await (await app.get("/user/getbalance").set("email", "tesla@mail.com"))
+            const response = await (await request(app).get("/user/getbalance").set("email", "tesla@mail.com"))
             expect(response.statusCode).toBe(200)
         })
     })
     describe("get balance for non-existing user", () => {
         test("should respond w 400 status code", async () => {
-            const response = await (await app.get("/user/getbalance").set("email", "notauser@mail.com"))
+            const response = await (await request(app).get("/user/getbalance").set("email", "notauser@mail.com"))
             expect(response.statusCode).toBe(400)
         })
     })
