@@ -68,12 +68,12 @@ describe ("POST /user/authenticate", () => {
         })
     })
     describe("failed authentication due to user not found", () => {
-        test("should respond w 400 status code", async () => {
+        test("should respond w 201 status code", async () => {
             const response = await request(app).post("/user/authenticate").send({
                 googleIdToken : "fakeToken",
                 email: "notauser@mail.com"
         })
-            expect(response.statusCode).toBe(400)
+            expect(response.statusCode).toBe(201)
         })
     })
 })
