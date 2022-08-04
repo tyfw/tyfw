@@ -7,6 +7,8 @@ public class App extends Application {
     private String email;
     private String username;
     private int riskTolerance = 50;
+    private int riskAgg = 50;
+
 
     public void setGoogleIdToken(String googleIdToken) {
         this.googleIdToken = googleIdToken;
@@ -31,4 +33,8 @@ public class App extends Application {
     public void setRiskTolerance(int riskTolerance) { this.riskTolerance = riskTolerance; }
 
     public int getRiskTolerance() { return this.riskTolerance; }
+
+    public void setRiskAgg(int riskAgg) { this.riskAgg = riskAgg; }
+
+    public int getRiskAgg() { return this.riskAgg; }
 }

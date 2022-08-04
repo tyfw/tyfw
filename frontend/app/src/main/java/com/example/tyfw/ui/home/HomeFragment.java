@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
     private TextView currUser;
     private Button aiButton;
     private int riskTolerance;
+    private int riskAgg;
 
     private final String TAG = "HOME";
 
@@ -152,12 +153,11 @@ public class HomeFragment extends Fragment {
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
-            int riskTolerance = user.getInt("risktolerance");
-            config.setRiskTolerance(riskTolerance);
-            currWallet.setText("Your wallet address: " + addr.get(0).toString());
             riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
-
+            riskAgg = user.getInt("riskAgg");
+            config.setRiskAgg(riskAgg);
+            currWallet.setText("Your wallet address: " + addr.get(0).toString());
             config.setUsername(user.getString("username"));
         } catch (JSONException e) {
             currUser.setText("null");

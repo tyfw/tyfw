@@ -50,8 +50,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText;
     private EditText walletAddressEditText;
     private TextView seekBarLoginDescription;
+    private TextView seekBarLoginDescriptionAgg;
+
     private SeekBar seekBarLogin;
+    private SeekBar seekBarLoginAgg;
     private int riskTolerance = 50;
+    private int riskAgg = 50;
 
     private String email;
     private String googleIdToken;
@@ -60,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         EditText usernameEditText;
         seekBarLoginDescription = findViewById(R.id.tolerance_text);
+        seekBarLoginDescriptionAgg = findViewById(R.id.aggressiveness_text);
 
         email = getIntent().getStringExtra("email");
         googleIdToken = getIntent().getStringExtra("googleIdToken");
@@ -85,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         walletAddressEditText = binding.walletProfile;
         usernameEditText = binding.username;
         seekBarLogin = findViewById(R.id.seekBarLogin);
+        seekBarLoginAgg = findViewById(R.id.seekBarLoginAgg);
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
@@ -137,13 +143,31 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText.addTextChangedListener(afterTextChangedListener);
         walletAddressEditText.addTextChangedListener(afterTextChangedListener);
 
-        seekBarLogin = findViewById(R.id.seekBarLogin);
         seekBarLogin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekBarLoginDescription = findViewById(R.id.tolerance_text);
                 seekBarLoginDescription.setText("Current risk tolerance (%): " + String.valueOf(progress));
                 riskTolerance = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        seekBarLoginAgg.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                seekBarLoginDescriptionAgg = findViewById(R.id.aggressiveness_text);
+                seekBarLoginDescriptionAgg.setText("Current investment aggressiveness (%): " + String.valueOf(progress));
+                riskAgg = progress;
             }
 
             @Override
@@ -222,7 +246,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
-        RegisterUser getAuth = new RegisterUser(this.email, username, firstName, lastName, walletAddress, this.googleIdToken, String.valueOf(riskTolerance));
+        RegisterUser getAuth = new RegisterUser(this.email, username, firstName, lastName, walletAddress, this.googleIdToken, String.valueOf(riskTolerance), String.valueOf(riskAgg));
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {
