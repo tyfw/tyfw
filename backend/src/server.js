@@ -481,7 +481,7 @@ app.get("/user/getprediction", async (req, res) => {
   if (user.riskAgg != riskAgg) {
     await changeRiskAgg(req.header("email"), riskAgg)
   }
-  const predict = await ml.predict(riskTolerance);
+  const predict = await ml.predict(riskTolerance, riskAgg);
   res.status(200).json(predict)
 });
 
