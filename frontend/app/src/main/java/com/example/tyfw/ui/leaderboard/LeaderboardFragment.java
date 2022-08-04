@@ -21,6 +21,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.utils.LeaderboardListAdapter;
@@ -72,7 +73,7 @@ public class LeaderboardFragment extends Fragment {
             e.printStackTrace();
         }
 
-        GetLeaderboard getAuth = new GetLeaderboard(jsonObject);
+        APICallers.GetLeaderboard getAuth = new APICallers.GetLeaderboard(jsonObject);
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {
@@ -165,42 +166,5 @@ public class LeaderboardFragment extends Fragment {
         binding = null;
     }
 
-    class GetLeaderboard implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private JSONArray value;
-        private final JSONObject jsonObject;
 
-        public GetLeaderboard(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                Log.e("a", jsonObject.toString());
-                String url = "http://34.105.106.85:8081/user/leaderboard/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-
-                ANResponse<JSONArray> response = request.executeForJSONArray();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    Log.e("Leaderboard", String.valueOf(error.getErrorCode()));
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public JSONArray getValue() {
-            return value;
-        }
-    }
 }

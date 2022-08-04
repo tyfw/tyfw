@@ -30,6 +30,7 @@ import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.ActivityLoginBinding;
 
 import org.json.JSONArray;
@@ -37,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import static com.example.tyfw.api.APICallers.*;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -81,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = binding.email;
         walletAddressEditText = binding.walletProfile;
         usernameEditText = binding.username;
-
+        seekBarLogin = findViewById(R.id.seekBarLogin);
 
         emailEditText.setText(email);
         emailEditText.setEnabled(false);
@@ -219,26 +222,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
-        // model.notify();
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(walletAddress);
-
-            jsonObject.put("email", this.email);
-            jsonObject.put("username", username);
-            jsonObject.put("firstName", firstName);
-            jsonObject.put("lastName", lastName);
-            jsonObject.put("walletAddress", jsonArray);
-            jsonObject.put("googleIdToken", this.googleIdToken);
-            Log.e("Here", String.valueOf(riskTolerance));
-            jsonObject.put("riskTolerance", String.valueOf(riskTolerance));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RegisterUser getAuth = new RegisterUser(jsonObject);
+        RegisterUser getAuth = new RegisterUser(this.email, username, firstName, lastName, walletAddress, this.googleIdToken, String.valueOf(riskTolerance));
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {
@@ -263,35 +247,5 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    class RegisterUser implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private Integer value;
-        private final JSONObject jsonObject;
 
-        public RegisterUser(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            String url = "http://34.105.106.85:8081/user/register/";
-            ANRequest request= AndroidNetworking.post(url)
-                    .addJSONObjectBody(this.jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
-
-            ANResponse response = request.executeForOkHttpResponse();
-
-            if (response.isSuccess()) {
-                value = response.getOkHttpResponse().code();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
-            }
-        }
-
-        public Integer getValue() {
-            return value;
-        }
-    }
 }

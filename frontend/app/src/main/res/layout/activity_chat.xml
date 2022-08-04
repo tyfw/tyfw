@@ -7,6 +7,7 @@ android:layout_height="match_parent"
 tools:context=".ui.social.ChatActivity">
 
 
+<<<<<<< HEAD
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,6 +26,27 @@ tools:context=".ui.social.ChatActivity">
     android:layout_marginStart="16dp"
     android:layout_marginBottom="16dp"
     android:id="@+id/messageEdit" />
+=======
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/messageEdit" />
+
+    <EditText
+        android:id="@+id/messageEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="17dp"
+        android:layout_toStartOf="@id/sendBtn"
+        android:background="@drawable/edittext_design"
+        android:hint="Message..."
+        android:padding="8dp"
+        android:textSize="16sp" />
+>>>>>>> main
 
     <Button
         android:id="@+id/sendBtn"
@@ -32,13 +54,22 @@ tools:context=".ui.social.ChatActivity">
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+<<<<<<< HEAD
         android:layout_marginBottom="16dp"
+=======
+        android:layout_marginEnd="21dp"
+        android:layout_marginBottom="10dp"
+>>>>>>> main
         android:padding="10dp"
         android:text="Send"
         android:textColor="@color/colorPrimary" />
 
 
+<<<<<<< HEAD
 <!--    <ImageView-->
+=======
+    <!--    <ImageView-->
+>>>>>>> main
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
 <!--        android:src="@drawable/ic_image_black_24dp"-->

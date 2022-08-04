@@ -14,6 +14,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.ANResponse;
 import com.androidnetworking.error.ANError;
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.ui.home.HomeFragment;
 
 import org.json.JSONArray;
@@ -25,10 +26,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class AiPredictionActivity extends AppCompatActivity {
-    private TextView description;
     private TextView seekBarTitle;
     private TextView aiResults;
     private SeekBar riskBar;
@@ -39,6 +38,10 @@ public class AiPredictionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_prediction);
 
+        TextView description = findViewById(R.id.ai_description);
+        seekBarTitle = findViewById(R.id.seekBarTitle);
+        aiResults = findViewById(R.id.ai_results);
+        SeekBar riskBar = findViewById(R.id.seekBar);
         description = findViewById(R.id.ai_description);
         seekBarTitle = findViewById(R.id.seekBarTitle);
         aiResults = findViewById(R.id.ai_results);
@@ -50,7 +53,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         riskBar.setProgress(riskTol);
 
         List<String> responseList = getPrediction();
-        String recommendation = (responseList.get(0) == "false") ? "hold" : "sell";
+        String recommendation = (responseList.get(0).equals("false")) ? "hold" : "sell";
         aiResults.setText("Today's ETH value: " + responseList.get(1) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(2) +  " USD\n" + "Our recommendation: " + recommendation + "\n");
 
         // Helpful/taken from: https://stackoverflow.com/questions/8629535/implementing-a-slider-seekbar-in-android
@@ -62,7 +65,7 @@ public class AiPredictionActivity extends AppCompatActivity {
                 config.setRiskTolerance(progress);
 
                 List<String> responseList = getPrediction();
-                String recommendation = (responseList.get(0) == "false") ? "hold" : "sell";
+                String recommendation = (responseList.get(0).equals("false")) ? "hold" : "sell";
                 aiResults.setText("Today's ETH value: " + responseList.get(1) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(2) +  " USD\n" + "Our recommendation: " + recommendation + "\n");
             }
 
@@ -90,7 +93,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        GetPrediction getPrediction = new GetPrediction(jsonObject);
+        APICallers.GetPrediction getPrediction = new APICallers.GetPrediction(jsonObject);
         Thread getPredictionThread = new Thread(getPrediction);
         getPredictionThread.start();
         try {
@@ -115,49 +118,6 @@ public class AiPredictionActivity extends AppCompatActivity {
         }
     }
 
-    static class GetPrediction implements Runnable {
-        final static String TAG = "GetUserRunnable";
-        private JSONObject value;
-        private final JSONObject jsonObject;
 
-        public GetPrediction(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/getprediction/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("risktolerance", jsonObject.getString("risktolerance"))
-                        .build();
-
-                ANResponse response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = (JSONObject) response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    errorResponse(error);
-                }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
-        }
-
-        private void errorResponse(Exception e){
-            value = new JSONObject();
-            try {
-                value.putOpt("data", new JSONArray());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-        public JSONObject getValue() {
-            return value;
-        }
-    }
 }
 

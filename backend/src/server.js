@@ -7,9 +7,9 @@ const app = express();
 app.use(express.json());
 
 // Graylog logging
-const Graylog2 = require('graylog2');
+const graylog2 = require('graylog2');
 
-const logger = new Graylog2.graylog({
+const logger = new graylog2.graylog({
   servers: [{ host: '4m1pqj.stackhero-network.com', port: 12201 }] // Replace the "host" per your Graylog domain
 });
 
@@ -19,6 +19,12 @@ logger.log('Hello from tyfw server');
 
 //debug printout
 console.isDebugMode = true;
+
+
+// mongo-db
+const { MongoClient } = require('mongodb');
+const uri = "mongodb://localhost:27017"
+const mongo_client = new MongoClient(uri)
 
 // Google User Auth
 const {OAuth2Client} = require('google-auth-library');
@@ -54,7 +60,7 @@ wsServer.on('request', (req) => {
         element.sendUTF(mes.utf8Data)
         var receivedJSON = JSON.parse(mes.utf8Data)
         var message = new Message(receivedJSON.message, receivedJSON.fromUser, receivedJSON.toUser)
-        var existingChat = await getChat(receivedJSON.fromUser, receivedJSON.toUser) 
+        var existingChat = await getChat(receivedJSON.fromUser, receivedJSON.toUser)
         // if (existingChat == null) {
         //   var chat = new Chat(receivedJSON.fromUser, receivedJSON.toUser)
         //   chat.messages.push(message)
@@ -102,6 +108,9 @@ async function googleAuthVerify(token) {
   //const userid = payload['sub'];
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 app.get("/", (req, res) => {
   res.send("Hello world!")
@@ -117,10 +126,10 @@ var server = app.listen(8081, (req, res) => {
 app.post("/user/authenticate", async (req, res) => {
   try {
     console.debug("/user/authenticate \n    Time: ", Date.now(), "\n    req.body: ", req.body)
-    
+
     existingUser = await getUserByEmail(req.body.email)
     console.debug("existingUser: ", existingUser)
-    
+
     if (existingUser == null) {
       console.log("User not found")
       res.sendStatus(201)
@@ -130,6 +139,14 @@ app.post("/user/authenticate", async (req, res) => {
     const verifyied = await googleAuthVerify(req.body.googleIdToken)
     if (!verifyied) {
       res.sendStatus(401)
+      return;
+    }
+
+    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
+
+    if (existingUser == null) {
+      console.log("User not found")
+      res.sendStatus(201)
       return;
     }
     res.sendStatus(200)
@@ -148,7 +165,7 @@ app.post("/user/register", async (req, res) => {
       const existingUser = await getUserByUsername(req.body.username)
       if (existingUser != null) {
         if (req.body.username == "testuser") {
-          res.status(200).send("Success") 
+          res.status(200).send("Success")
         } else {
           throw new Error('Username Exists')
         }
@@ -212,9 +229,9 @@ app.get("/user/displaycurruser", async (req, res) => {
           numPoints = 30
         } else if (req.header("time") == "year") {
           interval = "1w"
-          numPoints = 52 
+          numPoints = 52
         }
-        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints)
         res.status(200).json({"timescale": interval, "data": accountHistory})
         return
     }
@@ -223,7 +240,7 @@ app.get("/user/displaycurruser", async (req, res) => {
         logger.log(String(err))
         res.sendStatus(400)
         return
-    } 
+    }
 })
 
 app.get("/user/displayotheruserbyusername", async (req, res) => {
@@ -246,9 +263,9 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
           numPoints = 30
         } else if (req.header("time") == "year") {
           interval = "1w"
-          numPoints = 52 
+          numPoints = 52
         }
-        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+        const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints)
         res.status(200).json({"timescale": interval, "data": accountHistory})
         return
       }
@@ -258,13 +275,13 @@ app.get("/user/displayotheruserbyusername", async (req, res) => {
     logger.log(String(err))
     res.sendStatus(400)
     return
-  } 
+  }
 })
 
 app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
   console.debug("/user/displayotheruserbywalletaddress\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   try {
-    const user = await getUserByWalletAddress(req.header("otherWalletAddress")) 
+    const user = await getUserByWalletAddress(req.header("otherWalletAddress"))
     if (user == null) {
       throw new Error('No users found')
     }
@@ -281,9 +298,9 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
         numPoints = 30
       } else if (req.header("time") == "year") {
         interval = "1w"
-        numPoints = 52 
+        numPoints = 52
       }
-      const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints) 
+      const accountHistory = await getAccountHistory(user.addresses[0], interval, numPoints)
       res.status(200).json({"timescale": interval, "data": accountHistory})
       return
     }
@@ -293,7 +310,7 @@ app.get("/user/displayotheruserbywalletaddress", async (req, res) => {
     logger.log(String(err))
     res.sendStatus(400)
     return
-    } 
+    }
 })
 
 
@@ -318,7 +335,7 @@ app.post("/user/changename", async (req, res) => {
 app.get("/user/search", async (req, res) => {
   console.debug("/user/search\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   try {
-      const queryMatches = await search(req.header("email"), req.header("queryString")) 
+      const queryMatches = await search(req.header("email"), req.header("queryString"))
 
       if (queryMatches.length == 0) {
         throw new Error('No users found')
@@ -441,7 +458,7 @@ app.get("/user/getbalance", async (req, res) => {
       logger.log(String(err))
       res.sendStatus(400)
       return
-  } 
+  }
 });
 
 app.get("/user/getuser", async (req, res) => {
@@ -467,10 +484,9 @@ app.get("/user/getprediction", async (req, res) => {
   if (user.riskTolerance != riskTolerance) {
     await changeRiskTolerance(req.header("email"), riskTolerance)
   }
-  const predict = await ml.predict(riskTolerance); 
+  const predict = await ml.predict(riskTolerance);
   res.status(200).json(predict)
 });
-
 app.get("/user/getfriends", async (req, res) => {
   console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
     const user = await getUserByEmail(req.header("email"))

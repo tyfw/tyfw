@@ -2,6 +2,10 @@ package com.example.tyfw.ui.social;
 
 import static android.content.ContentValues.TAG;
 
+<<<<<<< HEAD
+=======
+import androidx.appcompat.app.ActionBar;
+>>>>>>> main
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +14,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+<<<<<<< HEAD
+=======
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+>>>>>>> main
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,6 +31,10 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
+<<<<<<< HEAD
+=======
+import com.example.tyfw.api.APICallers;
+>>>>>>> main
 import com.example.tyfw.utils.MessageAdapter;
 import com.google.gson.JsonParser;
 
@@ -56,7 +70,14 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< HEAD
         setContentView(R.layout.activity_chat);
+=======
+
+        setContentView(R.layout.activity_chat);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+>>>>>>> main
 
         name = getIntent().getStringExtra("name");
         me = getIntent().getStringExtra("fromUser");
@@ -69,10 +90,60 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         config.setEmail(email);
         config.setGoogleIdToken(googleIdToken);
 
+<<<<<<< HEAD
+=======
+        setTitle(them);
+
+>>>>>>> main
 //        sendBtn = findViewById(R.id.sendBtn);
         initializeView();
         initiateSocketConnection();
     }
+<<<<<<< HEAD
+=======
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.chat_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.view_profile_chat:
+                moveToProfile();
+                return true;
+            case R.id.share_option:
+                shareProfileDetails();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private void moveToProfile(){
+
+    }
+
+    private void shareProfileDetails(){
+        sendMessage("THIS MY PROFILE FR");
+    }
+>>>>>>> main
 
     private String getConvoID(){
         JSONObject jsonObject = new JSONObject();
@@ -83,7 +154,11 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
             e.printStackTrace();
         }
 
+<<<<<<< HEAD
         GetConversationID getConvoId = new GetConversationID(jsonObject);
+=======
+        APICallers.GetConversationID getConvoId = new APICallers.GetConversationID(jsonObject);
+>>>>>>> main
         Thread getConvoThread = new Thread(getConvoId);
         getConvoThread.start();
         try {
@@ -116,9 +191,16 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
             public void onMessage(WebSocket webSocket, String text) {
                 super.onMessage(webSocket, text);
 
+<<<<<<< HEAD
                 runOnUiThread(() -> {
                     try {
 
+=======
+                Log.e("TEXT", text);
+
+                runOnUiThread(() -> {
+                    try {
+>>>>>>> main
                         JSONObject jsonObject = new JSONObject(text);
                         jsonObject.put("isSent", false);
                         jsonObject.put("name", them);
@@ -144,6 +226,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
         messageEdit.addTextChangedListener(this);
 
+<<<<<<< HEAD
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -166,10 +249,58 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
                     e.printStackTrace();
                 }
 
+=======
+        APICallers.GetConvoHistory getConvoHistory = new APICallers.GetConvoHistory(me, them);
+        Thread getHistThread = new Thread(getConvoHistory);
+        getHistThread.start();
+        try {
+            getHistThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            JSONArray messages = getConvoHistory.getValue();
+            for (int i = 0; i < messages.length(); i++){
+                JSONObject msg = messages.getJSONObject(i);
+                Log.e(i + "th Message:", msg.toString());
+                if (!(msg.isNull("message") && msg.isNull("fromUser") && msg.isNull("toUser"))) {
+                    messageAdapter.addItem(msg);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        resetMessageEdit();
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(messageEdit.getText().toString());
+>>>>>>> main
             }
         });
     }
 
+<<<<<<< HEAD
+=======
+    private void sendMessage(String text) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("fromUser", me);
+            jsonObject.put("toUser", them);
+            jsonObject.put("message", text);
+            webSocket.send(jsonObject.toString());
+            messageAdapter.addItem(jsonObject);
+            jsonObject.put("isSent", true);
+            resetMessageEdit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+>>>>>>> main
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -197,6 +328,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         messageEdit.setText("");
         sendBtn.setVisibility(View.INVISIBLE);
         messageEdit.addTextChangedListener(this);
+<<<<<<< HEAD
     }
 
     class GetConversationID implements Runnable {
@@ -236,5 +368,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         public String getValue() {
             return value;
         }
+=======
+        recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
+>>>>>>> main
     }
 }

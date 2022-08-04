@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.androidnetworking.common.Priority;
 
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.ui.login.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -108,7 +109,7 @@ public class AuthActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            GetAuth getAuth = new GetAuth(jsonObject);
+            APICallers.GetAuth getAuth = new APICallers.GetAuth(jsonObject);
             Thread getAuthThread = new Thread(getAuth);
             getAuthThread.start();
             try {
@@ -136,35 +137,5 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
-    class GetAuth implements Runnable {
-        final static String TAG = "GetAuthRunnable";
-        private Integer value;
-        private final JSONObject jsonObject;
 
-        public GetAuth(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            String url = "http://34.105.106.85:8081/user/authenticate/";
-            ANRequest request= AndroidNetworking.post(url)
-                    .addJSONObjectBody(this.jsonObject)
-                    .setPriority(Priority.MEDIUM)
-                    .build();
-
-            ANResponse response = request.executeForOkHttpResponse();
-
-            if (response.isSuccess()) {
-                value = response.getOkHttpResponse().code();
-            } else {
-                // handle error
-                ANError error = response.getError();
-                Log.d(TAG, error.toString());
-            }
-        }
-
-        public Integer getValue() {
-            return value;
-        }
-    }
 }
