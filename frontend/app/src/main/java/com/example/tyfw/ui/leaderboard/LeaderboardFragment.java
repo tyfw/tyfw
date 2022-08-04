@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,6 +45,7 @@ public class LeaderboardFragment extends Fragment {
     private final List<LeaderboardRow> itemsList = new ArrayList<LeaderboardRow>();
     private ListView listView;
     private FragmentLeaderboardBinding binding;
+    private LeaderboardListAdapter adapter;
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
@@ -53,15 +55,18 @@ public class LeaderboardFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         LeaderboardViewModel leaderboardViewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
 
-        // leaderboardViewModel.notifyAll();
-
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         listView = (ListView) binding.list;
-        LeaderboardListAdapter adapter = new LeaderboardListAdapter(root.getContext(), itemsList);
+        adapter = new LeaderboardListAdapter(root.getContext(), itemsList);
         listView.setAdapter(adapter);
 
+        setLeaderBoard();
+        return root;
+    }
+
+    private void setLeaderBoard() {
         // Call the leaderboard API
         App config = (App) getActivity().getApplicationContext();
 
@@ -115,7 +120,6 @@ public class LeaderboardFragment extends Fragment {
             }
             adapter.notifyDataSetChanged();
         }
-        return root;
     }
 
     @Override

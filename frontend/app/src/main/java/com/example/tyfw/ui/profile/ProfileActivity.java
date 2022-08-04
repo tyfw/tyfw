@@ -115,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 } else {
                     button.setText(R.string.add_friend_button);
-
+                    button.toggle();
                     DeleteFriend delFriend = new DeleteFriend(config.getEmail(), username);
                     Thread delFriendThread = new Thread(delFriend);
                     delFriendThread.start();
