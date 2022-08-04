@@ -43,8 +43,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView nameTxt;
-        TextView messageTxt;
+        TextView nameTxt, messageTxt;
 
         public ReceivedMessageHolder(@NonNull View itemView) {
             super(itemView);

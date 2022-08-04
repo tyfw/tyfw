@@ -32,6 +32,8 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
+// Credits to https://github.com/heyletscode/Chat-App-In-Android-And-NodeJS-Using-WebSockets
+
 public class ChatActivity extends AppCompatActivity implements TextWatcher {
     private String me;
     private String them;
