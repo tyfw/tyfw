@@ -30,7 +30,7 @@ const mongo_client = new MongoClient(uri)
 const {OAuth2Client} = require('google-auth-library');
 const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
 const { Message, initConversation, getChat, addMessageToChat, getConversationID} = require('./chat.js')
-const {runMongo, deleteFriend, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend, changeRiskTolerance} = require('./user.js')
+const {runMongo, deleteFriend, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend, changeRiskTolerance, changeRiskAgg} = require('./user.js')
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -166,7 +166,7 @@ app.post("/user/register", async (req, res) => {
       else {
         //create user object
         // const user = new User(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress)
-        await registerUser(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress, req.body.riskTolerance)
+        await registerUser(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress, req.body.riskTolerance, req.body.riskAgg)
         res.status(200).send("Success") 
       }
   }
@@ -473,13 +473,18 @@ app.get("/user/getuser", async (req, res) => {
 app.get("/user/getprediction", async (req, res) => {
   console.debug("/user/getprediction\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   const riskTolerance = req.header("riskTolerance")
+  const riskAgg = req.header("riskAgg")
   const user = await getUserByEmail(req.header("email"))
   if (user.riskTolerance != riskTolerance) {
     await changeRiskTolerance(req.header("email"), riskTolerance)
   }
+  if (user.riskAgg != riskAgg) {
+    await changeRiskAgg(req.header("email"), riskAgg)
+  }
   const predict = await ml.predict(riskTolerance);
   res.status(200).json(predict)
 });
+
 app.get("/user/getfriends", async (req, res) => {
   console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
   const user = await getUserByEmail(req.header("email"))

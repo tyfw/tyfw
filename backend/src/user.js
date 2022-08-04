@@ -3,7 +3,7 @@ const uri = "mongodb://localhost:27017"
 const mongo_client = new MongoClient(uri)
 
 class User {
-    constructor(username, firstname, lastname, email, addresses, risktolerance) {
+    constructor(username, firstname, lastname, email, addresses, risktolerance, riskAgg) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -11,6 +11,7 @@ class User {
         this.addresses = addresses; 
         this.friends = [];
         this.risktolerance = risktolerance;
+        this.riskAgg = riskAgg;
     }
 }
 
@@ -67,6 +68,10 @@ const changeRiskTolerance = async(email, riskTolerance) => {
   await mongo_client.db("tyfw").collection("users").updateOne({email}, {$set: {risktolerance: riskTolerance}})
 }
 
+const changeRiskAgg = async(email, riskAgg) => {
+  await mongo_client.db("tyfw").collection("users").updateOne({email}, {$set: {riskagg: riskAgg}})
+}
+
 const search = async(email, queryString) => {
       var query = {
         $and : [
@@ -99,6 +104,7 @@ module.exports = {
     getUserByWalletAddress,
     changeName,
     changeRiskTolerance,
+    changeRiskAgg,
     search,
     addFriend,
     deleteFriend

@@ -7,7 +7,7 @@ const data = require("./data.js");
 const min = 83.5925;
 const max = 4773.12;
 
-const predict = async (riskTolerance) => {
+const predict = async (riskTolerance, riskAgg) => {
   const model = await tf.loadLayersModel("file://data/model.json");
   const priceHistInput = await data.getPriceHistory("ETHUSDC", "1d", {
     limit: 30,
@@ -26,7 +26,8 @@ const predict = async (riskTolerance) => {
   const todayPrice = priceHistInput[priceHistInput.length - 1].avgPrice;
   const tomorrowPrice = predictions[predictions.length - 1] * (max - min) + min;
   const predictionBundle = {
-    prediction: -((tomorrowPrice - todayPrice) / todayPrice) > riskTolerance / 100,
+    predictSell: -((tomorrowPrice - todayPrice) / todayPrice) > riskTolerance / 100,
+    predictBuy: ((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100,
     todayPrice,
     tomorrowPrice,
   };
