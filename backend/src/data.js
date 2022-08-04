@@ -106,7 +106,7 @@ const getPriceHistory = async (price_abv, interval, options) => {
     throw new Error("Invalid interval");
   }
   if (price_abv != "ETHUSDC") {
-    throw new Error("Invalid Price Abv");
+    throw new Error("Invalid Price ABV");
   }
   return client.klines(price_abv, interval, options)
   .then((res)=>{

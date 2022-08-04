@@ -14,13 +14,14 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "test": "jest --coverage"
+    "test": "NODE_ENV=test jest --coverage --forceExit"
   },
   "name": "backend",
   "version": "1.0.0",
   "description": "Server backend for 321 Project",
   "main": "server.js",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^4.0.0",
     "jest": "^28.1.1"
   }
 }

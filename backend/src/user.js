@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb')
 const uri = "mongodb://localhost:27017"
+// const uri = global.__MONGO_URI__
 const mongo_client = new MongoClient(uri)
 
 class User {
@@ -107,5 +108,6 @@ module.exports = {
     changeRiskAgg,
     search,
     addFriend,
-    deleteFriend
+    deleteFriend,
+    User
 }
