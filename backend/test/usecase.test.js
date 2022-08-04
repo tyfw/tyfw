@@ -9,7 +9,6 @@ beforeAll(async () => {
     console.log(MongoClient)
     console.log(global.__MONGO_URI__)
     console.log(process.env.MONGO_URL)
-    // connection = await MongoClient.connect(global.__MONGO_URI__, {
     connection = await MongoClient.connect("mongodb://localhost:27017", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
