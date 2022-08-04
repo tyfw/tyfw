@@ -22,10 +22,6 @@ const predict = async (riskTolerance, riskAgg) => {
   inputTensor = inputTensor.reshape([-1, 30, 1]);
 
   const predictions = model.predict(inputTensor).dataSync();
-  console.log(-((tomorrowPrice - todayPrice) / todayPrice))
-  console.log( (-((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100)? 1 : 0));
-  console.log(((tomorrowPrice - todayPrice) / todayPrice) > riskAgg)
-  console.log((((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100? 1 : 0));
 
   const todayPrice = priceHistInput[priceHistInput.length - 1].avgPrice;
   const tomorrowPrice = predictions[predictions.length - 1] * (max - min) + min;
@@ -36,6 +32,10 @@ const predict = async (riskTolerance, riskAgg) => {
     tomorrowPrice,
   };
   console.log(predictionBundle);
+  console.log(-((tomorrowPrice - todayPrice) / todayPrice))
+  console.log( (-((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100)? 1 : 0));
+  console.log(((tomorrowPrice - todayPrice) / todayPrice) > riskAgg)
+  console.log((((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100? 1 : 0));
   return predictionBundle;
 
 };
