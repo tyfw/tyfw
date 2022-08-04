@@ -16,7 +16,7 @@ beforeAll(async () => {
       });
       db = await connection.db("tyfw");
       await db.collection("users").deleteMany({});
-      const teslaMockUser = new user.User("Tesla", "Nikola", "Tesla", "tesla@mail.com", ["0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4"])
+      const teslaMockUser = new user.User("Tesla", "Nikola", "Tesla", "tesla@mail.com", ["0x9BF4001d307dFd62B26A2F1307ee0C0307632d59"])
       const zephUser = new user.User("zeph", "Zeph", "Ko", "zeph@mail.com", ["0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf"])
       db.collection("users").insertOne(teslaMockUser)
       db.collection("users").insertOne(zephUser)

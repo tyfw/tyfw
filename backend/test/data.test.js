@@ -59,7 +59,7 @@ test("Test getPriceHistory fails with bad interval", async () => {
 test("Test getPriceHistory fails with bad Price Abv", async () => {
   await expect(async () => {
     await data.getPriceHistory("a", "3m", {});
-  }).rejects.toEqual(Error("Invalid Price ABV"));
+  }).rejects.toThrow("Invalid Price ABV");
 });
 
 test("Test getEthPrice", async () => {
