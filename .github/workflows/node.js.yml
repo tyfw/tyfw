@@ -29,8 +29,8 @@ jobs:
 
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
-          with:
-        mongodb-version: ${{ matrix.mongodb-version }}
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
 
       - run: |
           touch .env
