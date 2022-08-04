@@ -116,15 +116,21 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 } else {
                     button.setText(R.string.add_friend_button);
+
+                    DeleteFriend delFriend = new DeleteFriend(config.getEmail(), username);
+                    Thread delFriendThread = new Thread(delFriend);
+                    delFriendThread.start();
+                    try {
+                        delFriendThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    button.setChecked(!delFriend.getValue());
                 }
             }
         });
 
-       if (isFriend()) {
-            friend.setChecked(true);
-        } else {
-            friend.setChecked(false);
-        }
+        friend.setChecked(isFriend());
     }
 
     private boolean isFriend(){
