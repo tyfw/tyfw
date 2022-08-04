@@ -54,13 +54,9 @@ const priceIntervals = [
 
 // return current value of eth at wallet address
 const getBalanceUSD = async (address) => {
-  try {
-    const ethBalance = await getEthBalance(address);
-    const ethPrice = await getEthPrice();
-    return ethBalance * ethPrice;
-  } catch (err) {
-    throw err;
-  }
+  const ethBalance = await getEthBalance(address);
+  const ethPrice = await getEthPrice();
+  return ethBalance * ethPrice;
 };
 
 // get transaction history of wallet address
@@ -109,6 +105,9 @@ const getPriceHistory = async (price_abv, interval, options) => {
   if(!priceIntervals.includes(interval)) {
     throw new Error("Invalid interval");
   }
+  if (price_abv != "ETHUSDC") {
+    throw new Error("Invalid Price Abv");
+  }
   return client.klines(price_abv, interval, options)
   .then((res)=>{
     return res["data"].map((item) => {
@@ -121,8 +120,6 @@ const getPriceHistory = async (price_abv, interval, options) => {
             .reduce((a, b) => a + b) / 4,
       };
     });
-  }).catch((err)=>{
-    throw Error("Invalid Price ABV");
   });
 };
 
@@ -223,5 +220,4 @@ module.exports = {
   getAccountHistory,
   getYearPercentReturn,
   generateTrainingData,
-  getPriceHistory,
 };
