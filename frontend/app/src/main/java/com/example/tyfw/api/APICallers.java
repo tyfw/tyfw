@@ -403,10 +403,12 @@ public class APICallers {
 
         public void run() {
             try {
+                Log.e("a", jsonObject.toString());
                 String url = "http://34.105.106.85:8081/user/getprediction/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
                         .addHeaders("risktolerance", jsonObject.getString("risktolerance"))
+                        .addHeaders("riskAgg", jsonObject.getString("riskAgg"))
                         .build();
 
                 ANResponse response = request.executeForJSONObject();

@@ -64,27 +64,6 @@ public class AiPredictionActivity extends AppCompatActivity {
         riskBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarTitle.setText("Current risk tolerance: " + progress);
-                App config = (App) getApplicationContext();
-                config.setRiskTolerance(progress);
-
-                List<String> responseList = getPrediction();
-                String recommendation = (responseList.get(0).equals("false")) ? "hold" : "sell";
-                aiResults.setText("Today's ETH value: " + responseList.get(1) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(2) +  " USD\n" + "Our recommendation: " + recommendation + "\n");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });        riskBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekBarTitle.setText("Current risk tolerance: " + progress + "%");
                 App config = (App) getApplicationContext();
                 config.setRiskTolerance(progress);
@@ -147,7 +126,6 @@ public class AiPredictionActivity extends AppCompatActivity {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            Log.e("HERE", String.valueOf(riskTolerance));
             jsonObject.put("risktolerance", riskTolerance);
             jsonObject.put("riskAgg", riskAgg);
             jsonObject.put("email", config.getEmail());
@@ -164,6 +142,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         }
         JSONObject serverResponse = getPrediction.getValue();
         try {
+            Log.e("A", serverResponse.toString());
             List<String> returnList = new ArrayList<>();
             returnList.add(serverResponse.getString("predictBuy"));
             returnList.add(serverResponse.getString("predictSell"));
