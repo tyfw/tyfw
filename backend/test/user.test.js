@@ -1,4 +1,26 @@
 const user = require('../src/user.js')
+const {MongoClient} = require('mongodb')
+let connection;
+let db;
+
+beforeAll(async () => {
+    console.log(MongoClient)
+    console.log(global.__MONGO_URI__)
+    console.log(process.env.MONGO_URL)
+    // connection = await MongoClient.connect(global.__MONGO_URI__, {
+    connection = await MongoClient.connect("mongodb://localhost:27017", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      db = await connection.db("tyfw");
+      await db.collection("users").deleteMany({});
+      const teslaMockUser = new user.User("Tesla", "Nikola", "Tesla", "tesla@mail.com", "0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4")
+      db.collection("users").insertOne(teslaMockUser)
+    });
+
+afterAll(async () => {
+    await connection.close();
+});
 
 test("Test opening mongo connection", async () => {
     user.runMongo()

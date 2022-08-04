@@ -21,6 +21,7 @@
   "description": "Server backend for 321 Project",
   "main": "server.js",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^4.0.0",
     "jest": "^28.1.1"
   }
 }
