@@ -20,6 +20,8 @@ beforeAll(async () => {
       const zephUser = new user.User("zeph", "Zeph", "Ko", "zeph@mail.com", ["0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf"])
       db.collection("users").insertOne(teslaMockUser)
       db.collection("users").insertOne(zephUser)
+      db.collection("users").updateOne({"email": zephUser.email}, {$addToSet: {friends: teslaMockUser.email}})
+
       
     })
 
@@ -255,6 +257,24 @@ describe ("GET /user/getlastname", () => {
         test("should respond w 400 status code", async () => {
             const response = await (await request(app).get("/user/getlastname").set("email", "notauser@mail.com"))
             expect(response.statusCode).toBe(400)
+        })
+    })
+})
+
+describe ("GET /user/getprediction", () => {
+    describe("test changing risk tolerance and risk agg", () => {
+        test("should respond w 200 status code", async () => {
+            const response = await (await request(app).get("/user/getprediction").set("email", "tesla@mail.com").set("riskAgg", 50).set("riskTolerance", 50))
+            expect(response.statusCode).toBe(200)
+        })
+    })
+})
+
+describe ("DELETE /user/delete_friend", () => {
+    describe("test deleting friend", () => {
+        test("should respond w 200 status code", async () => {
+            const response =  await (await request(app).delete("/user/delete_friend").set("email", "zeph@mail.com").set("friend", "Tesla"))
+            expect(response.statusCode).toBe(200)
         })
     })
 })
