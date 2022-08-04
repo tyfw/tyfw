@@ -47,7 +47,7 @@ public class WalletAddressTests {
     public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(intent);
 
     @Test
-    public void validEthereumAddress() {
+    public void validEthereumAddress1() {
         onView(withId(R.id.first_name)).perform(typeText("John"));
         onView(withId(R.id.last_name)).perform(typeText("Doe"));
         // This is a valid Ethereum wallet
@@ -62,6 +62,28 @@ public class WalletAddressTests {
 
         onView(withId(R.id.home_graph_options)).check(matches(withSpinnerText(containsString("Today"))));
         final long endTime = System.currentTimeMillis();
+        // To verify non functional requirements
+        assert(startTime - endTime < 5000);
+    }
+
+    @Test
+    public void validEthereumAddress2() {
+        // This is a different address than above
+        onView(withId(R.id.first_name)).perform(typeText("John"));
+        onView(withId(R.id.last_name)).perform(typeText("Doe"));
+        // This is a valid Ethereum wallet
+        onView(withId(R.id.wallet_profile)).perform(typeText("0x44C1767ED909E808cee9a92d016CE3956d60871F")).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.wallet_profile)).check(matches(not(hasErrorText(invalid_wallet_address))));
+        onView(withId(R.id.username)).perform(typeText("testuser")).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.login)).check(matches(isEnabled()));
+        final long startTime = System.currentTimeMillis();
+        onView(withId(R.id.login)).perform(click());
+
+        onView(withId(R.id.home_graph_options)).check(matches(withSpinnerText(containsString("Today"))));
+        final long endTime = System.currentTimeMillis();
+        // To verify non functional requirements
         assert(startTime - endTime < 5000);
     }
 }

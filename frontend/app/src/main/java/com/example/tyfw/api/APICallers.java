@@ -13,8 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.spec.ECField;
-
 public class APICallers {
     // Register User
     public static class RegisterUser implements Runnable {
