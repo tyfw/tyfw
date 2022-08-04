@@ -127,7 +127,7 @@ app.post("/user/authenticate", async (req, res) => {
   try {
     console.debug("/user/authenticate \n    Time: ", Date.now(), "\n    req.body: ", req.body)
 
-    existingUser = await getUserByEmail(req.body.email)
+    const existingUser = await getUserByEmail(req.body.email)
     console.debug("existingUser: ", existingUser)
 
     if (existingUser == null) {
@@ -142,13 +142,6 @@ app.post("/user/authenticate", async (req, res) => {
       return;
     }
 
-    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": req.body.email})
-
-    if (existingUser == null) {
-      console.log("User not found")
-      res.sendStatus(201)
-      return;
-    }
     res.sendStatus(200)
   }
   catch (err) {
@@ -361,7 +354,7 @@ app.post("/user/addbyusername", async (req, res) => {
       else if (newFriend.email == req.body.email) {
         throw new Error('User cannot add themself')
       }
-      await addFriend(req.body.email, req.body.newFriendEmail)
+      await addFriend(req.body.email, newFriend.email)
       res.status(200).send("Success")
   }
   catch (err) {
