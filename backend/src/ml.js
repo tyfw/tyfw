@@ -23,18 +23,17 @@ const predict = async (riskTolerance) => {
 
   const predictions = model.predict(inputTensor).dataSync();
 
-
-  const todayPrice = priceHistInput[priceHistInput.length - 1].avgPrice
-  const tomorrowPrice = predictions[predictions.length-1] * (max - min) + min;
-
-
-  return {
-    "prediction": -((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100),
+  const todayPrice = priceHistInput[priceHistInput.length - 1].avgPrice;
+  const tomorrowPrice = predictions[predictions.length - 1] * (max - min) + min;
+  const predictionBundle = {
+    prediction: -((tomorrowPrice - todayPrice) / todayPrice) > riskTolerance / 100,
     todayPrice,
     tomorrowPrice,
   };
+  return predictionBundle;
+
 };
 
 module.exports = {
-    predict
-}
+  predict,
+};
