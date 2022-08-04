@@ -1,7 +1,10 @@
 const user = require('../src/user.js')
-const {MongoClient} = require('mongodb')
+const {MongoClient} = require('mongodb');
+const jestConfig = require('../jest.config.js');
 let connection;
 let db;
+
+const data = jest.mock('data')
 
 beforeAll(async () => {
     console.log(MongoClient)
@@ -165,4 +168,8 @@ test("Test changing name fails when user email does not match any user", async (
     await expect(async () => {
     var result = await user.changeName("nouser@mail.com", "last", "newName")
     }).rejects
+})
+
+test("Test get balance for user", async () => {
+    await expect(data.mockgetBalance("0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4")).toBe(12.34)
 })

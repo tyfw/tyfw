@@ -1,4 +1,5 @@
-const { MongoClient } = require('mongodb')
+const { MongoClient } = require('mongodb');
+const data = require('./data');
 const uri = "mongodb://localhost:27017"
 // const uri = global.__MONGO_URI__
 const mongo_client = new MongoClient(uri)
@@ -95,6 +96,10 @@ const addFriend = async(email, newFriendEmail) => {
 const deleteFriend  = async(email, friend) => {
   friendUser = await getUserByUsername(friend)
   await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$pull: {friends: friendUser.email}})
+}
+
+const getBalance = async(address) => {
+  await data.getBalance(address)
 }
 
 module.exports = {

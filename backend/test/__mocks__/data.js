@@ -90,5 +90,3 @@ test("test mockGetYearPercentReturn", async () => {
     const history = await mockDataModule.getYearPercentReturn("0x12345");
     expect(history).toBe(1.23);
 });
-
-module.exports = mockDataModule
