@@ -21,59 +21,16 @@ logger.log('Hello from tyfw server');
 console.isDebugMode = true;
 
 
-class User {
-    constructor(username, firstname, lastname, email, addresses) {
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.addresses = addresses;
-        this.friends = [];
-    }
-}
-
-class Chat {
-    constructor(user1, user2) {
-      this.user1 = user1
-      this.user2 = user2
-      this.messages = [];
-    }
-}
-
-class Message {
-    constructor(message, fromUser, toUser) {
-      this.message = message;
-      this.fromUser = fromUser;
-      this.toUser = toUser;
-    }
-}
-
 // mongo-db
 const { MongoClient } = require('mongodb');
 const uri = "mongodb://localhost:27017"
 const mongo_client = new MongoClient(uri)
 
-// test function for mongo-db
-async function run() {
-    try {
-      // Connect the client to the server
-      await mongo_client.connect();
-      // Establish and verify connection
-      await mongo_client.db("admin").command({ ping: 1 });
-      console.log("Connected successfully to database");
-      logger.log("Connected successfully to database")
-    } catch(err) {
-        console.log(err)
-        await mongo_client.close()
-    }
-  }
-
 // Google User Auth
 const {OAuth2Client} = require('google-auth-library');
 const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
-const {runMongo, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend} = require('./user.js')
 const { Message, initConversation, getChat, addMessageToChat, getConversationID} = require('./chat.js')
-const {runMongo, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend, changeRiskTolerance} = require('./user.js')
+const {runMongo, deleteFriend, getUserByUsername, getUserByEmail, getUserByWalletAddress, registerUser, changeName, search, addFriend, changeRiskTolerance} = require('./user.js')
 const CLIENT_ID = process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -115,17 +72,6 @@ wsServer.on('request', (req) => {
           // await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{"user1": existingChat.user1}, {"user2": existingChat.user2}]}, {$addToSet: {"messages": message}})
         // }
         
-        var existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": receivedJSON.fromUser, "user2": receivedJSON.toUser}, {"user1": receivedJSON.toUser, "user2": receivedJSON.fromUser}]})
-        if (existingChat == null) {
-          var chat = new Chat(receivedJSON.fromUser, receivedJSON.toUser)
-          chat.messages.push(message)
-          await mongo_client.db("tyfw").collection("chat").insertOne(chat)
-          console.log("added new chat to db")
-        }
-        else {
-          await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{"user1": existingChat.user1}, {"user2": existingChat.user2}]}, {$addToSet: {"messages": message}})
-        }
-
     })
 
   connection.on('close', (resCode, des) => {
@@ -565,7 +511,6 @@ app.get("/user/chathistory", async (req, res) => {
   req.headers: ", req.headers)
 
   try {
-    var existingChat = await mongo_client.db("tyfw").collection("chat").findOne({$or: [{"user1": req.header("fromUser"), "user2": req.header("toUser")}, {"user1": req.header("toUser"), "user2": req.header("fromUser")}]})
     const existingChat = await getChat(req.header("fromUser"), req.header("toUser"))
     if (existingChat == null) {
       res.status(404)
@@ -584,7 +529,7 @@ app.get("/user/conversation_id", async (req, res) => {
   req.headers: ", req.headers)
 
   try {
-    const conversation_id = await getConversationID(req.header("fromUser"), req.header("toUser"))
+    const conversation_id = await getConversationID(req.header("fromUser"), req.header("toUser")) 
     console.log(conversation_id)
     if (conversation_id == null) {
       res.status(404)
@@ -611,6 +556,23 @@ app.post("/user/init_conversation", async (req, res) => {
     res.sendStatus(400)
   }
 });
+
+app.delete("/user/delete_friend", async (req, res) => {
+  console.debug("/user/delete_friend\n\
+  Time: ", Date.now(), "\n\
+  req.headers: ", req.headers)
+
+  try {
+    await deleteFriend(req.header("email"), req.header("friend"))
+    res.sendStatus(200)
+  } catch (err) {
+    console.log(err)
+    logger.log(String(err))
+    res.sendStatus(400)
+  }
+  
+  
+})
 
 module.exports = server
 

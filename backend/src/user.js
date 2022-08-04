@@ -86,6 +86,11 @@ const addFriend = async(email, newFriendEmail) => {
     return true
 }
 
+const deleteFriend  = async(email, friend) => {
+  friendUser = await getUserByUsername(friend)
+  await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$pull: {friends: friendUser.email}})
+}
+
 module.exports = {
     runMongo,
     getUserByUsername, 
@@ -95,5 +100,6 @@ module.exports = {
     changeName,
     changeRiskTolerance,
     search,
-    addFriend
+    addFriend,
+    deleteFriend
 }
