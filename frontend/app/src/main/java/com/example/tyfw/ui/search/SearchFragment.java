@@ -22,12 +22,15 @@ import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentSearchBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.json.JSONArray;
+
+import static com.example.tyfw.api.APICallers.*;
 
 public class SearchFragment extends Fragment {
 
@@ -96,39 +99,5 @@ public class SearchFragment extends Fragment {
         binding = null;
     }
 
-    static class GetSearch implements Runnable {
-        private JSONObject value;
-        private final JSONObject jsonObject;
 
-        public GetSearch(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public void run() {
-            try {
-                String url = "http://34.105.106.85:8081/user/search/";
-                ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("queryString", jsonObject.getString("queryString"))
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
-                        .setPriority(Priority.MEDIUM)
-                        .build();
-                ANResponse<JSONObject> response = request.executeForJSONObject();
-
-                if (response.isSuccess()) {
-                    value = response.getResult();
-                } else {
-                    // handle error
-                    ANError error = response.getError();
-                    error.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public JSONObject getValue() {
-            return value;
-        }
-    }
 }

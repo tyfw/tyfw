@@ -28,6 +28,8 @@
     <string name="action_search">Search</string>
     <string name="time_default">Please select a timescale to view your wallet</string>
 
+    <string name="IP_addy">34.105.106.85</string>
+
     <!-- For profile page -->
     <string name="add_friend_button">Add Friend</string>
     <string name="profile_name">Loading profile name…</string>
@@ -35,8 +37,7 @@
     <string name="follow_wallet_button">Follow</string>
     <string name="time_opt_default">Choose a time range</string>
 
-    <string-array
-        name="time_options">
+    <string-array name="time_options">
         <item>Today</item>
         <item>Last Week</item>
         <item>Last Month</item>
@@ -45,5 +46,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="ai_recomendation">AI Recommendation: </string>
+    <string name="share_your_portfolio">Share your portfolio</string>
+    <string name="view_profile">View profile</string>
 
 </resources>
