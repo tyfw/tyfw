@@ -31,12 +31,12 @@ async function runMongo() {
   }
 
 const getUserByEmail = async (email) => {
-    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"email": email})
+    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({email})
     return existingUser
 }
 
 const getUserByUsername = async (username) => {
-    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({"username": username})
+    const existingUser = await mongo_client.db("tyfw").collection("users").findOne({username})
     return existingUser
 }
 
@@ -53,11 +53,11 @@ const registerUser = async (username, firstName, lastName, email, walletAddress,
 
 const changeName = async (email, name, newName) => {
       if (name == "first") {
-        await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$set: {firstname: newName}})
+        await mongo_client.db("tyfw").collection("users").updateOne({email}, {$set: {firstname: newName}})
         return true
       }
       else if (name == "last") {
-        await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$set: {lastname: newName}})
+        await mongo_client.db("tyfw").collection("users").updateOne({email}, {$set: {lastname: newName}})
         return true
       }
       else {
@@ -88,13 +88,13 @@ const search = async(email, queryString) => {
 }
 
 const addFriend = async(email, newFriendEmail) => {
-    await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$addToSet: {friends: newFriendEmail}})
+    await mongo_client.db("tyfw").collection("users").updateOne({email}, {$addToSet: {friends: newFriendEmail}})
     return true
 }
 
 const deleteFriend  = async(email, friend) => {
   friendUser = await getUserByUsername(friend)
-  await mongo_client.db("tyfw").collection("users").updateOne({"email": email}, {$pull: {friends: friendUser.email}})
+  await mongo_client.db("tyfw").collection("users").updateOne({email}, {$pull: {friends: friendUser.email}})
 }
 
 module.exports = {

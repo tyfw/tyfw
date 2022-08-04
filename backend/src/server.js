@@ -20,12 +20,6 @@ logger.log('Hello from tyfw server');
 //debug printout
 console.isDebugMode = true;
 
-
-// mongo-db
-const { MongoClient } = require('mongodb');
-const uri = "mongodb://localhost:27017"
-const mongo_client = new MongoClient(uri)
-
 // Google User Auth
 const {OAuth2Client} = require('google-auth-library');
 const { getBalance, getAccountHistory, getYearPercentReturn} = require('./data.js');
@@ -36,7 +30,6 @@ const client = new OAuth2Client(CLIENT_ID);
 
 const SocketServer = require('websocket').server
 const http = require('http');
-const { json } = require('express');
 const socket_server = http.createServer((req, res) => {})
 
 
@@ -103,10 +96,6 @@ async function googleAuthVerify(token) {
   }
   //const payload = ticket.getPayload();
   //const userid = payload['sub'];
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 app.get("/", (req, res) => {
@@ -515,9 +504,7 @@ app.get("/user/getfriends", async (req, res) => {
 
 
 app.get("/user/chathistory", async (req, res) => {
-  console.debug("/user/chathistory\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/chathistory\n Time: ", Date.now(), "\n req.headers: ", req.headers)
 
   try {
     const existingChat = await getChat(req.header("fromUser"), req.header("toUser"))
@@ -533,9 +520,7 @@ app.get("/user/chathistory", async (req, res) => {
 });
 
 app.get("/user/conversation_id", async (req, res) => {
-  console.debug("/user/conversation_id\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/conversation_id\n Time: ", Date.now(), "\n req.headers: ", req.headers)
 
   try {
     const conversation_id = await getConversationID(req.header("fromUser"), req.header("toUser")) 
@@ -567,9 +552,7 @@ app.post("/user/init_conversation", async (req, res) => {
 });
 
 app.delete("/user/delete_friend", async (req, res) => {
-  console.debug("/user/delete_friend\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/delete_friend\n Time: ", Date.now(), "\n req.headers: ", req.headers)
 
   try {
     await deleteFriend(req.header("email"), req.header("friend"))

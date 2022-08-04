@@ -38,7 +38,7 @@ const getConversationID = async (fromUser, toUser) => {
 }
 
 const addMessageToChat  = async (user1, user2, message) => {
-    await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{"user1": user1}, {"user2": user2}]}, {$addToSet: {"messages": message}})
+    await mongo_client.db("tyfw").collection("chat").updateOne({$and: [{user1}, {user2}]}, {$addToSet: {"messages": message}})
 }
 
 module.exports = {
