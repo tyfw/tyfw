@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
@@ -99,16 +100,11 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.view_profile_chat:
-                moveToProfile();
-                return true;
-            case R.id.share_option:
-                shareProfileDetails();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.share_option) {
+            shareProfileDetails();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -118,12 +114,25 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         return true;
     }
 
-    private void moveToProfile(){
-
-    }
 
     private void shareProfileDetails(){
-        sendMessage("THIS MY PROFILE FR");
+        APICallers.GetBalance getBalance = new APICallers.GetBalance(email, googleIdToken);
+        Thread getBalanceThread = new Thread(getBalance);
+        getBalanceThread.start();
+        try {
+            getBalanceThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        JSONObject serverResponse = getBalance.getValue();
+        DecimalFormat df = new DecimalFormat("0.00");
+        try {
+            String currBal = df.format(serverResponse.getDouble("balance"))+ " USD";
+            sendMessage("Check out my balance: " + currBal);
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(),"Unable to fetch profile details. Please try again later", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
     private String getConvoID(){
@@ -141,7 +150,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     private void initiateSocketConnection() {
         OkHttpClient client = new OkHttpClient();
 
-        String conversationID = getConvoID(); //TODO: make this get a conversation ID from the API based on fromUser and toUser; make the call for conversation id
+        String conversationID = getConvoID();
         // Request request = new Request.Builder().url(SERVER_PATH).build();
         Log.d("WEBSOCKET CONNECTION URL", SERVER_PATH + "?ConversationID="+ conversationID);
         Request request = new Request.Builder().url(SERVER_PATH + "?ConversationID="+ conversationID).build();

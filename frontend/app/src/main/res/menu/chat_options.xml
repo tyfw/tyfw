@@ -2,9 +2,6 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/view_profile_chat"
-        android:title="@string/view_profile" />
-    <item
         android:id="@+id/share_option"
         android:title="@string/share_your_portfolio" />
 </menu>

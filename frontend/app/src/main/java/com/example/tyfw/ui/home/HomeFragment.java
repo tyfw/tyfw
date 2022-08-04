@@ -31,11 +31,16 @@ import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentHomeBinding;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import org.json.JSONArray;
@@ -44,6 +49,7 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -139,7 +145,6 @@ public class HomeFragment extends Fragment {
         }
 
         JSONObject serverResponse = getUser.getValue();
-        Log.d(TAG, serverResponse.toString());
         JSONObject user = null;
         try {
             user = serverResponse.getJSONObject("data");
@@ -148,7 +153,7 @@ public class HomeFragment extends Fragment {
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
             riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
-            riskAgg = user.getInt("riskAgg");
+            riskAgg = user.getInt("riskagg");
             config.setRiskAgg(riskAgg);
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
             config.setUsername(user.getString("username"));
@@ -165,13 +170,6 @@ public class HomeFragment extends Fragment {
     private void setBalance(){
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         APICallers.GetBalance getBalance = new APICallers.GetBalance(config.getEmail(), config.getGoogleIdToken());
         Thread getBalanceThread = new Thread(getBalance);
         getBalanceThread.start();
@@ -221,12 +219,9 @@ public class HomeFragment extends Fragment {
     }
 
     // Followed this tutorial: https://www.youtube.com/watch?v=TNeE9DJoOMY&list=PLgCYzUzKIBE9Z0x8zVUunk-Flx8r_ioQF&index=6
-    // TODO: add custom x-y-margins for graph for each option
     private void setChart(){
         ArrayList<String> xData = new ArrayList<>(); // each index contains String of what that is
         ArrayList<Entry> yAxis = new ArrayList<>(); // each index contains data point
-        // Assuming xAxis and yAxis are set:
-        //TODO: make a better way of reloading
         updateData(xData,yAxis);
 
         ArrayList<ILineDataSet> lineData = new ArrayList<>();
@@ -239,7 +234,6 @@ public class HomeFragment extends Fragment {
 
         lineChart.setData(res);
         lineChart.setVisibleXRange(res.getXMin(), res.getXMax());
-        // Im goated for this
         lineChart.setAutoScaleMinMaxEnabled(true);
         lineChart.setDrawBorders(true);
         lineChart.notifyDataSetChanged();
@@ -253,11 +247,34 @@ public class HomeFragment extends Fragment {
         des.setTextSize(16f);
         lineChart.setDescription(des);
 
-        XAxis x_axis = lineChart.getXAxis();
-
-        XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
-        x_axis.setPosition(position);
+//        setXAxis();
     }
+
+//    private void setXAxis(){
+//        switch (timeOption) {
+//            case "Today":
+//                XAxis x_axis = lineChart.getXAxis();
+//                final ArrayList<String> xLabel = new ArrayList<>();
+//                for (int i = 0; i < lineChart.getMaxVisibleCount(); i++) {
+//                    xLabel.add(String.valueOf(30-i));
+//                }
+//
+//                XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
+//                x_axis.setPosition(position);
+//                x_axis.setDrawGridLines(false);
+//                x_axis.setValueFormatter(new IndexAxisValueFormatter(xLabel));
+//
+//                break;
+//            case "Last Week":
+//                break;
+//            case "Last Month":
+//                break;
+//            case "Last Year":
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
@@ -320,8 +337,4 @@ public class HomeFragment extends Fragment {
         }
         return false;
     }
-
-
-
-
 }
