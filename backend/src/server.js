@@ -482,7 +482,7 @@ app.get("/user/getprediction", async (req, res) => {
 });
 app.get("/user/getfriends", async (req, res) => {
   console.debug("/user/getfriends\n  Time: ", Date.now(), "\n  req.headers: ", req.headers)
-    const user = await getUserByEmail(req.header("email"))
+  const user = await getUserByEmail(req.header("email"))
   try {
     var usernames = [];
     for (let i = 0; i < user.friends.length; i++) {
