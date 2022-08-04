@@ -8,6 +8,7 @@
     "google-auth-library": "^8.0.2",
     "graylog2": "^0.2.1",
     "mongodb": "^4.7.0",
+    "supertest": "^6.2.4",
     "web3": "^1.7.3",
     "websocket": "^1.0.34"
   },
