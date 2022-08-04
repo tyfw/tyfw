@@ -26,8 +26,8 @@ const predict = async (riskTolerance, riskAgg) => {
   const todayPrice = priceHistInput[priceHistInput.length - 1].avgPrice;
   const tomorrowPrice = predictions[predictions.length - 1] * (max - min) + min;
   const predictionBundle = {
-    predictSell: -((tomorrowPrice - todayPrice) / todayPrice) > riskTolerance / 100,
-    predictBuy: ((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100,
+    predictSell: (-((tomorrowPrice - todayPrice) / todayPrice) > (riskTolerance / 100)? 1 : 0),
+    predictBuy: (((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100? 1 : 0),
     todayPrice,
     tomorrowPrice,
   };
