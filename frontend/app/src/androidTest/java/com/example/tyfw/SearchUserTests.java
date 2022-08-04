@@ -41,12 +41,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.example.tyfw.api.APICallers;
 import com.example.tyfw.ui.search.SearchFragment;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -280,6 +282,18 @@ public class SearchUserTests {
         onData(allOf(is(instanceOf(String.class)), is("Last Year"))).perform(click());
         onView(withId(R.id.profile_graph_options)).check(matches(withSpinnerText("Last Year")));
         onView(withId(R.id.wallet_chart)).check(matches(isDisplayed()));
+    }
+
+    @After
+    public void deleteFriends() {
+        APICallers.DeleteFriend delFriend = new APICallers.DeleteFriend("tyfw.cpen321@gmail.com", "Cooper");
+        Thread delFriendThread = new Thread(delFriend);
+        delFriendThread.start();
+        try {
+            delFriendThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

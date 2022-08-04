@@ -25,6 +25,9 @@ import android.view.View;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
+import com.example.tyfw.api.APICallers;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -100,8 +103,9 @@ public class LeaderboardTests {
         onView(withId(R.id.profileActivity)).check(matches(isDisplayed()));
 
         // Verify that the friend button exists and works
-        onView(withId(R.id.friend_button)).check(matches(isDisplayed())).check(matches(isClickable())).check(matches(withText(R.string.add_friend_button)));
+        onView(withId(R.id.friend_button)).check(matches(isDisplayed())).check(matches(isClickable()));
         SystemClock.sleep(1000);
+
         onView(withId(R.id.friend_button)).perform(click()).check(matches(withText("Friends")));
 
         pressBack(); // exit to search
@@ -116,8 +120,20 @@ public class LeaderboardTests {
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
-        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(3).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.list)).atPosition(2).perform(click());
 
         onView(withId(R.id.profileActivity)).check(matches(isDisplayed()));
+    }
+
+    @After
+    public void deleteFriends() {
+        APICallers.DeleteFriend delFriend = new APICallers.DeleteFriend("tyfw.cpen321@gmail.com", "Cooper");
+        Thread delFriendThread = new Thread(delFriend);
+        delFriendThread.start();
+        try {
+            delFriendThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
