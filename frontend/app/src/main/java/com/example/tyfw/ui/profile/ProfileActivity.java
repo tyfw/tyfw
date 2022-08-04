@@ -86,29 +86,28 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(MaterialButton button, boolean isChecked) {
                 App config = (App) getApplicationContext();
-
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("email", config.getEmail());
-                    jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-                    jsonObject.put("friendUsername", username);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                AddFriend addFriend = new AddFriend(jsonObject);
-                Thread addFriendThread = new Thread(addFriend);
-                addFriendThread.start();
-                try {
-                    addFriendThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Boolean serverResponse = addFriend.success();
-                Log.d(TAG, serverResponse.toString());
-
                 if (isChecked){
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("email", config.getEmail());
+                        jsonObject.put("googleIdToken",  config.getGoogleIdToken());
+                        jsonObject.put("friendUsername", username);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    AddFriend addFriend = new AddFriend(jsonObject);
+                    Thread addFriendThread = new Thread(addFriend);
+                    addFriendThread.start();
+                    try {
+                        addFriendThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    Boolean serverResponse = addFriend.success();
+                    Log.d(TAG, serverResponse.toString());
+
                     if (serverResponse){
                         button.setText("Friends");
                     } else {
