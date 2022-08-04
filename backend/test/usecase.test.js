@@ -1,6 +1,27 @@
 const request = require('supertest')
+const user = require('../src/user.js') 
 const app = require('../src/server.js')
+const {MongoClient} = require('mongodb')
+let connection;
+let db;
 
+beforeAll(async () => {
+    console.log(MongoClient)
+    console.log(global.__MONGO_URI__)
+    console.log(process.env.MONGO_URL)
+    // connection = await MongoClient.connect(global.__MONGO_URI__, {
+    connection = await MongoClient.connect("mongodb://localhost:27017", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      db = await connection.db("tyfw");
+      await db.collection("users").deleteMany({});
+      const teslaMockUser = new user.User("Tesla", "Nikola", "Tesla", "tesla@mail.com", ["0x9BF4001d307dFd62B26A2F1307ee0C0307632d59"])
+      const zephUser = new user.User("zeph", "Zeph", "Ko", "zeph@mail.com", ["0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf"])
+      db.collection("users").insertOne(teslaMockUser)
+      db.collection("users").insertOne(zephUser)
+      
+    })
 
 describe ("POST /user/register", () => {
     describe("unique username and email", () => {
@@ -47,12 +68,12 @@ describe ("POST /user/authenticate", () => {
         })
     })
     describe("failed authentication due to user not found", () => {
-        test("should respond w 400 status code", async () => {
+        test("should respond w 201 status code", async () => {
             const response = await request(app).post("/user/authenticate").send({
                 googleIdToken : "fakeToken",
                 email: "notauser@mail.com"
         })
-            expect(response.statusCode).toBe(401)
+            expect(response.statusCode).toBe(201)
         })
     })
 })
@@ -64,8 +85,7 @@ describe ("GET /user/leaderboard", () => {
             const response = await request(app).get("/user/leaderboard").set(
                 "email", "tesla@mail.com"
             )
-            expect(response.statusCode).toBe(400)
-            // expect(response.statusCode).toBe(200)
+            expect(response.statusCode).toBe(200)
 
         })
     })

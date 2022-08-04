@@ -14,9 +14,13 @@ beforeAll(async () => {
       });
       db = await connection.db("tyfw");
       await db.collection("users").deleteMany({});
-      const teslaMockUser = new user.User("Tesla", "Nikola", "Tesla", "tesla@mail.com", "0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4")
+      const teslaMockUser = new user.User("Tesla", "Nikola", "Tesla", "tesla@mail.com", ["0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4"])
+      const zephUser = new user.User("zeph", "Zeph", "Ko", "zeph@mail.com", ["0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf"])
+      const mikeUser = new user.User("mike", "Michael", "Scott", "mike@mail.com", ["0x0548F59fEE79f8832C299e01dCA5c76F034F558e"])
       db.collection("users").insertOne(teslaMockUser)
-    });
+      db.collection("users").insertOne(zephUser)
+      
+    })
 
 afterAll(async () => {
     await connection.close();
@@ -38,7 +42,7 @@ test("Test registering a user with a non-unique username", async () => {
     }).rejects
 })
 
-test("Test registering a user with a non-unique username", async () => {
+test("Test registering a user with a non-unique email", async () => {
     await expect(async () => {
         await user.registerUser("testUser", "Test", "User", "tesla@mail.com", ["0xa5cD18A9c0028853Cac10c778B03001e2c18aFF4"])
     }).rejects
@@ -132,7 +136,7 @@ test("Test adding a friend fails when user email does not match any user", async
 })
 
 test("Test adding a friend by username when user already friended", async () => {
-    var result = await user.addFriend("tesla@mail.com", "mike@gmail.com")
+    var result = await user.addFriend("zeph@mail.com", "mike@gmail.com")
     expect(result).toBe(true)
 })
 
