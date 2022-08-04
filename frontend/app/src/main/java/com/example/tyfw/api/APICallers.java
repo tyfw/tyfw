@@ -354,6 +354,43 @@ public class APICallers {
         }
     }
 
+    // Get Auth
+    public static class DeleteFriend implements Runnable {
+        private Boolean value = null;
+        final static String TAG = "DeleteFriend";
+
+        private String email = "";
+        private String friend = "";
+
+        public DeleteFriend(String email, String friend) {
+            this.email = email;
+            this.friend = friend;
+        }
+
+        public void run() {
+            String url = "http://34.105.106.85:8081/user/delete_friend/";
+            ANRequest request= AndroidNetworking.delete(url)
+                    .addHeaders("email", this.email)
+                    .addHeaders("friend", this.friend)
+                    .setPriority(Priority.MEDIUM)
+                    .build();
+
+            ANResponse response = request.executeForOkHttpResponse();
+
+            if (response.isSuccess()) {
+                value = response.getOkHttpResponse().isSuccessful();
+            } else {
+                // handle error
+                ANError error = response.getError();
+                Log.d(TAG, error.toString());
+            }
+        }
+
+        public Boolean getValue() {
+            return value;
+        }
+    }
+
     // AI Prediction
     public static class GetPrediction implements Runnable {
         final static String TAG = "GetUserRunnable";
