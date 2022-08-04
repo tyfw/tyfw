@@ -53,16 +53,7 @@ public class SearchFragment extends Fragment {
             Log.d(TAG,queryString);
             App config = (App) getContext().getApplicationContext();
 
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("queryString", queryString);
-                jsonObject.put("email", config.getEmail());
-                jsonObject.put("googleIdToken", config.getGoogleIdToken());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            GetSearch getSearch = new GetSearch(jsonObject);
+            GetSearch getSearch = new GetSearch(queryString, config.getEmail(), config.getGoogleIdToken());
             Thread getAuthThread = new Thread(getSearch);
             getAuthThread.start();
             try {

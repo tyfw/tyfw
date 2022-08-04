@@ -21,8 +21,6 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.api.APICallers;
-import com.example.tyfw.api.APICallers.GetUser;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -87,16 +85,8 @@ public class ProfileActivity extends AppCompatActivity {
             public void onCheckedChanged(MaterialButton button, boolean isChecked) {
                 App config = (App) getApplicationContext();
                 if (isChecked){
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("email", config.getEmail());
-                        jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-                        jsonObject.put("friendUsername", username);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
 
-                    AddFriend addFriend = new AddFriend(jsonObject);
+                    AddFriend addFriend = new AddFriend(config.getEmail(), config.getGoogleIdToken(), username);
                     Thread addFriendThread = new Thread(addFriend);
                     addFriendThread.start();
                     try {
@@ -135,14 +125,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean isFriend(){
         App config = (App) getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        GetFriends getFriend = new GetFriends(jsonObject);
+        GetFriends getFriend = new GetFriends(config.getEmail());
         Thread getFriendThread = new Thread(getFriend);
         getFriendThread.start();
         try {
@@ -240,17 +223,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         App config = (App) this.getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-            jsonObject.put("time", timeScale);
-            jsonObject.put("friendUsername", username);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        GetProfile getProfile = new GetProfile(jsonObject);
+        GetProfile getProfile = new GetProfile(config.getEmail(), config.getGoogleIdToken(), timeScale, username);
         Thread getHomeThread = new Thread(getProfile);
         getHomeThread.start();
         try {

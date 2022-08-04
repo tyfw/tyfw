@@ -101,15 +101,8 @@ public class AuthActivity extends AppCompatActivity {
             config.setGoogleIdToken(account.getIdToken());
             config.setEmail(account.getEmail());
 
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("email", account.getEmail());
-                jsonObject.put("googleIdToken", account.getIdToken());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-            APICallers.GetAuth getAuth = new APICallers.GetAuth(jsonObject);
+            APICallers.GetAuth getAuth = new APICallers.GetAuth(account.getEmail(), account.getIdToken());
             Thread getAuthThread = new Thread(getAuth);
             getAuthThread.start();
             try {

@@ -70,15 +70,7 @@ public class LeaderboardFragment extends Fragment {
         // Call the leaderboard API
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        APICallers.GetLeaderboard getAuth = new APICallers.GetLeaderboard(jsonObject);
+        APICallers.GetLeaderboard getAuth = new APICallers.GetLeaderboard(config.getEmail(), config.getGoogleIdToken());
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();
         try {

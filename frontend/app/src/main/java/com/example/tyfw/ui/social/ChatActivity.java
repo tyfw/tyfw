@@ -127,15 +127,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     }
 
     private String getConvoID(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("fromUser", me);
-            jsonObject.put("toUser", them);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        APICallers.GetConversationID getConvoId = new APICallers.GetConversationID(jsonObject);
+        APICallers.GetConversationID getConvoId = new APICallers.GetConversationID(me, them);
         Thread getConvoThread = new Thread(getConvoId);
         getConvoThread.start();
         try {

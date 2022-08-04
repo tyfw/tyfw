@@ -54,14 +54,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         App config = (App) getContext().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        APICallers.GetName getFirstname = new APICallers.GetName(jsonObject, FirstOrLast.FIRST);
+        APICallers.GetName getFirstname = new APICallers.GetName(config.getEmail(), FirstOrLast.FIRST);
         Thread getFirstNameThread = new Thread(getFirstname);
         getFirstNameThread.start();
         try {
@@ -71,7 +64,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             e.printStackTrace();
         }
 
-        APICallers.GetName getLastName = new APICallers.GetName(jsonObject, FirstOrLast.LAST);
+        APICallers.GetName getLastName = new APICallers.GetName(config.getEmail(), FirstOrLast.LAST);
         Thread getLastNameThread = new Thread(getLastName);
         getLastNameThread.start();
         try {
@@ -87,15 +80,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         firstNamePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("name", "first");
-                    jsonObject.put("email", config.getEmail());
-                    jsonObject.put("newName", newValue.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                APICallers.ChangeName changeName = new APICallers.ChangeName(jsonObject);
+                APICallers.ChangeName changeName = new APICallers.ChangeName("first", config.getEmail(), newValue.toString());
                 Thread changeNameThread = new Thread(changeName);
                 changeNameThread.start();
                 try {
@@ -111,15 +96,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         final EditTextPreference lastNamePreference = getPreferenceManager().findPreference("preference_last_name");
         lastNamePreference.setText(lastName);
         lastNamePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-            JSONObject jsonObject1 = new JSONObject();
-            try {
-                jsonObject1.put("name", "last");
-                jsonObject1.put("email", config.getEmail());
-                jsonObject1.put("newName", newValue.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            APICallers.ChangeName changeName = new APICallers.ChangeName(jsonObject1);
+            APICallers.ChangeName changeName = new APICallers.ChangeName("last", config.getEmail(), newValue.toString());
             Thread changeNameThread = new Thread(changeName);
             changeNameThread.start();
             try {

@@ -66,10 +66,15 @@ public class APICallers {
     public static class GetAuth implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private Integer value;
-        private final JSONObject jsonObject;
+        private final JSONObject jsonObject = new JSONObject();
 
-        public GetAuth(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetAuth(String email, String googleIdToken) {
+            try {
+                this.jsonObject.put("email", email);
+                this.jsonObject.put("googleIdToken", googleIdToken);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         public void run() {
@@ -99,18 +104,19 @@ public class APICallers {
     public static class GetHome implements Runnable {
         final static String TAG = "GetHomeRunnable";
         private JSONObject value;
-        private final JSONObject jsonObject;
+        private final String email;
+        private final String time;
 
-        public GetHome(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetHome(String email, String time) {
+            this.email = email;
+            this.time = time;
         }
 
         public void run() {
-            try {
                 String url = "http://34.105.106.85:8081/user/displaycurruser/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("time", jsonObject.getString("time"))
+                        .addHeaders("email", email)
+                        .addHeaders("time", time)
                         .build();
 
                 ANResponse response = request.executeForJSONObject();
@@ -122,9 +128,6 @@ public class APICallers {
                     ANError error = response.getError();
                     errorResponse(error);
                 }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
         }
 
         private void errorResponse(Exception e){
@@ -146,17 +149,20 @@ public class APICallers {
     public static class GetUser implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private final JSONObject jsonObject;
+        private final String email;
+        private final String googleIdToken;
 
-        public GetUser(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetUser(String email, String googleToken) {
+            this.email = email;
+            this.googleIdToken = googleToken;
         }
 
         public void run() {
-            try {
+
                 String url = "http://34.105.106.85:8081/user/getuser/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("email", this.email)
+                        .addHeaders("googleIdToken", this.googleIdToken)
                         .build();
 
                 ANResponse response = request.executeForJSONObject();
@@ -172,9 +178,7 @@ public class APICallers {
                     }
                     errorResponse(error);
                 }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
+
         }
 
         private void errorResponse(Exception e){
@@ -196,17 +200,19 @@ public class APICallers {
     public static class GetBalance implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private final JSONObject jsonObject;
+        private final String email;
+        private final String googleIdToken;
 
-        public GetBalance(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetBalance(String email, String googleIdToken) {
+            this.email = email;
+            this.googleIdToken = googleIdToken;
         }
 
         public void run() {
-            try {
                 String url = "http://34.105.106.85:8081/user/getbalance/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("email", this.email)
+                        .addHeaders("googleIdToken", this.googleIdToken)
                         .build();
 
                 ANResponse response = request.executeForJSONObject();
@@ -218,9 +224,7 @@ public class APICallers {
                     ANError error = response.getError();
                     errorResponse(error);
                 }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
+
         }
 
         private void errorResponse(Exception e){
@@ -242,17 +246,23 @@ public class APICallers {
         final static String TAG = "GetProfileRunnable";
         private JSONObject value;
         private JSONObject jsonObject;
+        private String email;
+        private String token;
+        private String time;
+        private String friend;
         private String url = "http://34.105.106.85:8081/user/displayotheruserbyusername/";
 
-        public GetProfile(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetProfile(String email, String token, String time, String friend) {
+            this.email = email;
+            this.token = token;
+            this.time = time;
+            this.friend = friend;
         }
 
         public void run() {
-            try {
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("otherUsername", jsonObject.getString("friendUsername"))
-                        .addHeaders("time", jsonObject.getString("time"))
+                        .addHeaders("otherUsername", this.friend)
+                        .addHeaders("time", this.time)
                         .setPriority(Priority.MEDIUM)
                         .build();
 
@@ -266,9 +276,6 @@ public class APICallers {
                     error.printStackTrace();
                     errorResponse(error);
                 }
-            } catch (JSONException e) {
-                errorResponse(e);
-            }
         }
 
         private void errorResponse(Exception e){
@@ -290,11 +297,18 @@ public class APICallers {
     public static class AddFriend implements Runnable {
         final static String TAG = "GetProfileRunnable";
         private boolean value;
-        private JSONObject jsonObject;
+        private JSONObject jsonObject = new JSONObject();
+
         private String url = "http://34.105.106.85:8081/user/addbyusername/";
 
-        public AddFriend(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public AddFriend(String email,String token, String username) {
+            try {
+                jsonObject.put("email", email);
+                jsonObject.put("googleIdToken",  token);
+                jsonObject.put("friendUsername", username);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         public void run() {
@@ -322,17 +336,16 @@ public class APICallers {
     public static class GetFriends implements Runnable {
         final static String TAG = "GetFriendsRunnable";
         private JSONObject value;
-        private final JSONObject jsonObject;
+        private final String email;
 
-        public GetFriends(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetFriends(String email) {
+            this.email = email;
         }
 
         public void run() {
-            try {
                 String url = "http://34.105.106.85:8081/user/getfriends/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("email", this.email)
                         .build();
 
                 ANResponse response = request.executeForJSONObject();
@@ -344,9 +357,7 @@ public class APICallers {
                     ANError error = response.getError();
                     error.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
         }
 
         public JSONObject getValue() {
@@ -395,10 +406,16 @@ public class APICallers {
     public static class GetPrediction implements Runnable {
         final static String TAG = "GetUserRunnable";
         private JSONObject value;
-        private final JSONObject jsonObject;
+        private final JSONObject jsonObject = new JSONObject();
 
-        public GetPrediction(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetPrediction(int riskTolerance, int riskAgg, String email) {
+            try {
+                jsonObject.put("risktolerance", riskTolerance);
+                jsonObject.put("riskAgg", riskAgg);
+                jsonObject.put("email", email);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
         }
 
         public void run() {
@@ -443,19 +460,18 @@ public class APICallers {
     public static class GetLeaderboard implements Runnable {
         final static String TAG = "GetAuthRunnable";
         private JSONArray value;
-        private final JSONObject jsonObject;
-
-        public GetLeaderboard(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        private final String email;
+        private final String token;
+        public GetLeaderboard(String email, String token) {
+            this.email = email;
+            this.token = token;
         }
 
         public void run() {
-            try {
-                Log.e("a", jsonObject.toString());
                 String url = "http://34.105.106.85:8081/user/leaderboard/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .addHeaders("email", this.email)
+                        .addHeaders("googleIdToken", this.token)
                         .setPriority(Priority.MEDIUM)
                         .build();
 
@@ -469,9 +485,7 @@ public class APICallers {
                     Log.e("Leaderboard", String.valueOf(error.getErrorCode()));
                     error.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
         }
 
         public JSONArray getValue() {
@@ -482,18 +496,19 @@ public class APICallers {
     public static class GetConversationID implements Runnable {
         final static String TAG = "GetConversationID";
         private String value;
-        private final JSONObject jsonObject;
+        private final String from;
+        private final String to;
 
-        public GetConversationID(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public GetConversationID(String fromUser, String toUser) {
+            this.from = fromUser;
+            this.to = toUser;
         }
 
         public void run() {
-            try {
                 String url = "http://34.105.106.85:8081/user/conversation_id/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("fromUser", jsonObject.getString("fromUser"))
-                        .addHeaders("toUser", jsonObject.getString("toUser"))
+                        .addHeaders("fromUser", from)
+                        .addHeaders("toUser", to)
                         .setPriority(Priority.MEDIUM)
                         .build();
 
@@ -507,9 +522,6 @@ public class APICallers {
                     Log.e("Social", String.valueOf(error.getErrorCode()));
                     error.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         public String getValue() {
@@ -569,19 +581,21 @@ public class APICallers {
     // Search
     public static class GetSearch implements Runnable {
         private JSONObject value;
-        private final JSONObject jsonObject;
-
-        public GetSearch(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        private final String query;
+        private final String email;
+        private final String token;
+        public GetSearch(String query, String email, String googleIdToken) {
+            this.query = query;
+            this.email = email;
+            this.token = googleIdToken;
         }
 
         public void run() {
-            try {
                 String url = "http://34.105.106.85:8081/user/search/";
                 ANRequest request = AndroidNetworking.get(url)
-                        .addHeaders("queryString", jsonObject.getString("queryString"))
-                        .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("googleIdToken", jsonObject.getString("googleIdToken"))
+                        .addHeaders("queryString", query)
+                        .addHeaders("email", email)
+                        .addHeaders("googleIdToken", token)
                         .setPriority(Priority.MEDIUM)
                         .build();
                 ANResponse<JSONObject> response = request.executeForJSONObject();
@@ -593,9 +607,7 @@ public class APICallers {
                     ANError error = response.getError();
                     error.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
         }
 
         public JSONObject getValue() {
@@ -607,10 +619,10 @@ public class APICallers {
         final static String TAG = "GetAuthRunnable";
         private final FirstOrLast firstOrLast;
         private String value;
-        private final JSONObject jsonObject;
+        private final String email;
 
-        public GetName(JSONObject jsonObject, FirstOrLast firstOrLast) {
-            this.jsonObject = jsonObject;
+        public GetName(String email, FirstOrLast firstOrLast) {
+            this.email = email;
             this.firstOrLast = firstOrLast;
         }
 
@@ -622,9 +634,8 @@ public class APICallers {
             } else {
                 req_url = url + "getlastname/";
             }
-            try {
                 ANRequest request = AndroidNetworking.get(req_url)
-                        .addHeaders("email", jsonObject.getString("email"))
+                        .addHeaders("email", email)
                         .setPriority(Priority.MEDIUM)
                         .build();
 
@@ -637,9 +648,6 @@ public class APICallers {
                     ANError error = response.getError();
                     Log.d(TAG, error.toString());
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         public String getValue() {
@@ -651,10 +659,16 @@ public class APICallers {
         final static String TAG = "GetAuthRunnable";
         private FirstOrLast firstOrLast;
         private Integer value;
-        private final JSONObject jsonObject;
+        private final JSONObject jsonObject = new JSONObject();
 
-        public ChangeName(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
+        public ChangeName(String name, String email, String newName) {
+            try {
+                this.jsonObject.put("name", name);
+                this.jsonObject.put("email", email);
+                this.jsonObject.put("newName", newName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         public void run() {

@@ -129,14 +129,7 @@ public class HomeFragment extends Fragment {
     private void setUserData(){
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        APICallers.GetUser getUser = new APICallers.GetUser(jsonObject);
+        APICallers.GetUser getUser = new APICallers.GetUser(config.getEmail(), config.getGoogleIdToken());
         Thread getUserThread = new Thread(getUser);
         getUserThread.start();
         try {
@@ -179,7 +172,7 @@ public class HomeFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        APICallers.GetBalance getBalance = new APICallers.GetBalance(jsonObject);
+        APICallers.GetBalance getBalance = new APICallers.GetBalance(config.getEmail(), config.getGoogleIdToken());
         Thread getBalanceThread = new Thread(getBalance);
         getBalanceThread.start();
         try {
@@ -290,16 +283,7 @@ public class HomeFragment extends Fragment {
 
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken", config.getGoogleIdToken());
-            jsonObject.put("time", timeScale);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        APICallers.GetHome getHome = new APICallers.GetHome(jsonObject);
+        APICallers.GetHome getHome = new APICallers.GetHome(config.getEmail(), timeScale);
         Thread getHomeThread = new Thread(getHome);
         getHomeThread.start();
         try {

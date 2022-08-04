@@ -121,18 +121,8 @@ public class AiPredictionActivity extends AppCompatActivity {
     }
     private List<String> getPrediction(){
         App config = (App) getApplicationContext();
-        int riskTolerance = config.getRiskTolerance();
-        int riskAgg = config.getRiskAgg();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("risktolerance", riskTolerance);
-            jsonObject.put("riskAgg", riskAgg);
-            jsonObject.put("email", config.getEmail());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        APICallers.GetPrediction getPrediction = new APICallers.GetPrediction(jsonObject);
+        APICallers.GetPrediction getPrediction = new APICallers.GetPrediction(config.getRiskTolerance(), config.getRiskAgg(), config.getEmail());
         Thread getPredictionThread = new Thread(getPrediction);
         getPredictionThread.start();
         try {

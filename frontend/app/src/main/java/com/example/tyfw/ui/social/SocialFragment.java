@@ -62,15 +62,7 @@ public class SocialFragment extends Fragment {
         // Call the get friends API
         App config = (App) getActivity().getApplicationContext();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", config.getEmail());
-            jsonObject.put("googleIdToken",  config.getGoogleIdToken());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        APICallers.GetFriends getFriends = new APICallers.GetFriends(jsonObject);
+        APICallers.GetFriends getFriends = new APICallers.GetFriends(config.getEmail());
         Thread getAuthThread = new Thread(getFriends);
         getAuthThread.start();
         try {
