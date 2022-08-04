@@ -43,7 +43,7 @@ const predict = async (riskTolerance, riskAgg) => {
   console.log("(((tomorrowPrice - todayPrice) / todayPrice)" + (((tomorrowPrice - todayPrice) / todayPrice)))
   console.log("riskAgg / 100: " + riskAgg / 100);
   console.log("(((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100): " + (((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100));
-  console.log("(((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100)? 1 : 0): " + (((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100)? 1 : 0));
+  console.log("(((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100)? 1 : 0): " + (((tomorrowPrice - todayPrice) / todayPrice) > riskAgg / 100)? 1 : 0);
   return predictionBundle;
 
 };
