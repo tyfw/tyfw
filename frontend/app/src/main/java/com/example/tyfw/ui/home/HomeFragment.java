@@ -135,7 +135,7 @@ public class HomeFragment extends Fragment {
             riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
             int riskAgg;
-            riskAgg = user.getInt("riskagg");
+            riskAgg = user.getInt("riskAgg");
             config.setRiskAgg(riskAgg);
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
             config.setUsername(user.getString("username"));
