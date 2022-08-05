@@ -64,7 +64,6 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
         setTitle(them);
 
-//        sendBtn = findViewById(R.id.sendBtn);
         initializeView();
         initiateSocketConnection();
     }

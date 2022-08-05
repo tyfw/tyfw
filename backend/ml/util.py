@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
+# starter code taken from: https://www.tensorflow.org/tutorials/structured_data/time_series
+
 # Code here from original tutorial
 class WindowGenerator():
   def __init__(self, input_width, label_width, shift,
