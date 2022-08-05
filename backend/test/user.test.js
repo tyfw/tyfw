@@ -3,8 +3,6 @@ const {MongoClient} = require('mongodb');
 let connection;
 let db;
 
-const data = jest.mock('data')
-
 beforeAll(async () => {
     console.log(MongoClient)
     console.log(global.__MONGO_URI__)
