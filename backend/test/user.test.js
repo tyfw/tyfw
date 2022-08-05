@@ -122,14 +122,14 @@ test("Test search when query string is not a substring of a username or wallet a
 
 test("Test adding a friend by username is successful", async () => {
     const random = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
-    var success = await user.registerUser(random, "Test", "User", random + "mail.com", ["0x9BF4001d307dFd62B26A2F1307ee0C0307632d59"])
+    await user.registerUser(random, "Test", "User", random + "mail.com", ["0x9BF4001d307dFd62B26A2F1307ee0C0307632d59"])
     var result = await user.addFriend("tesla@mail.com", random + "mail.com")
     expect(result).toBe(true)
 })
 
 test("Test adding a friend fails when user email does not match any user", async () => {
     await expect(async () => {
-    var result = await user.addFriend("nouser@mail.com", "tesla@mail.com")
+        await user.addFriend("nouser@mail.com", "tesla@mail.com")
     }).rejects
 })
 
@@ -140,7 +140,7 @@ test("Test adding a friend by username when user already friended", async () => 
 
 test("Test adding a friend fails when friend email does not match any user", async () => {
     await expect(async () => {
-    var result = await user.addFriend("tesla@mail.com", "nouser@mail.com")
+        await user.addFriend("tesla@mail.com", "nouser@mail.com")
     }).rejects
 })
 
@@ -161,6 +161,6 @@ test("Test changing name with an invalid name field", async () => {
 
 test("Test changing name fails when user email does not match any user", async () => {
     await expect(async () => {
-    var result = await user.changeName("nouser@mail.com", "last", "newName")
+        await user.changeName("nouser@mail.com", "last", "newName")
     }).rejects
 })

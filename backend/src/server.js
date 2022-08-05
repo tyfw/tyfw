@@ -537,9 +537,7 @@ app.get("/user/conversation_id", async (req, res) => {
 });
 
 app.post("/user/init_conversation", async (req, res) => {
-  console.debug("/user/init_conversation\n\
-  Time: ", Date.now(), "\n\
-  req.headers: ", req.headers)
+  console.debug("/user/init_conversation\n Time: ", Date.now(), "\n req.headers: ", req.headers)
 
   try {
     await initConversation(req.body.fromUser, req.body.toUser)
