@@ -163,12 +163,10 @@ app.post("/user/register", async (req, res) => {
           throw new Error('Username Exists')
         }
       }
-      else {
-        //create user object
-        // const user = new User(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress)
-        await registerUser(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress, req.body.riskTolerance, req.body.riskAgg)
-        res.status(200).send("Success") 
-      }
+      //create user object
+      // const user = new User(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress)
+      await registerUser(req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.walletAddress, req.body.riskTolerance, req.body.riskAgg)
+      res.status(200).send("Success") 
   }
   catch (err) {
       console.log(err)
