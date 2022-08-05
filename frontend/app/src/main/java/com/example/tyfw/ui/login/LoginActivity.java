@@ -22,22 +22,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANRequest;
-import com.androidnetworking.common.ANResponse;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
 import com.example.tyfw.R;
-import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.ActivityLoginBinding;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
 
 import static com.example.tyfw.api.APICallers.*;
 
@@ -51,9 +40,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText walletAddressEditText;
     private TextView seekBarLoginDescription;
     private TextView seekBarLoginDescriptionAgg;
-
-    private SeekBar seekBarLogin;
-    private SeekBar seekBarLoginAgg;
     private int riskTolerance = 50;
     private int riskAgg = 50;
 
@@ -63,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         EditText usernameEditText;
+        SeekBar seekBarLogin;
+        SeekBar seekBarLoginAgg;
         seekBarLoginDescription = findViewById(R.id.tolerance_text);
         seekBarLoginDescriptionAgg = findViewById(R.id.aggressiveness_text);
 
@@ -153,12 +141,12 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
         });
 
@@ -172,12 +160,12 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
         });
 
@@ -232,7 +220,6 @@ public class LoginActivity extends AppCompatActivity {
 
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(
-                        loginResult.getSuccess(),
                         firstNameEditText.getText().toString(),
                         lastNameEditText.getText().toString(),
                         walletAddressEditText.getText().toString(),
@@ -245,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     
-    private void updateUiWithUser(LoggedInUserView model, String firstName, String lastName, String walletAddress, String username) {
+    private void updateUiWithUser(String firstName, String lastName, String walletAddress, String username) {
         RegisterUser getAuth = new RegisterUser(this.email, username, firstName, lastName, walletAddress, this.googleIdToken, String.valueOf(riskTolerance), String.valueOf(riskAgg));
         Thread getAuthThread = new Thread(getAuth);
         getAuthThread.start();

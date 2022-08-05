@@ -172,10 +172,6 @@ public class APICallers {
                 } else {
                     // handle error
                     ANError error = response.getError();
-                    int errorCode = error.getErrorCode();
-                    if (errorCode == 400) {
-                        // Toast.makeText(getContext(), "Unable to get all user details from server", Toast.LENGTH_SHORT).show();
-                    }
                     errorResponse(error);
                 }
 

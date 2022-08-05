@@ -1,8 +1,5 @@
 package com.example.tyfw.ui.social;
 
-import static android.content.ContentValues.TAG;
-
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,23 +15,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANRequest;
-import com.androidnetworking.common.ANResponse;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
 import com.example.tyfw.utils.MessageAdapter;
-import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,13 +38,10 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     private String me;
     private String them;
 
-    private String email;
-    private String googleIdToken;
-
     private WebSocket webSocket;
     private String SERVER_PATH = "ws://34.105.106.85:3000";
     private EditText messageEdit;
-    private View sendBtn, pickImgBtn;
+    private View sendBtn;
     private RecyclerView recyclerView;
     private MessageAdapter messageAdapter;
 
@@ -71,8 +58,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         me = getIntent().getStringExtra("fromUser");
         them = getIntent().getStringExtra("toUser");
 
-        email = getIntent().getStringExtra("email");
-        googleIdToken = getIntent().getStringExtra("googleIdToken");
+        String email = getIntent().getStringExtra("email");
+        String googleIdToken = getIntent().getStringExtra("googleIdToken");
 
         App config = (App) getApplicationContext();
         config.setEmail(email);
@@ -116,6 +103,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
 
     private void shareProfileDetails(){
+        String email = getIntent().getStringExtra("email");
+        String googleIdToken = getIntent().getStringExtra("googleIdToken");
         APICallers.GetBalance getBalance = new APICallers.GetBalance(email, googleIdToken);
         Thread getBalanceThread = new Thread(getBalance);
         getBalanceThread.start();
@@ -247,12 +236,12 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        // ignore
     }
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        // ignore
     }
 
     @Override

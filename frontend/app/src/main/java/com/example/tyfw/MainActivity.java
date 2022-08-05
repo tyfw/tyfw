@@ -7,7 +7,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import android.content.Intent;
 
 import com.example.tyfw.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

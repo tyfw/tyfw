@@ -38,12 +38,10 @@ public class AiPredictionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_prediction);
 
-        TextView description = findViewById(R.id.ai_description);
         seekBarTitle = findViewById(R.id.seekBarTitle);
         aiResults = findViewById(R.id.ai_results);
         SeekBar riskBar = findViewById(R.id.seekBar);
         SeekBar riskBarAgg = findViewById(R.id.seekBarAgg);
-        description = findViewById(R.id.ai_description);
         seekBarTitle = findViewById(R.id.seekBarTitle);
         seekBarTitleAgg = findViewById(R.id.seekBarTitleAgg);
         aiResults = findViewById(R.id.ai_results);
@@ -80,12 +78,12 @@ public class AiPredictionActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
         });
 
@@ -109,12 +107,12 @@ public class AiPredictionActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                // ignore
             }
         });
 
