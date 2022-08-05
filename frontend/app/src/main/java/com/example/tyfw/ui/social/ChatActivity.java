@@ -33,7 +33,6 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class ChatActivity extends AppCompatActivity implements TextWatcher {
-    private String name;
     private String me;
     private String them;
 
@@ -53,7 +52,6 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        name = getIntent().getStringExtra("name");
         me = getIntent().getStringExtra("fromUser");
         them = getIntent().getStringExtra("toUser");
 

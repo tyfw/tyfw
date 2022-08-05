@@ -28,7 +28,6 @@ public class AiPredictionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ai_prediction);
 
         seekBarTitle = findViewById(R.id.seekBarTitle);
-        aiResults = findViewById(R.id.ai_results);
         SeekBar riskBar = findViewById(R.id.seekBar);
         SeekBar riskBarAgg = findViewById(R.id.seekBarAgg);
         seekBarTitle = findViewById(R.id.seekBarTitle);
@@ -44,8 +43,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         riskBarAgg.setProgress(riskAgg);
 
         List<String> responseList = getPrediction();
-        String recommendation = (responseList.get(0).equals("false")) ? "hold" : "sell";
-        aiResults.setText("Today's ETH value: " + responseList.get(1) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(2) +  " USD\n" + "Our recommendation: " + recommendation + "\n");
+        showPredictions(responseList);
 
         // Helpful/taken from: https://stackoverflow.com/questions/8629535/implementing-a-slider-seekbar-in-android
         riskBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -56,13 +54,7 @@ public class AiPredictionActivity extends AppCompatActivity {
                 config.setRiskTolerance(progress);
 
                 List<String> responseList = getPrediction();
-                if (responseList.get(0).equals(("true")) ) {
-                    aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "sell ETH" + "\n");
-                } else if (responseList.get(1).equals(("true"))) {
-                    aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "buy ETH" + "\n");
-                } else {
-                    aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "hold ETH" + "\n");
-                }
+                showPredictions(responseList);
             }
 
             @Override
@@ -84,14 +76,7 @@ public class AiPredictionActivity extends AppCompatActivity {
                 config.setRiskAgg(progress);
 
                 List<String> responseList = getPrediction();
-                Log.e("a", responseList.toString());
-                if (responseList.get(0).equals(("true")) ) {
-                    aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "sell ETH" + "\n");
-                } else if (responseList.get(1).equals(("true"))) {
-                    aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "buy ETH" + "\n");
-                } else {
-                    aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "hold ETH" + "\n");
-                }
+                showPredictions(responseList);
             }
 
             @Override
@@ -132,10 +117,19 @@ public class AiPredictionActivity extends AppCompatActivity {
             returnList.add("Error, unable to access server");
             returnList.add("Error, unable to access server");
             returnList.add("Error, unable to access server");
+            returnList.add("Error, unable to access server");
             return returnList;
         }
     }
 
-
+    private void showPredictions(List<String> responseList) {
+        if (responseList.get(0).equals(("1")) ) {
+            aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "buy ETH" + "\n");
+        } else if (responseList.get(1).equals(("1"))) {
+            aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "sell ETH" + "\n");
+        } else {
+            aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "hold ETH" + "\n");
+        }
+    }
 }
 

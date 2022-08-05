@@ -406,7 +406,7 @@ public class APICallers {
 
         public GetPrediction(int riskTolerance, int riskAgg, String email) {
             try {
-                jsonObject.put("risktolerance", riskTolerance);
+                jsonObject.put("riskTolerance", riskTolerance);
                 jsonObject.put("riskAgg", riskAgg);
                 jsonObject.put("email", email);
             }catch (JSONException e){
@@ -420,7 +420,7 @@ public class APICallers {
                 String url = "http://34.105.106.85:8081/user/getprediction/";
                 ANRequest request = AndroidNetworking.get(url)
                         .addHeaders("email", jsonObject.getString("email"))
-                        .addHeaders("risktolerance", jsonObject.getString("risktolerance"))
+                        .addHeaders("riskTolerance", jsonObject.getString("riskTolerance"))
                         .addHeaders("riskAgg", jsonObject.getString("riskAgg"))
                         .build();
 

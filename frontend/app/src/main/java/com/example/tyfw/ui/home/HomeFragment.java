@@ -131,11 +131,9 @@ public class HomeFragment extends Fragment {
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
-            int riskTolerance;
-            riskTolerance = user.getInt("risktolerance");
+            int riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
-            int riskAgg;
-            riskAgg = user.getInt("riskAgg");
+            int riskAgg = user.getInt("riskAgg");
             config.setRiskAgg(riskAgg);
             currWallet.setText("Your wallet address: " + addr.get(0).toString());
             config.setUsername(user.getString("username"));
