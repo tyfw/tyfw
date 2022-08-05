@@ -91,11 +91,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
-
-            // TODO: make this a valid profile checker
-            private boolean isProfile(@NonNull String s){
-                return s.length()<5;
-            }
         });
     }
 

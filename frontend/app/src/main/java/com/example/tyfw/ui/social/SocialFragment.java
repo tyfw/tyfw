@@ -133,20 +133,3 @@ public class SocialFragment extends Fragment {
     }
 
 }
-
-//    public View onCreateView(@NonNull LayoutInflater inflater,
-//                             ViewGroup container, Bundle savedInstanceState) {
-//        SocialViewModel socialViewModel =
-//                new ViewModelProvider(this).get(SocialViewModel.class);
-//
-//        binding = FragmentSocialBinding.inflate(inflater, container, false);
-//        View root = binding.getRoot();
-//
-////        final TextView textView = binding.textSocial;
-////        socialViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-//        String friend = "Zeph";
-//        Intent chatActivity = new Intent(getActivity(), ChatActivity.class);
-//        chatActivity.putExtra("name", friend);
-//        startActivity(chatActivity);
-//        return root;
-//    }

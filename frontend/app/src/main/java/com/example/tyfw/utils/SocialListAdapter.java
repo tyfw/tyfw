@@ -1,15 +1,15 @@
 package com.example.tyfw.utils;
 
-        import android.content.Context;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.BaseAdapter;
-        import android.widget.TextView;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
-        import com.example.tyfw.R;
+import com.example.tyfw.R;
 
-        import java.util.List;
+import java.util.List;
 
 public class SocialListAdapter extends BaseAdapter {
     // This code is taken from and adapted from (this includes relevant .xml files):
