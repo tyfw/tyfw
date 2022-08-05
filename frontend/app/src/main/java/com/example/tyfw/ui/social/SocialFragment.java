@@ -14,19 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANRequest;
-import com.androidnetworking.common.ANResponse;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
-import com.example.tyfw.MainActivity;
 import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentSocialBinding;
-import com.example.tyfw.ui.leaderboard.LeaderboardFragment;
-import com.example.tyfw.ui.profile.ProfileActivity;
-import com.example.tyfw.utils.LeaderboardListAdapter;
-import com.example.tyfw.utils.LeaderboardRow;
 import com.example.tyfw.utils.SocialListAdapter;
 import com.example.tyfw.utils.SocialRow;
 
@@ -36,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class SocialFragment extends Fragment {
 
@@ -48,9 +37,7 @@ public class SocialFragment extends Fragment {
     //start of leaderboard paste
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SocialViewModel socialViewModel = new ViewModelProvider(this).get(SocialViewModel.class);
-
-        // leaderboardViewModel.notifyAll();
+        // SocialViewModel socialViewModel = new ViewModelProvider(this).get(SocialViewModel.class);
 
         binding = FragmentSocialBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

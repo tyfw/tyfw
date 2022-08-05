@@ -13,19 +13,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.ANRequest;
-import com.androidnetworking.common.ANResponse;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.SearchResultsActivity;
 
-import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentSearchBinding;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.json.JSONArray;

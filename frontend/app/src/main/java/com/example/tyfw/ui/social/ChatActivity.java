@@ -33,7 +33,6 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class ChatActivity extends AppCompatActivity implements TextWatcher {
-
     private String name;
     private String me;
     private String them;
