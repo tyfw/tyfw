@@ -4,7 +4,7 @@ const uri = "mongodb://localhost:27017"
 const mongo_client = new MongoClient(uri)
 
 class User {
-    constructor(username, firstname, lastname, email, addresses, risktolerance, riskAgg) {
+    constructor(username, firstname, lastname, email, addresses, risktolerance, riskagg) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -12,7 +12,7 @@ class User {
         this.addresses = addresses; 
         this.friends = [];
         this.risktolerance = risktolerance;
-        this.riskAgg = riskAgg;
+        this.riskagg = riskagg;
     }
 }
 
