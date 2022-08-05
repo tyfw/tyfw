@@ -58,7 +58,7 @@ public class LeaderboardTests {
         onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
 
         // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.leaderboard_layout)).check(matches(isDisplayed()));
+        onView(withId(R.id.social_container)).check(matches(isDisplayed()));
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
@@ -72,7 +72,7 @@ public class LeaderboardTests {
         onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
 
         // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.leaderboard_layout)).check(matches(isDisplayed()));
+        onView(withId(R.id.social_container)).check(matches(isDisplayed()));
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
@@ -96,9 +96,7 @@ public class LeaderboardTests {
         SystemClock.sleep(1000);
 
         onView(withId(R.id.search_results_list)).check(matches(isDisplayed()));
-
         onData(anything()).inAdapterView(withId(R.id.search_results_list)).atPosition(1).perform(click());
-
         onView(withId(R.id.profileActivity)).check(matches(isDisplayed()));
 
         // Verify that the friend button exists and works
@@ -115,7 +113,7 @@ public class LeaderboardTests {
         onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
 
         // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.leaderboard_layout)).check(matches(isDisplayed()));
+        onView(withId(R.id.social_container)).check(matches(isDisplayed()));
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));

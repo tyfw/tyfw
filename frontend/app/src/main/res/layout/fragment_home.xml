@@ -14,10 +14,10 @@
         android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.344"
+        app:layout_constraintVertical_bias="0.37"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <com.github.mikephil.charting.charts.LineChart
@@ -26,17 +26,17 @@
         android:layout_height="271dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_graph_options"
-        app:layout_constraintVertical_bias="0.333">
+        app:layout_constraintVertical_bias="0.505">
 
     </com.github.mikephil.charting.charts.LineChart>
 
     <TextView
         android:id="@+id/latest_value"
-        android:layout_width="196dp"
-        android:layout_height="51dp"
+        android:layout_width="189dp"
+        android:layout_height="59dp"
         android:layout_marginTop="72dp"
         android:text="Current wallet value"
         android:textAlignment="center"
@@ -44,7 +44,7 @@
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/wallet"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.004"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.744" />
@@ -59,10 +59,10 @@
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@+id/latest_value"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toEndOf="@+id/latest_value"
         app:layout_constraintTop_toTopOf="@+id/latest_value"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/wallet"
@@ -77,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.375" />
 
     <TextView
         android:id="@+id/user"
@@ -102,6 +102,7 @@
         app:layout_constraintBottom_toTopOf="@+id/home_chart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_graph_options" />
+        app:layout_constraintTop_toBottomOf="@+id/home_graph_options"
+        app:layout_constraintVertical_bias="0.606" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
