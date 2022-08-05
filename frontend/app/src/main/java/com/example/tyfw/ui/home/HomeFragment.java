@@ -2,6 +2,7 @@ package com.example.tyfw.ui.home;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -28,6 +29,8 @@ import com.example.tyfw.databinding.FragmentHomeBinding;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -95,7 +98,6 @@ public class HomeFragment extends Fragment {
 
         try {
             setTimeOptions();
-            // setChart();
         } catch (Exception e){
             Log.d(TAG,e.toString());
         }
@@ -206,7 +208,7 @@ public class HomeFragment extends Fragment {
 
         ArrayList<ILineDataSet> lineData = new ArrayList<>();
         LineDataSet yData = new LineDataSet(yAxis, "Value");
-        yData.setCircleColor(Color.MAGENTA);
+        yData.setCircleColor(Color.DKGRAY);
 
         lineData.add(yData);
 
@@ -220,41 +222,30 @@ public class HomeFragment extends Fragment {
         lineChart.animateXY(1000,1000);
         lineChart.fitScreen();
 
-        Description des = new Description();
-        des.setText("Value");
-        des.setPosition(0,0);
-        des.setTextColor(Color.CYAN);
-        des.setTextSize(16f);
-        lineChart.setDescription(des);
-
-//        setXAxis();
+        nightModeUI();
     }
 
-//    private void setXAxis(){
-//        switch (timeOption) {
-//            case "Today":
-//                XAxis x_axis = lineChart.getXAxis();
-//                final ArrayList<String> xLabel = new ArrayList<>();
-//                for (int i = 0; i < lineChart.getMaxVisibleCount(); i++) {
-//                    xLabel.add(String.valueOf(30-i));
-//                }
-//
-//                XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
-//                x_axis.setPosition(position);
-//                x_axis.setDrawGridLines(false);
-//                x_axis.setValueFormatter(new IndexAxisValueFormatter(xLabel));
-//
-//                break;
-//            case "Last Week":
-//                break;
-//            case "Last Month":
-//                break;
-//            case "Last Year":
-//                break;
-//            default:
-//                break;
-//        }
-//    }
+    private void nightModeUI(){
+        LineData data = lineChart.getData();
+
+        XAxis xAxis = lineChart.getXAxis();
+
+        int nightModeFlags =
+                getContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                lineChart.setBorderColor(Color.WHITE);
+                data.setValueTextColor(Color.WHITE);
+                xAxis.setTextColor(Color.WHITE);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                data.setValueTextColor(Color.BLACK);
+                break;
+        }
+    }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
