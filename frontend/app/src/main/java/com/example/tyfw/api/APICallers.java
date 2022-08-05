@@ -13,7 +13,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+/**
+ * APICallers
+ * A package consisting of static classes that handle all the back-end calls from the front-end.
+ *
+ * Please refer to our back-end API docs for detailed information on parameters passed into
+ * each constructor.
+ */
+
 public class APICallers {
+    /**
+     * RegisterUser
+     */
     // Register User
     public static class RegisterUser implements Runnable {
         final static String TAG = "GetAuthRunnable";
@@ -62,6 +74,9 @@ public class APICallers {
         }
     }
 
+    /**
+     *
+     */
     // Get Auth
     public static class GetAuth implements Runnable {
         final static String TAG = "GetAuthRunnable";

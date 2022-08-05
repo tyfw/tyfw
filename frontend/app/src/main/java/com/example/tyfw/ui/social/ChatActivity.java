@@ -44,8 +44,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher {
     private View sendBtn;
     private RecyclerView recyclerView;
     private MessageAdapter messageAdapter;
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

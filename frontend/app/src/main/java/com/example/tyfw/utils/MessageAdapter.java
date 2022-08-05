@@ -16,6 +16,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+// Credits to https://github.com/heyletscode/Chat-App-In-Android-And-NodeJS-Using-WebSockets
+
 public class MessageAdapter extends RecyclerView.Adapter {
 
     private static final int TYPE_MESSAGE_SENT = 0;
