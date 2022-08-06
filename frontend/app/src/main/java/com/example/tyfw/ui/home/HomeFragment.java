@@ -25,7 +25,7 @@ import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentHomeBinding;
-import com.example.tyfw.ui.graph.GraphUi;
+import com.example.tyfw.ui.graph.GraphUiUtils;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -220,7 +220,7 @@ public class HomeFragment extends Fragment {
         lineChart.animateXY(1000,1000);
         lineChart.fitScreen();
 
-        GraphUi.nightModeUI(lineChart,getContext());
+        GraphUiUtils.nightModeUI(lineChart,getContext());
         Description d = new Description();
         d.setText("");
         lineChart.setDescription(d);    // Hide the description
