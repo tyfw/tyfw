@@ -1,4 +1,4 @@
-package com.example.tyfw;
+package com.example.tyfw.ui.search;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tyfw.R;
 import com.example.tyfw.ui.profile.ProfileActivity;
 import com.example.tyfw.utils.SearchResultsListAdapter;
 import com.example.tyfw.utils.SearchResultsRow;

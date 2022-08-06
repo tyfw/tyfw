@@ -58,7 +58,7 @@ public class LeaderboardTests {
         onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
 
         // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.social_container)).check(matches(isDisplayed()));
+        onView(withId(R.id.leaderboard_container)).check(matches(isDisplayed()));
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
@@ -72,7 +72,7 @@ public class LeaderboardTests {
         onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
 
         // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.social_container)).check(matches(isDisplayed()));
+        onView(withId(R.id.leaderboard_container)).check(matches(isDisplayed()));
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));
@@ -113,7 +113,7 @@ public class LeaderboardTests {
         onView(allOf(withId(R.id.navigation_leaderboard), withContentDescription("Leaderboard"))).perform(click());
 
         // Verify that the Leaderboard fragment is shown on screen
-        onView(withId(R.id.social_container)).check(matches(isDisplayed()));
+        onView(withId(R.id.leaderboard_container)).check(matches(isDisplayed()));
 
         // Verify that the Leaderboard list is shown on screen
         onView(withId(R.id.list)).check(matches(isDisplayed()));

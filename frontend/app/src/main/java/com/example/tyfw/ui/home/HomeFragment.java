@@ -20,7 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.androidnetworking.AndroidNetworking;
-import com.example.tyfw.AiPredictionActivity;
+import com.example.tyfw.ui.ai.AiPredictionActivity;
 import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
@@ -128,19 +128,20 @@ public class HomeFragment extends Fragment {
         JSONObject user = null;
         try {
             user = serverResponse.getJSONObject("data");
+            Log.e("SERVER_RESPONSE_userdata", user.toString());
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
             currWallet.setText(addr.get(0).toString());
             int riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
-            int riskAgg = user.getInt("riskagg");
+            int riskAgg = user.getInt("riskAgg");
             config.setRiskAgg(riskAgg);
             currWallet.setText(addr.get(0).toString());
             config.setUsername(user.getString("username"));
         } catch (JSONException e) {
             currUser.setText("null");
             currWallet.setText("null");
-            Toast.makeText(getContext(), "You are being rate limited, please reload and try again.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Unable to fetch user data! Please try to reload this page later.",Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 

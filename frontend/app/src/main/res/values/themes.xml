@@ -11,13 +11,13 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
+        <item name="android:forceDarkAllowed">false</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="Theme.Tyfw.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="Theme.Tyfw.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.Tyfw.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:fontFamily">@font/proxima_nova_regular</item>

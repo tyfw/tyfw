@@ -53,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         seekBarLoginDescription = findViewById(R.id.tolerance_text);
         seekBarLoginDescriptionAgg = findViewById(R.id.aggressiveness_text);
 
+        getSupportActionBar().setTitle("Register your account");
+
         email = getIntent().getStringExtra("email");
         googleIdToken = getIntent().getStringExtra("googleIdToken");
 

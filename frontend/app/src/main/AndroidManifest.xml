@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".AiPredictionActivity"
+            android:name=".ui.ai.AiPredictionActivity"
             android:exported="false" />
         <activity
             android:name=".ui.social.ChatActivity"
@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchResultsActivity"
+            android:name=".ui.search.SearchResultsActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.SearchResultsActivity;
 
 import com.example.tyfw.databinding.FragmentSearchBinding;
 

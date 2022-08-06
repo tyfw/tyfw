@@ -1,4 +1,4 @@
-package com.example.tyfw;
+package com.example.tyfw.ui.ai;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.tyfw.App;
+import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
 
 import org.json.JSONException;
