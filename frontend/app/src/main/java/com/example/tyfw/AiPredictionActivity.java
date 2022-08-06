@@ -125,11 +125,11 @@ public class AiPredictionActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void showPredictions(List<String> responseList) {
         if (responseList.get(0).equals(("1")) ) {
-            aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "buy ETH" + "\n");
+            aiResults.setText("Today's ETH value:\n" + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value:\n" + responseList.get(3) +  " USD\n" + "Our recommendation:\n" + "buy ETH" + "\n");
         } else if (responseList.get(1).equals(("1"))) {
-            aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "sell ETH" + "\n");
+            aiResults.setText("Today's ETH value:\n" + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value:\n" + responseList.get(3) +  " USD\n" + "Our recommendation:\n" + "sell ETH" + "\n");
         } else {
-            aiResults.setText("Today's ETH value: " + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value: " + responseList.get(3) +  " USD\n" + "Our recommendation: " + "hold ETH" + "\n");
+            aiResults.setText("Today's ETH value:\n" + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value:\n" + responseList.get(3) +  " USD\n" + "Our recommendation:\n" + "hold ETH" + "\n");
         }
     }
 }
