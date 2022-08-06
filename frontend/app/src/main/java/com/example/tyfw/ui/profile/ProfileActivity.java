@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.graph.GraphUI;
+import com.example.tyfw.ui.graph.GraphUi;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -207,7 +207,7 @@ public class ProfileActivity extends AppCompatActivity {
         XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
         x_axis.setPosition(position);
 
-        GraphUI.nightModeUI(lineChart,this.getBaseContext());
+        GraphUi.nightModeUI(lineChart,this.getBaseContext());
         Description d = new Description();
         d.setText("");
         lineChart.setDescription(d);    // Hide the description
@@ -278,30 +278,4 @@ public class ProfileActivity extends AppCompatActivity {
                 return null;
         }
     }
-
-
-    private void nightModeUI(){
-        LineData data = lineChart.getData();
-
-        XAxis xAxis = lineChart.getXAxis();
-
-        int nightModeFlags =
-                this.getApplicationContext().getResources().getConfiguration().uiMode &
-                        Configuration.UI_MODE_NIGHT_MASK;
-
-        switch (nightModeFlags) {
-            case Configuration.UI_MODE_NIGHT_YES:
-                lineChart.setBorderColor(Color.WHITE);
-                data.setValueTextColor(Color.WHITE);
-                xAxis.setTextColor(Color.WHITE);
-                break;
-            case Configuration.UI_MODE_NIGHT_NO:
-            case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                data.setValueTextColor(Color.BLACK);
-                break;
-        }
-    }
-
-
-
 }

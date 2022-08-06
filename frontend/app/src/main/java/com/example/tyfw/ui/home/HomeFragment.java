@@ -2,7 +2,6 @@ package com.example.tyfw.ui.home;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -26,12 +25,10 @@ import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentHomeBinding;
-import com.example.tyfw.ui.graph.GraphUI;
+import com.example.tyfw.ui.graph.GraphUi;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -223,7 +220,7 @@ public class HomeFragment extends Fragment {
         lineChart.animateXY(1000,1000);
         lineChart.fitScreen();
 
-        GraphUI.nightModeUI(lineChart,getContext());
+        GraphUi.nightModeUI(lineChart,getContext());
         Description d = new Description();
         d.setText("");
         lineChart.setDescription(d);    // Hide the description

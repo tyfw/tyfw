@@ -8,7 +8,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.LineData;
 
-public class GraphUI {
+public class GraphUi {
 
     public static void nightModeUI(LineChart lineChart, Context c){
         LineData data = lineChart.getData();
@@ -20,6 +20,7 @@ public class GraphUI {
                         Configuration.UI_MODE_NIGHT_MASK;
 
         switch (nightModeFlags) {
+            default:
             case Configuration.UI_MODE_NIGHT_YES:
                 lineChart.setBorderColor(Color.WHITE);
                 data.setValueTextColor(Color.WHITE);
@@ -29,6 +30,7 @@ public class GraphUI {
             case Configuration.UI_MODE_NIGHT_UNDEFINED:
                 data.setValueTextColor(Color.BLACK);
                 break;
+
         }
     }
 }

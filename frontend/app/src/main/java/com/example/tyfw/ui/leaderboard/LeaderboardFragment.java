@@ -1,20 +1,13 @@
 package com.example.tyfw.ui.leaderboard;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.icu.text.DateFormat;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
-import android.net.Uri;
+
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.tyfw.App;
 import com.example.tyfw.MainActivity;
-import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentLeaderboardBinding;
 import com.example.tyfw.ui.profile.ProfileActivity;
@@ -36,7 +28,6 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 

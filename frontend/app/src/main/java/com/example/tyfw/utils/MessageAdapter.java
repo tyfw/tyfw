@@ -12,6 +12,7 @@ import com.example.tyfw.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
-        TextView nameTxt, messageTxt;
+        TextView nameTxt;
+        TextView messageTxt;
 
         public ReceivedMessageHolder(@NonNull View itemView) {
             super(itemView);
