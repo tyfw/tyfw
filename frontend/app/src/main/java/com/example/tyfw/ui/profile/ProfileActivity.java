@@ -3,7 +3,6 @@ package com.example.tyfw.ui.profile;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.tyfw.App;
 import com.example.tyfw.R;
-import com.example.tyfw.ui.graph.GraphUi;
+import com.example.tyfw.ui.graph.graphUi;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -207,7 +206,7 @@ public class ProfileActivity extends AppCompatActivity {
         XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
         x_axis.setPosition(position);
 
-        GraphUi.nightModeUI(lineChart,this.getBaseContext());
+        graphUi.nightModeUI(lineChart,this.getBaseContext());
         Description d = new Description();
         d.setText("");
         lineChart.setDescription(d);    // Hide the description
