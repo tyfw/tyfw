@@ -1,3 +1,8 @@
+// Citation for chat functionality:
+// This was the template for the chat code
+// https://github.com/heyletscode/Chat-App-In-Android-And-NodeJS-Using-WebSockets
+// https://www.youtube.com/watch?v=7ZbqvnbrFjQ&list=PLsOU6EOcj51ehxchZXdlL06wkATIh-6z3
+
 const { MongoClient } = require('mongodb')
 const uri = "mongodb://localhost:27017"
 const mongo_client = new MongoClient(uri)
