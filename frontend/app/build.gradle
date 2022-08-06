@@ -77,6 +77,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.opencsv:opencsv:5.6'
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
+    implementation 'com.github.douglasjunior:android-simple-tooltip:1.1.0'
 }
 
 

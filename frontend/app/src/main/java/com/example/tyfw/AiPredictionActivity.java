@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -15,6 +17,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.douglasjunior.androidSimpleTooltip.OverlayView;
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public class AiPredictionActivity extends AppCompatActivity {
     private TextView seekBarTitleAgg;
@@ -34,12 +39,14 @@ public class AiPredictionActivity extends AppCompatActivity {
         seekBarTitleAgg = findViewById(R.id.seekBarTitleAgg);
         aiResults = findViewById(R.id.ai_results);
 
+        Button riskButton = findViewById(R.id.risk_button);
+
         App config = (App) getApplicationContext();
         int riskTol = config.getRiskTolerance();
-        seekBarTitle.setText("Current risk tolerance: " + riskTol);
+        seekBarTitle.setText("Current risk tolerance:\n" + riskTol);
         riskBar.setProgress(riskTol);
         int riskAgg = config.getRiskAgg();
-        seekBarTitleAgg.setText("Current investment aggressiveness: " + riskAgg);
+        seekBarTitleAgg.setText("Current investment aggressiveness:\n" + riskAgg);
         riskBarAgg.setProgress(riskAgg);
 
         List<String> responseList = getPrediction();
@@ -49,7 +56,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         riskBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarTitle.setText("Current risk tolerance: " + progress + "%");
+                seekBarTitle.setText("Current risk tolerance:\n" + progress + "%");
                 App config = (App) getApplicationContext();
                 config.setRiskTolerance(progress);
 
@@ -71,7 +78,7 @@ public class AiPredictionActivity extends AppCompatActivity {
         riskBarAgg.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarTitleAgg.setText("Current investment aggressiveness: " + progress + "%");
+                seekBarTitleAgg.setText("Current investment aggressiveness:\n" + progress + "%");
                 App config = (App) getApplicationContext();
                 config.setRiskAgg(progress);
 
@@ -89,6 +96,33 @@ public class AiPredictionActivity extends AppCompatActivity {
                 // ignore
             }
         });
+
+        riskButton.setOnClickListener(v -> {
+            new SimpleTooltip.Builder(getApplicationContext())
+                    .anchorView(seekBarTitleAgg)
+                    .text("Lower investment aggressiveness: more likely to buy when the predicted price is larger than today's price.")
+                    .gravity(Gravity.BOTTOM)
+                    .animated(true)
+                    .transparentOverlay(false)
+                    .highlightShape(OverlayView.HIGHLIGHT_SHAPE_RECTANGULAR_ROUNDED)
+                    .cornerRadius(20)
+                    .overlayOffset(0)
+                    .build()
+                    .show();
+
+            new SimpleTooltip.Builder(getApplicationContext())
+                    .anchorView(seekBarTitle)
+                    .text("Higher risk tolerance: less likely to sell on a low predicted price.")
+                    .gravity(Gravity.TOP)
+                    .animated(true)
+                    .transparentOverlay(false)
+                    .highlightShape(OverlayView.HIGHLIGHT_SHAPE_RECTANGULAR_ROUNDED)
+                    .cornerRadius(20)
+                    .overlayOffset(0)
+                    .build()
+                    .show();
+        });
+
 
     }
     private List<String> getPrediction(){
@@ -132,5 +166,7 @@ public class AiPredictionActivity extends AppCompatActivity {
             aiResults.setText("Today's ETH value:\n" + responseList.get(2) + " USD\n" + "Tomorrow's predicted ETH value:\n" + responseList.get(3) +  " USD\n" + "Our recommendation:\n" + "hold ETH" + "\n");
         }
     }
+
+
 }
 
