@@ -5,104 +5,105 @@
     android:id="@+id/home_frag"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".ui.home.HomeFragment">
+
+    <Button
+        android:id="@+id/ai_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/proxima_nova_regular"
+        android:text="@string/ai_button"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.864"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wallet"
+        app:layout_constraintVertical_bias="0.412" />
 
     <Spinner
         android:id="@+id/home_graph_options"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_weight="1"
+        android:backgroundTint="#E6E6E6"
+        android:backgroundTintMode="add"
+        android:elevation="8dp"
+        android:foregroundTint="#B6B4B4"
+        android:popupElevation="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.37"
+        app:layout_constraintVertical_bias="0.389"
         tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/wallet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="128dp"
+        android:fontFamily="@font/proxima_nova_regular"
+        android:text="@string/wallet_name"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user"
+        app:layout_constraintVertical_bias="0.77"
+        app:layout_wrapBehaviorInParent="included" />
+
+    <TextView
+        android:id="@+id/user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="130dp"
+        android:fontFamily="@font/proxima_nova_regular"
+        android:text="@string/profile_name"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.058" />
+
+    <TextView
+        android:id="@+id/currentvalue"
+        android:layout_width="196dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/proxima_nova_regular"
+        android:text="Current Value"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:autoSizeTextType="none"
+        app:layout_constraintBottom_toBottomOf="@+id/ai_button"
+        app:layout_constraintEnd_toStartOf="@+id/ai_button"
+        app:layout_constraintHorizontal_bias="0.638"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ai_button" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/home_chart"
         android:layout_width="match_parent"
         android:layout_height="271dp"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_graph_options"
-        app:layout_constraintVertical_bias="0.505">
-
-    </com.github.mikephil.charting.charts.LineChart>
-
-    <TextView
-        android:id="@+id/latest_value"
-        android:layout_width="189dp"
-        android:layout_height="59dp"
-        android:layout_marginTop="72dp"
-        android:text="Current wallet value"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/wallet"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.004"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.744" />
-
-    <TextView
-        android:id="@+id/currentvalue"
-        android:layout_width="196dp"
-        android:layout_height="51dp"
-        android:text="Current Value"
-        android:textAlignment="center"
-        android:textSize="12sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="@+id/latest_value"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.36"
-        app:layout_constraintStart_toEndOf="@+id/latest_value"
-        app:layout_constraintTop_toTopOf="@+id/latest_value"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/wallet"
-        android:layout_width="409dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="170dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/wallet_name"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.375" />
-
-    <TextView
-        android:id="@+id/user"
-        android:layout_width="408dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="130dp"
-        android:text="@string/profile_name"
-        android:textAlignment="center"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toTopOf="@+id/home_graph_options"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/ai_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ai_button"
-        app:layout_constraintBottom_toTopOf="@+id/home_chart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_graph_options"
-        app:layout_constraintVertical_bias="0.606" />
+        app:layout_constraintVertical_bias="0.123">
+
+    </com.github.mikephil.charting.charts.LineChart>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

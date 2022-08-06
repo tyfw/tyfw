@@ -6,8 +6,8 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_activity"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SearchResultsActivity">
@@ -23,33 +23,9 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             tools:context=".leaderboard">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="Search results"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textSize="50dp"
-                    android:textStyle="bold">
-
-                </TextView>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
-
-            </RelativeLayout>
 
             <ListView
                 android:id="@+id/search_results_list"
@@ -58,6 +34,18 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
                 android:layout_weight="1.0">
 
             </ListView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.38">
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.38" />
 
         </LinearLayout>
 

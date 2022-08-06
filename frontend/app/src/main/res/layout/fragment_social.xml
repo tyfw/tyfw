@@ -15,6 +15,10 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
     <androidx.core.widget.NestedScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context=".MainActivity">
 
         <LinearLayout
@@ -22,30 +26,6 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
             android:layout_height="wrap_content"
             android:orientation="vertical"
             tools:context=".social">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="Social"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textSize="50dp"
-                    android:textStyle="bold">
-
-                </TextView>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
-
-            </RelativeLayout>
 
             <ListView
                 android:id="@+id/list"

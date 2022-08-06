@@ -3,6 +3,7 @@ package com.example.tyfw.ui.profile;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.tyfw.App;
 import com.example.tyfw.R;
+import com.example.tyfw.ui.graph.GraphUI;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -61,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         walletAddr.setText(walletName);
 
         ImageView profilePic = (ImageView) findViewById(R.id.profile_default_pic);
-        profilePic.setImageResource(R.drawable.ic_baseline_people_24);
+        profilePic.setImageDrawable( ContextCompat.getDrawable(getApplicationContext(),R.drawable.shang_chi_stock_photo));
         profilePic.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
 
         dropdown = findViewById(R.id.profile_graph_options);
@@ -70,7 +72,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         try {
             setTimeOptions();
-            // setChart();
         } catch (Exception e){
             Log.d(TAG,e.toString());
         }
@@ -130,7 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         JSONObject serverResponse = getFriend.getValue();
-        JSONArray friendsList = new JSONArray();
+        JSONArray friendsList;
         try {
             friendsList = serverResponse.getJSONArray("friends");
             for (int i=0; !friendsList.isNull(i); i++) {
@@ -176,7 +177,6 @@ public class ProfileActivity extends AppCompatActivity {
         ArrayList<Entry> yAxis = new ArrayList<>(); // each index contains data point
         // Assuming xAxis and yAxis are set:
         if (!updateData(xData,yAxis)){
-            // Toast.makeText(getBaseContext(),"Unable load data for this option. Please try again.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -206,14 +206,20 @@ public class ProfileActivity extends AppCompatActivity {
 
         XAxis.XAxisPosition position = XAxis.XAxisPosition.BOTTOM;
         x_axis.setPosition(position);
+
+        GraphUI.nightModeUI(lineChart,this.getBaseContext());
+        Description d = new Description();
+        d.setText("");
+        lineChart.setDescription(d);    // Hide the description
+        lineChart.getAxisRight().setDrawLabels(false);
+
+        lineChart.getLegend().setEnabled(false);   // Hide the legend
     }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
         String timeScale = "";
-
         timeScale = getTimeScale();
-
         Log.d("DATA", timeScale);
 
         App config = (App) this.getApplicationContext();
@@ -274,7 +280,27 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
+    private void nightModeUI(){
+        LineData data = lineChart.getData();
 
+        XAxis xAxis = lineChart.getXAxis();
+
+        int nightModeFlags =
+                this.getApplicationContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                lineChart.setBorderColor(Color.WHITE);
+                data.setValueTextColor(Color.WHITE);
+                xAxis.setTextColor(Color.WHITE);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                data.setValueTextColor(Color.BLACK);
+                break;
+        }
+    }
 
 
 

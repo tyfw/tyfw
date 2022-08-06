@@ -18,6 +18,7 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
+        android:fontFamily="@font/proxima_nova_regular"
         android:layout_marginLeft="16dp"
         android:textSize="14dp" />
 

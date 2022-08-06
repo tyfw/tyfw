@@ -14,38 +14,19 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context=".MainActivity">
 
         <LinearLayout
+            android:id="@+id/leaderboard_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             tools:context=".leaderboard">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="Leaderboard!"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textSize="50dp"
-                    android:textStyle="bold">
-
-                </TextView>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.38">
-
-            </RelativeLayout>
 
             <ListView
                 android:id="@+id/list"
@@ -54,6 +35,13 @@ https://stackoverflow.com/questions/60478873/make-a-leaderboard-using-a-listview
                 android:layout_weight="1.0">
 
             </ListView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.38">
+
+            </RelativeLayout>
 
         </LinearLayout>
 

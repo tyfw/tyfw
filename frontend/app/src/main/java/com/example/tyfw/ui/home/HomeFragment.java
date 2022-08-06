@@ -26,6 +26,7 @@ import com.example.tyfw.App;
 import com.example.tyfw.R;
 import com.example.tyfw.api.APICallers;
 import com.example.tyfw.databinding.FragmentHomeBinding;
+import com.example.tyfw.ui.graph.GraphUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -132,12 +133,12 @@ public class HomeFragment extends Fragment {
             user = serverResponse.getJSONObject("data");
             currUser.setText(user.getString("username"));
             JSONArray addr = user.getJSONArray("addresses");
-            currWallet.setText("Your wallet address: " + addr.get(0).toString());
+            currWallet.setText(addr.get(0).toString());
             int riskTolerance = user.getInt("risktolerance");
             config.setRiskTolerance(riskTolerance);
             int riskAgg = user.getInt("riskagg");
             config.setRiskAgg(riskAgg);
-            currWallet.setText("Your wallet address: " + addr.get(0).toString());
+            currWallet.setText(addr.get(0).toString());
             config.setUsername(user.getString("username"));
         } catch (JSONException e) {
             currUser.setText("null");
@@ -222,51 +223,19 @@ public class HomeFragment extends Fragment {
         lineChart.animateXY(1000,1000);
         lineChart.fitScreen();
 
-        nightModeUI();
-    }
+        GraphUI.nightModeUI(lineChart,getContext());
+        Description d = new Description();
+        d.setText("");
+        lineChart.setDescription(d);    // Hide the description
+        lineChart.getAxisRight().setDrawLabels(false);
 
-    private void nightModeUI(){
-        LineData data = lineChart.getData();
-
-        XAxis xAxis = lineChart.getXAxis();
-
-        int nightModeFlags =
-                getContext().getResources().getConfiguration().uiMode &
-                        Configuration.UI_MODE_NIGHT_MASK;
-
-        switch (nightModeFlags) {
-            case Configuration.UI_MODE_NIGHT_YES:
-                lineChart.setBorderColor(Color.WHITE);
-                data.setValueTextColor(Color.WHITE);
-                xAxis.setTextColor(Color.WHITE);
-                break;
-            case Configuration.UI_MODE_NIGHT_NO:
-            case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                data.setValueTextColor(Color.BLACK);
-                break;
-        }
+        lineChart.getLegend().setEnabled(false);   // Hide the legend
     }
 
     // Example: https://github.com/PhilJay/MPAndroidChart/wiki/Setting-Data
     private boolean updateData(ArrayList<String> xAxis, ArrayList<Entry> yAxis){
         String timeScale = "";
-        switch (timeOption) {
-            case "Today":
-                timeScale = "day";
-                break;
-            case "Last Week":
-                timeScale = "week";
-                break;
-            case "Last Month":
-                timeScale = "month";
-                break;
-            case "Last Year":
-                timeScale = "year";
-                break;
-            default:
-                timeScale = "";
-                break;
-        }
+        timeScale = getTimeScale();
         Log.d("DATA", timeScale);
 
         App config = (App) getActivity().getApplicationContext();
@@ -304,8 +273,23 @@ public class HomeFragment extends Fragment {
             }
             return true;
         } else {
-            Toast.makeText(getContext(), "Unable to load data, you might be rate limited.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Unable to load data. Please try again later.", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    private String getTimeScale(){
+        switch (timeOption) {
+            case "Today":
+                return "day";
+            case "Last Week":
+                return "week";
+            case "Last Month":
+                return "month";
+            case "Last Year":
+                return "year";
+            default:
+                return null;
+        }
     }
 }
